@@ -108,7 +108,7 @@ add_action('wpmktengine_init', function($repositarySettings, $api, $cache){
       );
       return $fields;
   }, 10, 1);
-});
+}, 10, 3);
 
 add_action('wp_action_to_modify', function(){
   // Get WPME api object, same in both Genoo and WPME plugins
