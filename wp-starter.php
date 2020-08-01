@@ -224,7 +224,7 @@ function access_entry_via_field($entry,$form) {
                    if($field['type']=='checkbox'): 
                         $inputs = $field->get_entry_inputs();
                         foreach($inputs as $inputsfields) :
-                            if($entry[$inputsfields['id']]):
+                            if(!empty($entry[$inputsfields['id']])):
                                $values[$field->thirdPartyInput] = '1';    
                             endif;
                         endforeach;
