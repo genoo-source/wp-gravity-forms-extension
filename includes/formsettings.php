@@ -128,7 +128,8 @@
                 },
          success:function(data) {
         //success of function call to show in options
-        if(data){
+     
+        if(folderid){
                jQuery(".send-email").show(); 
                jQuery(".title-send-email").show();
                jQuery(".send-email").empty();

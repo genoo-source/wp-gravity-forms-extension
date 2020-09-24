@@ -118,7 +118,6 @@ add_action('wpmktengine_init', function ($repositarySettings, $api, $cache) {
 }
 , 10, 3);
 add_action('gform_after_submission', 'access_entry_via_field', 10, 2);
-add_action('gform_after_submission', 'access_entry_via_field', 10, 2);
 function access_entry_via_field($entry, $form) {
    global $wpdb, $WPME_API;
     $id = isset($entry['form_id']) ? $entry['form_id'] : 0;
@@ -135,7 +134,7 @@ function access_entry_via_field($entry, $form) {
             $values['client_ip_address'] = $entry['ip'];
             $values['lead_type_id'] = $select_lead_id;
             $values['form_type'] = 'opt-in form';
-            $values['web_site_url'] = $entry['source_url'];
+            $values['page_url'] = $entry['source_url'];
             if (!empty($select_email_id)):
                 $values['confirmation_email_id'] = $select_email_id;
             endif;
@@ -149,6 +148,9 @@ function access_entry_via_field($entry, $form) {
                 endif;
                 if ($field['type'] == 'phone' && !empty($entry[$field['id']])):
                     $values['phone'] = $entry[$field['id']];
+                endif;
+                if ($field['type'] == 'website' && !empty($entry[$field['id']])):
+                    $values['web_site_url'] = $entry[$field['id']];
                 endif;
                 if ($field['type'] == 'address'):
                     $field_id = $field['id'];
@@ -183,7 +185,6 @@ function access_entry_via_field($entry, $form) {
                     $firstindex = strstr($field->thirdPartyInput, 'c00');
                     $lastindex = strstr($field->thirdPartyInput, 'date');
                      if($firstindex == true && $lastindex == true):
-                         echo $entry[$field['id']];
                              $date=date_create($entry[$field['id']]);
                              $date = date_format($date,"Y-m-d");
                              $values[$field->thirdPartyInput] = $date."T".'00:00:00+00:00';
@@ -219,7 +220,7 @@ function access_entry_via_field($entry, $form) {
         }
         catch(Exception $e) {
                 if ($WPME_API->http->getResponseCode() == 404):
-                    // Looks like values not found
+                    // Looks like leadfields not found
                     
                 endif;
             }
