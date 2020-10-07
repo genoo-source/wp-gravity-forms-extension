@@ -122,7 +122,7 @@ function access_entry_via_field($entry, $form) {
    global $wpdb, $WPME_API;
     $id = isset($entry['form_id']) ? $entry['form_id'] : 0;
     if ($id != 0):
-        $gf_addon_wpextenstion = $wpdb->prefix . gf_settings;
+        $gf_addon_wpextenstion = $wpdb->prefix.'gf_settings';
         $form_settings = $wpdb->get_row("SELECT * from $gf_addon_wpextenstion WHERE form_id = $id");
         $select_folder_id = isset($form_settings->select_folder) ? $form_settings->select_folder : '';
         $select_lead_id = isset($form_settings->select_leadtype) ? $form_settings->select_leadtype : '';

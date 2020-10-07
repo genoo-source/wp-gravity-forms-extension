@@ -91,7 +91,7 @@ class Gravityformextension extends GFAddOn {
         if (isset($_POST['gform-settings-save'])):
           global $wpdb;
           //geting all form post values while click save sattings button
-          $gf_addon_wpextenstion = $wpdb->prefix . gf_settings;
+          $gf_addon_wpextenstion = $wpdb->prefix.'gf_settings';
           $leadtypes = $emailfolder = $Webinar = $form_id = $select_email = $check_webinnar = '';
           $leadtypes = isset($_POST['selectleadtypes']) ? $_POST['selectleadtypes'] : '';
           $emailfolder = isset($_POST['leadingemailfolders']) ? $_POST['leadingemailfolders'] : '';
@@ -128,7 +128,7 @@ class Gravityformextension extends GFAddOn {
             //to view the WPMktgEngineExtension itself.
             if ($_GET['subview'] == 'WPMktgEngineExtension'):
                 global $wpdb;
-                $gf_addon_wpextenstion = $wpdb->prefix . gf_settings;
+                $gf_addon_wpextenstion = $wpdb->prefix.'gf_settings';
                 $form_id_title = $_GET['id'];
                 //get title of the form
                 $select_for_title = RGFormsModel::get_form($form_id_title);
