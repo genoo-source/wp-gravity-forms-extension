@@ -29,10 +29,6 @@ class Gravityformextension extends GFAddOn {
             $this,
             'form_submit_button'
         ) , 10, 2);
-        add_action('gform_after_submission', array(
-            $this,
-            'after_submission'
-        ) , 10, 2);
     }
     // # SCRIPTS & STYLES -----------------------------------------------------------------------------------------------
     
@@ -161,5 +157,10 @@ class Gravityformextension extends GFAddOn {
                 endif;
             }
             public function settings_save($field, $echo = true) {
+            }
+      
+            public function render_settings() {
+                
+                
             }
         }
