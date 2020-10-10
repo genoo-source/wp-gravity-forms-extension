@@ -1,16 +1,13 @@
 <?php
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
-Plugin URI: http://www.gravityforms.com
 Description: Gravity Forms should be installed and active to use this plugin.
 Version: 2.2.0
 Requires PHP: 7.1
 Author: Genoo LLC
-Author URI: http://www.genooo.com
 */
 /*
     Copyright 2015  WPMKTENGINE, LLC  (web : http://www.genoo.com/)
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
