@@ -159,7 +159,7 @@ class Gravityformextension extends GFAddOn {
             public function settings_save($field, $echo = true) {
             }
       
-            public function render_settings() {
+    public function render_settings($sections) {
                 
                 
             }
