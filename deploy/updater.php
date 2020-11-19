@@ -3,7 +3,7 @@
  * Get Github Latest Version
  */
 
-function wpme_get_github_version(){
+function wpme_gravity_forms_get_github_version(){
   static $checked_version = null;
   if($checked_version !== null){
     return $checked_version;
@@ -24,9 +24,9 @@ function wpme_get_github_version(){
 /**
  * Updater init
  */
-function wpme_updater_init($file){
 
-  $GLOBALS['wpme_aff_downloadLink'] = 'https://github.com/genoo-source/wp-gravity-forms-extension/archive/master.zip';
+function wpme_gravity_forms_updater_init($file){
+ $GLOBALS['wpme_aff_downloadLink'] = 'https://github.com/genoo-source/wp-gravity-forms-extension/archive/master.zip';
   $GLOBALS['wpme_aff_plugin'] = null;
   $GLOBALS['wpme_aff_basename'] = null;
   $GLOBALS['wpme_aff_active'] = null;
@@ -46,7 +46,7 @@ function wpme_updater_init($file){
   add_filter('site_transient_update_plugins', function($transient) use ($file, $version) {
     if($transient && property_exists( $transient, 'checked') ) {
       if( $checked = $transient->checked && isset($GLOBALS['wpme_aff_plugin'])) { 
-        $version = $version === null ? wpme_get_github_version() : $version;
+        $version = $version === null ? wpme_gravity_forms_get_github_version() : $version;
         $out_of_date = version_compare($version, $GLOBALS['wpme_aff_plugin']['Version'], 'gt');
         if($out_of_date){
           $slug = current(explode('/', $GLOBALS['wpme_aff_basename']));
@@ -107,3 +107,4 @@ function wpme_updater_init($file){
 		}
   }, 10, 3 );
 }
+

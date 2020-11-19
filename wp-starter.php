@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
-Description: Gravity Forms should be installed and active to use this plugin.
-Version: 2.2.0
+Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
+Version: 2.2.1
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -49,8 +49,12 @@ register_activation_hook(__FILE__, function () {
         $api = new \WPMKTENGINE\Api($repo);
     }
     // 1. First protectoin, no WPME or Genoo plugin
-    if ($activate == FALSE) {
-        genoo_wpme_deactivate_plugin($filePlugin, 'This extension requires WPMktgEngine or Genoo plugin to work with.');
+    if ($activate == FALSE && $isGenoo == FALSE) { ?>
+  <div class="alert">
+<p style="font-family:Segoe UI;font-size:14px;">This plugin requires the WPMKtgEngine or Genoo plugin installed  order to activate</p>
+</div>
+    <?php die;
+ genoo_wpme_deactivate_plugin($filePlugin, 'This extension requires WPMktgEngine or Genoo plugin to work with.');
     } else {
         // Make ACTIVATE calls if any?
         
@@ -75,7 +79,7 @@ register_activation_hook(__FILE__, function () {
  */
 
 include_once( plugin_dir_path( __FILE__ ) . 'deploy/updater.php' );
-wpme_updater_init(__FILE__);
+ wpme_gravity_forms_updater_init(__FILE__);
 
 add_action('wpmktengine_init', function ($repositarySettings, $api, $cache) {
     // Use the Settings, Api or Cache to do things on load of WPME if you need to
@@ -291,14 +295,7 @@ class GF__gravityform_Bootstrap {
         GFAddOn::register('Gravityformextension');
     }
 }
-register_activation_hook(__FILE__, 'child_plugin_activate');
-function child_plugin_activate() {
-    // Require parent plugin
-    if (!is_plugin_active('gravityforms/gravityforms.php') and current_user_can('activate_plugins')) {
-        // Stop activation redirect and show error
-        wp_die('Sorry, but this plugin requires the Parent Plugin to be installed and active. <br><a href="' . admin_url('plugins.php') . '">&laquo; Return to Plugins</a>');
-    }
-}
+
 function gf_gravityform() {
     return Gravityformextension::get_instance();
 }
@@ -376,5 +373,98 @@ add_action('gform_editor_js', function () {
    <?php
     endforeach;
 });
+//save while create the new form
+add_action('gform_after_save_form', 'after_save_form', 10, 2 );
+function after_save_form( $form, $is_new ) {
+    global $wpdb,$WPME_API;
+    $gf_form_table = $wpdb->prefix.'gf_form';
+    $gf_save_form_id = $wpdb->prefix.'postmeta';
+    $get_form_name = $wpdb->get_row("SELECT * from $gf_form_table WHERE `id` = ".$form['id']."");
+   
+    if($is_new){
+   $values = array();
+   $values['form_name'] = $get_form_name->title;
+          //changed callcustom api for Save Form   
+          
+         if (method_exists($WPME_API, 'callCustom')):
+        try {
+     
+      $count_extension = $wpdb->get_var("SELECT count(*) from $gf_save_form_id  WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
+          if ($count_extension == 0):
+            $log_file = ABSPATH . '/gf_saved_forms.log';
+            $f = fopen( $log_file, 'a' );
+            $user = wp_get_current_user();    
+         $response = $WPME_API->callCustom('/saveGravityForm','PUT',$values);
+          if ($WPME_API->http->getResponseCode() == 204): // No values 
+              elseif ($WPME_API->http->getResponseCode() == 200):
+             //inserting form response data into post_meta table
+               $formresponsestore = array(
+                        'genoo_form_id' => $response->genoo_form_id,
+                        'form_title' => $values['form_name'] ,
+                        'form_id' => $form['id']
+                        );
+            add_post_meta($form['id'],'form_values',$formresponsestore);
+          
+          
+      fwrite( $f, date( 'c' ) . " - Form created by {$user->user_login}. 
+       Form ID: {$form["id"]}.genoo_form_id: {$response->genoo_form_id}.
+       form_saved: {$response->form_saved}" .PHP_EOL);
+ 
+             endif;
+          else:
+         //if the same data with same form id then update the values.
+         update_post_meta($form['id'],'form_values',$form_serilize);
+      
+                endif;
+       
+        }
+        catch(Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+  //  fwrite( $f, date( 'c' ) . " - Form updated by {$user->user_login}. Form ID: {$form["id"]}. Error: {}n" );  
+                endif;
+            }
+        endif;
+       
+    
+    }
+
+  fclose( $f );   
+}
+
+//delete while click the delete permanantly
+
+add_action( 'gform_before_delete_form', 'log_form_deleted' );
+function log_form_deleted( $form_id ) {
+    global $wpdb;
+    global $WPME_API;
+   $values = array();
+   $gf_save_form_id = $wpdb->prefix.'postmeta';
+   $get_form_name = $wpdb->get_row("SELECT * from $gf_save_form_id WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
+   $unserilized=unserialize($get_form_name->meta_value); 
+   $form_genoo_id = $unserilized['genoo_form_id'];
+   $form_genoo_title = $unserilized['form_title'];
+   $values['form_name'] = $form_genoo_title;
+   $values['form_id'] = $form_genoo_id;
+if (method_exists($WPME_API, 'callCustom')):
+       
+        try {
+         $response = $WPME_API->callCustom('/deleteGravityForm','DELETE',$values);
+          if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
+                elseif ($WPME_API->http->getResponseCode() == 200):
+                  
+            $delete = $wpdb->query("DELETE FROM $gf_save_form_id WHERE `post_id` = '$form_id'"); 
+        //  print_r($WPME_API->http->getResponse());
+                endif;
+        }
+        catch(Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+                    // Looks like formname or form id not found
+                    
+                endif;
+            }
+        endif; 
+    }
+    
+
 require_once ('includes/api-functions.php');
 ?>
