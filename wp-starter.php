@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.3
+Version: 2.2.4
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -391,9 +391,7 @@ function after_save_form( $form, $is_new ) {
      
       $count_extension = $wpdb->get_var("SELECT count(*) from $gf_save_form_id  WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
           if ($count_extension == 0):
-            $log_file = ABSPATH . '/gf_saved_forms.log';
-            $f = fopen( $log_file, 'a' );
-            $user = wp_get_current_user();    
+           $user = wp_get_current_user();    
          $response = $WPME_API->callCustom('/saveGravityForm','PUT',$values);
           if ($WPME_API->http->getResponseCode() == 204): // No values 
               elseif ($WPME_API->http->getResponseCode() == 200):
@@ -405,12 +403,7 @@ function after_save_form( $form, $is_new ) {
                         );
             add_post_meta($form['id'],'form_values',$formresponsestore);
           
-          
-      fwrite( $f, date( 'c' ) . " - Form created by {$user->user_login}. 
-       Form ID: {$form["id"]}.genoo_form_id: {$response->genoo_form_id}.
-       form_saved: {$response->form_saved}" .PHP_EOL);
- 
-             endif;
+              endif;
           else:
          //if the same data with same form id then update the values.
          update_post_meta($form['id'],'form_values',$form_serilize);
@@ -420,7 +413,7 @@ function after_save_form( $form, $is_new ) {
         }
         catch(Exception $e) {
                 if ($WPME_API->http->getResponseCode() == 404):
-  //  fwrite( $f, date( 'c' ) . " - Form updated by {$user->user_login}. Form ID: {$form["id"]}. Error: {}n" );  
+ 
                 endif;
             }
         endif;
@@ -428,7 +421,7 @@ function after_save_form( $form, $is_new ) {
     
     }
 
-  fclose( $f );   
+
 }
 
 //delete while click the delete permanantly

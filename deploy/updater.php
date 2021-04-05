@@ -26,10 +26,10 @@ function wpme_gravity_forms_get_github_version(){
  */
 
 function wpme_gravity_forms_updater_init($file){
- $GLOBALS['wpme_aff_downloadLink'] = 'https://github.com/genoo-source/wp-gravity-forms-extension/archive/master.zip';
-  $GLOBALS['wpme_aff_plugin'] = null;
-  $GLOBALS['wpme_aff_basename'] = null;
-  $GLOBALS['wpme_aff_active'] = null;
+ $GLOBALS['wpme_gravity_downloadLink'] = 'https://github.com/genoo-source/wp-gravity-forms-extension/archive/master.zip';
+  $GLOBALS['wpme_gravity_plugin'] = null;
+  $GLOBALS['wpme_gravity_basename'] = null;
+  $GLOBALS['wpme_gravity_active'] = null;
   static $version = null;
 
   /**
@@ -37,26 +37,26 @@ function wpme_gravity_forms_updater_init($file){
    */
   add_action('admin_init', function() use ($file) {
     //  Get the basics
-    $GLOBALS['wpme_aff_plugin'] = get_plugin_data($file);
-    $GLOBALS['wpme_aff_basename'] = plugin_basename($file);
-    $GLOBALS['wpme_aff_active'] = is_plugin_active($GLOBALS['wpme_aff_basename']);
+    $GLOBALS['wpme_gravity_plugin'] = get_plugin_data($file);
+    $GLOBALS['wpme_gravity_basename'] = plugin_basename($file);
+    $GLOBALS['wpme_gravity_active'] = is_plugin_active($GLOBALS['wpme_gravity_basename']);
   });
 
   // Add update filter
   add_filter('site_transient_update_plugins', function($transient) use ($file, $version) {
     if($transient && property_exists( $transient, 'checked') ) {
-      if( $checked = $transient->checked && isset($GLOBALS['wpme_aff_plugin'])) { 
+      if( $checked = $transient->checked && isset($GLOBALS['wpme_gravity_plugin'])) { 
         $version = $version === null ? wpme_gravity_forms_get_github_version() : $version;
-        $out_of_date = version_compare($version, $GLOBALS['wpme_aff_plugin']['Version'], 'gt');
+        $out_of_date = version_compare($version, $GLOBALS['wpme_gravity_plugin']['Version'], 'gt');
         if($out_of_date){
-          $slug = current(explode('/', $GLOBALS['wpme_aff_basename']));
+          $slug = current(explode('/', $GLOBALS['wpme_gravity_basename']));
           $plugin = array(
-            'url' => isset($GLOBALS['wpme_aff_plugin']['PluginURI']) ? $GLOBALS['wpme_aff_plugin']['PluginURI'] : '',
+            'url' => isset($GLOBALS['wpme_gravity_plugin']['PluginURI']) ? $GLOBALS['wpme_gravity_plugin']['PluginURI'] : '',
             'slug' => $slug,
-            'package' => $GLOBALS['wpme_aff_downloadLink'],
+            'package' => $GLOBALS['wpme_gravity_downloadLink'],
             'new_version' => $version,
           );
-          $transient->response[$GLOBALS['wpme_aff_basename']] = (object)$plugin; 
+          $transient->response[$GLOBALS['wpme_gravity_basename']] = (object)$plugin; 
         }
       }
     }
@@ -66,12 +66,12 @@ function wpme_gravity_forms_updater_init($file){
   // Add pop up filter
   add_filter('plugins_api', function($result, $action, $args) use ($file, $version){
 		if( ! empty( $args->slug ) ) { // If there is a slug
-			if( $args->slug == current( explode( '/' , $GLOBALS['wpme_aff_basename']))) { // And it's our slug
+			if( $args->slug == current( explode( '/' , $GLOBALS['wpme_gravity_basename']))) { // And it's our slug
         $version = $version === null ? wpme_gravity_forms_get_github_version() : $version;
         // Set it to an array
 				$plugin = array(
-					'name'				=> $GLOBALS['wpme_aff_plugin']["Name"],
-					'slug'				=> $GLOBALS['wpme_aff_basename'],
+					'name'				=> $GLOBALS['wpme_gravity_plugin']["Name"],
+					'slug'				=> $GLOBALS['wpme_gravity_basename'],
 					'requires'	  => '',
 					'tested'			=> '',
 					'rating'			=> '100.0',
@@ -79,16 +79,16 @@ function wpme_gravity_forms_updater_init($file){
 					'downloaded'	=> '134',
 					'added'				=> '2016-01-05',
 					'version'			=> $version,
-					'author'			=> $GLOBALS['wpme_aff_plugin']["AuthorName"],
-					'author_profile'	=> $GLOBALS['wpme_aff_plugin']["AuthorURI"],
+					'author'			=> $GLOBALS['wpme_gravity_plugin']["AuthorName"],
+					'author_profile'	=> $GLOBALS['wpme_gravity_plugin']["AuthorURI"],
 					'last_updated'		=> '',
-					'homepage'			=> $GLOBALS['wpme_aff_plugin']["PluginURI"],
-					'short_description' => $GLOBALS['wpme_aff_plugin']["Description"],
+					'homepage'			=> $GLOBALS['wpme_gravity_plugin']["PluginURI"],
+					'short_description' => $GLOBALS['wpme_gravity_plugin']["Description"],
 					'sections'			=> array(
-						'Description'	=> $GLOBALS['wpme_aff_plugin']["Description"],
+						'Description'	=> $GLOBALS['wpme_gravity_plugin']["Description"],
 						'Updates'		=> $version,
 					),
-					'download_link'		=> $GLOBALS['wpme_aff_downloadLink'],
+					'download_link'		=> $GLOBALS['wpme_gravity_downloadLink'],
 				);
 				return (object)$plugin;
 			}
@@ -102,8 +102,8 @@ function wpme_gravity_forms_updater_init($file){
     $install_directory = plugin_dir_path($file);
     $wp_filesystem->move( $result['destination'], $install_directory);
     $result['destination'] = $install_directory;
-    if ($GLOBALS['wpme_aff_active']) { // If it was active
-			activate_plugin($GLOBALS['wpme_aff_basename']); // Reactivate
+    if ($GLOBALS['wpme_gravity_active']) { // If it was active
+			activate_plugin($GLOBALS['wpme_gravity_basename']); // Reactivate
 		}
   }, 10, 3 );
 }
