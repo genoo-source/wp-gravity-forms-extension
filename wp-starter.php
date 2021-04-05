@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.4
+Version: 2.2.5
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -283,7 +283,7 @@ add_action('wp_action_to_modify', function () {
     // 3. Api key?
     $apiKey = $WPME_API->key;
 });
-define('GF_SIMPLE_ADDON_VERSION', '2.1');
+
 add_action('gform_loaded', array('GF__gravityform_Bootstrap','load') , 5);
 class GF__gravityform_Bootstrap {
     public static function load() {
