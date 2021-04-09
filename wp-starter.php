@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.5
+Version: 2.2.6
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -141,8 +141,9 @@ function access_entry_via_field($entry, $form) {
             $values['form_name'] = $form['title'];
             $values['client_ip_address'] = $entry['ip'];
             $values['lead_type_id'] = $select_lead_id;
-            $values['form_type'] = 'opt-in form';
+            //$values['form_type'] = 'opt-in form';
             $values['page_url'] = $entry['source_url'];
+            $values['form_type'] = 'GF';
             if (!empty($select_email_id)):
                 $values['confirmation_email_id'] = $select_email_id;
             endif;
