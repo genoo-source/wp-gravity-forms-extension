@@ -1,8 +1,6 @@
 <?php
 GFForms::include_addon_framework();
 class Gravityformextension extends GFAddOn {
-    protected $_version = GF_SIMPLE_ADDON_VERSION;
-    protected $_min_gravityforms_version = '1.9';
     protected $_slug = 'WPMktgEngineExtension';
     protected $_path = 'wp-gravity-forms-extension-master/wp-starter.php';
     protected $_full_path = __FILE__;
