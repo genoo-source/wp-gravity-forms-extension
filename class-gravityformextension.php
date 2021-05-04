@@ -27,7 +27,11 @@ class Gravityformextension extends GFAddOn {
             $this,
             'form_submit_button'
         ) , 10, 2);
+        
+      
+        
     }
+   
     // # SCRIPTS & STYLES -----------------------------------------------------------------------------------------------
     
     /**
@@ -68,6 +72,7 @@ class Gravityformextension extends GFAddOn {
                 $leadTypes = $WPME_API->callCustom('/leadtypes', 'GET', NULL);
                 $webinars = $WPME_API->callCustom('/zoomwebinars/all', 'GET', NULL);
                 $leademailfolders = $WPME_API->callCustom('/emailfolders', 'GET', NULL);
+                $leadTypefolder = $WPME_API->callCustom('/listLeadTypeFolders/Uncategorized','GET','NULL');
                 if ($WPME_API->http->getResponseCode() == 204): // No leadtypes,zoomwebinars,emailfolders ! Ooops
                     elseif ($WPME_API->http->getResponseCode() == 200):
                         // Good product in $leadtypes,$zoomwebinars,$emailfolders variable
@@ -86,7 +91,8 @@ class Gravityformextension extends GFAddOn {
           global $wpdb;
           //geting all form post values while click save sattings button
           $gf_addon_wpextenstion = $wpdb->prefix.'gf_settings';
-          $leadtypes = $emailfolder = $Webinar = $form_id = $select_email = $check_webinnar = '';
+          $leadtypes = $emailfolder = $Webinar = $form_id = $select_email = $check_webinnar =   $leadfolder = '';
+          $leadfolder = isset($_POST['selectleadtypefolders']) ? $_POST['selectleadtypefolders'] : '';
           $leadtypes = isset($_POST['selectleadtypes']) ? $_POST['selectleadtypes'] : '';
           $emailfolder = isset($_POST['leadingemailfolders']) ? $_POST['leadingemailfolders'] : '';
           $Webinar = isset($_POST['leadwebinars']) ? $_POST['leadwebinars'] : '';
@@ -99,6 +105,7 @@ class Gravityformextension extends GFAddOn {
             $gf_insert = $wpdb->insert($gf_addon_wpextenstion, array(
             'form_id' => $form_id,
             'is_active' => $check_webinnar,
+            'select_lead_folder' => $leadfolder,
             'select_leadtype' => $leadtypes,
             'select_folder' => $emailfolder,
             'select_email' => $select_email,
@@ -109,6 +116,7 @@ class Gravityformextension extends GFAddOn {
           $gf_update = $wpdb->update($gf_addon_wpextenstion, array(
           'form_id' => $form_id,
           'is_active' => $check_webinnar,
+          'select_lead_folder' => $leadfolder,
           'select_leadtype' => $leadtypes,
           'select_folder' => $emailfolder,
           'select_email' => $select_email,
@@ -117,7 +125,7 @@ class Gravityformextension extends GFAddOn {
              'form_id' => $form_id
                     ));
                 endif;
-                $leadtypes = $emailfolder = $Webinar = $form_id = $select_email = $check_webinnar = '';
+                $leadtypes = $emailfolder = $Webinar = $form_id = $select_email = $check_webinnar = $leadfolder = '';
             endif;
             //to view the WPMktgEngineExtension itself.
             if ($_GET['subview'] == 'WPMktgEngineExtension'):
@@ -134,9 +142,11 @@ class Gravityformextension extends GFAddOn {
                 $select_email_id = isset($select_lead->select_email) ? $select_lead->select_email : '';
                 $is_active = isset($select_lead->is_active) ? $select_lead->is_active : '';
                 $select_webinar = isset($select_lead->select_webinar) ? $select_lead->select_webinar : '';
+                $leadfolder = isset($select_lead->select_lead_folder) ? $select_lead->select_lead_folder : '';
                 //to pass the folder id to show emails based on folderid
                 if (method_exists($WPME_API, 'callCustom')):
                     try { // Make a GET request, to Genoo / WPME api, for that rest endpoint
+                    
                         $getemails = $WPME_API->callCustom('/emails/' . $select_folder_id, 'GET', NULL);
                         if ($WPME_API->http->getResponseCode() == 204): // No emails! Ooops
                             elseif ($WPME_API->http->getResponseCode() == 200):
@@ -154,6 +164,11 @@ class Gravityformextension extends GFAddOn {
                     require_once ('includes/formsettings.php');
                 endif;
             }
+            
+       
+            
+            
+            
             public function settings_save($field, $echo = true) {
             }
       
