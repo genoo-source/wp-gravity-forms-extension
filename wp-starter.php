@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.7
+Version: 2.2.8
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -21,41 +21,51 @@ Author: Genoo LLC
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-register_activation_hook(__FILE__, function () {
+register_activation_hook(__FILE__, function ()
+{
     // Basic extension data
     global $wpdb;
     $fileFolder = basename(dirname(__FILE__));
     $file = basename(__FILE__);
     $filePlugin = $fileFolder . DIRECTORY_SEPARATOR . $file;
     // Activate?
-    $activate = FALSE;
-    $isGenoo = FALSE;
+    $activate = false;
+    $isGenoo = false;
     // Get api / repo
-    if (class_exists('\WPME\ApiFactory') && class_exists('\WPME\RepositorySettingsFactory')) {
-        $activate = TRUE;
+    if (class_exists('\WPME\ApiFactory') && class_exists('\WPME\RepositorySettingsFactory'))
+    {
+        $activate = true;
         $repo = new \WPME\RepositorySettingsFactory();
         $api = new \WPME\ApiFactory($repo);
-        if (class_exists('\Genoo\Api')) {
-            $isGenoo = TRUE;
+        if (class_exists('\Genoo\Api'))
+        {
+            $isGenoo = true;
         }
-    } elseif (class_exists('\Genoo\Api') && class_exists('\Genoo\RepositorySettings')) {
-        $activate = TRUE;
+    }
+    elseif (class_exists('\Genoo\Api') && class_exists('\Genoo\RepositorySettings'))
+    {
+        $activate = true;
         $repo = new \Genoo\RepositorySettings();
         $api = new \Genoo\Api($repo);
-        $isGenoo = TRUE;
-    } elseif (class_exists('\WPMKTENGINE\Api') && class_exists('\WPMKTENGINE\RepositorySettings')) {
-        $activate = TRUE;
+        $isGenoo = true;
+    }
+    elseif (class_exists('\WPMKTENGINE\Api') && class_exists('\WPMKTENGINE\RepositorySettings'))
+    {
+        $activate = true;
         $repo = new \WPMKTENGINE\RepositorySettings();
         $api = new \WPMKTENGINE\Api($repo);
     }
     // 1. First protectoin, no WPME or Genoo plugin
-    if ($activate == FALSE && $isGenoo == FALSE) { ?>
+    if ($activate == false && $isGenoo == false)
+    { ?>
   <div class="alert">
 <p style="font-family:Segoe UI;font-size:14px;">This plugin requires the WPMKtgEngine or Genoo plugin installed  order to activate</p>
 </div>
     <?php die;
- genoo_wpme_deactivate_plugin($filePlugin, 'This extension requires WPMktgEngine or Genoo plugin to work with.');
-    } else {
+        genoo_wpme_deactivate_plugin($filePlugin, 'This extension requires WPMktgEngine or Genoo plugin to work with.');
+    }
+    else
+    {
         // Make ACTIVATE calls if any?
         
     }
@@ -78,18 +88,21 @@ register_activation_hook(__FILE__, function () {
  * Plugin Updates
  */
 
-include_once( plugin_dir_path( __FILE__ ) . 'deploy/updater.php' );
- wpme_gravity_forms_updater_init(__FILE__);
+include_once (plugin_dir_path(__FILE__) . 'deploy/updater.php');
+wpme_gravity_forms_updater_init(__FILE__);
 
-add_action('wpmktengine_init', function ($repositarySettings, $api, $cache) {
+add_action('wpmktengine_init', function ($repositarySettings, $api, $cache)
+{
     // Use the Settings, Api or Cache to do things on load of WPME if you need to
     // For example, add custom settings to WPME screen
-    add_filter('wpmktengine_tools_extensions_widget', function ($array) {
+    add_filter('wpmktengine_tools_extensions_widget', function ($array)
+    {
         $array['Extension'] = '<span style="color:green">Active</span>' . $r;
         return $array;
     }
     , 10, 1);
-    add_filter('wpmktengine_settings_sections', function ($sections) {
+    add_filter('wpmktengine_settings_sections', function ($sections)
+    {
         $sections[] = array(
             'id' => 'Extension',
             'title' => __('Extension', 'wpmktengine')
@@ -97,7 +110,8 @@ add_action('wpmktengine_init', function ($repositarySettings, $api, $cache) {
         return $sections;
     }
     , 10, 1);
-    add_filter('wpmktengine_settings_fields', function ($fields) {
+    add_filter('wpmktengine_settings_fields', function ($fields)
+    {
         $fields['Extension'] = array(
             array(
                 'name' => 'extension_cipher_key',
@@ -126,11 +140,12 @@ add_action('wpmktengine_init', function ($repositarySettings, $api, $cache) {
 }
 , 10, 3);
 add_action('gform_after_submission', 'access_entry_via_field', 10, 2);
-function access_entry_via_field($entry, $form) {
-   global $wpdb, $WPME_API;
+function access_entry_via_field($entry, $form)
+{
+    global $wpdb, $WPME_API;
     $id = isset($entry['form_id']) ? $entry['form_id'] : 0;
     if ($id != 0):
-        $gf_addon_wpextenstion = $wpdb->prefix.'gf_settings';
+        $gf_addon_wpextenstion = $wpdb->prefix . 'gf_settings';
         $form_settings = $wpdb->get_row("SELECT * from $gf_addon_wpextenstion WHERE form_id = $id");
         $select_folder_id = isset($form_settings->select_folder) ? $form_settings->select_folder : '';
         $select_lead_id = isset($form_settings->select_leadtype) ? $form_settings->select_leadtype : '';
@@ -183,31 +198,55 @@ function access_entry_via_field($entry, $form) {
                     $values['last_name'] = $entry[$field_id . '.6'];
                 endif;
                 $all_default_types = array(
-                    'textarea','text','multiselect','checkbox','number','captcha','fileupload',
-                    'list', 'product','quantity','creditcard','post_title','html','select','page',
-                    'section','radio','post_category','post_image','post_tags','post_excerpt',
-                    'post_custom_field','option','total','shipping','post_content','date',
-                    'time','hidden'
+                    'textarea',
+                    'text',
+                    'multiselect',
+                    'checkbox',
+                    'number',
+                    'captcha',
+                    'fileupload',
+                    'list',
+                    'product',
+                    'quantity',
+                    'creditcard',
+                    'post_title',
+                    'html',
+                    'select',
+                    'page',
+                    'section',
+                    'radio',
+                    'post_category',
+                    'post_image',
+                    'post_tags',
+                    'post_excerpt',
+                    'post_custom_field',
+                    'option',
+                    'total',
+                    'shipping',
+                    'post_content',
+                    'date',
+                    'time',
+                    'hidden'
                 );
                 //check all default types which is not a premapped types
                 if (in_array($field['type'], $all_default_types) && !empty($entry[$field['id']]) && !empty($field->thirdPartyInput)):
                     $firstindex = strstr($field->thirdPartyInput, 'c00');
                     $lastindex = strstr($field->thirdPartyInput, 'date');
-                     if($firstindex == true && $lastindex == true):
-                             $date=date_create($entry[$field['id']]);
-                             $date = date_format($date,"Y-m-d");
-                             $values[$field->thirdPartyInput] = $date."T".'00:00:00+00:00';
-                       elseif($firstindex == false && $lastindex == true):
-                             $date = date_create($entry[$field['id']]);
-                             $date = date_format($date,"m/d/Y");
-                            $values[$field->thirdPartyInput] = $date;
-                        elseif($field['type']=='radio' && $field->thirdPartyInput=='c00eudatasubject' && !empty($entry[$field['id']])):
-                             $values['c00eudatasubject'] = '1';
-                        elseif(!empty($entry[$field['id']])):
-                             $values[$field->thirdPartyInput] = $entry[$field['id']];
-                        endif;
-                        
-                   endif;
+                    if ($firstindex == true && $lastindex == true):
+                        $date = date_create($entry[$field['id']]);
+                        $date = date_format($date, "Y-m-d");
+                        $values[$field->thirdPartyInput] = $date . "T" . '00:00:00+00:00';
+                    elseif ($firstindex == false && $lastindex == true):
+                        $date = date_create($entry[$field['id']]);
+                        $date = date_format($date, "m/d/Y");
+                        $values[$field->thirdPartyInput] = $date;
+                    elseif ($field['type'] == 'radio' && $field->thirdPartyInput == 'c00eudatasubject' && !empty($entry[$field['id']])):
+                        $values['c00eudatasubject'] = '1';
+                    elseif (!empty($entry[$field['id']])):
+                        $values[$field->thirdPartyInput] = $entry[$field['id']];
+                    endif;
+
+                endif;
                 if ($field['type'] == 'checkbox'):
                     $inputs = $field->get_entry_inputs();
                     foreach ($inputs as $inputsfields):
@@ -217,150 +256,229 @@ function access_entry_via_field($entry, $form) {
                     endforeach;
                 endif;
             endforeach;
-           
-         //changed callcustom api for leads submit   
-         if (method_exists($WPME_API, 'callCustom')):
-        try {
-         $response = $WPME_API->callCustom('/leadformsubmit','POST',$values);
-          if ($WPME_API->http->getResponseCode() == 204): // No values based on folderdid onchange! Ooops
-                elseif ($WPME_API->http->getResponseCode() == 200):
-                    
-                endif;
-        }
-        catch(Exception $e) {
-                if ($WPME_API->http->getResponseCode() == 404):
-                    // Looks like leadfields not found
-                    
-                endif;
-            }
-        endif;
-               $geno_ids = $response->genoo_id;
-                setcookie('_gtld', $geno_ids, time() + (10 * 365 * 24 * 60 * 60));
-          
-        endif;
-    endif;
-}
-add_action('wp_action_to_modify', function () {
-    // Get WPME api object, same in both Genoo and WPME plugins
-    global $WPME_API;
-    // It's set on INIT, if it's not present, this hook runs too early and you
-    if (!$WPME_API) {
-        return;
-    }
-    // Do things
-    // Get or save to settings repository
-    $settings = $WPME_API->settingsRepo;
-    // Value from custom setttings above
-    $settingsCipher = $settings->getOption('extension_cipher_key', 'Extension');
-    // Do something with settings value from custom settings?
-    // Make api calls, that are baked into the plugin
-    // 1. Get lead by email address
-    try {
-        $lead = $WPME_API->getLeadByEmail('lead@email.com');
-    }
-    catch(\Exception $e) {
-    }
-    // 2. Call custom API, newly created, etc.
-    if (method_exists($WPME_API, 'callCustom')) {
-        try {
-            $product_id_external = 1;
-            // Make a GET request, to Genoo / WPME api, for that rest endpoint
-            $product = $WPME_API->callCustom('/wpmeproductbyextid/' . $product_id_external, 'GET', NULL);
-            if ($WPME_API->http->getResponseCode() == 204) {
-                // No product! Ooops
-                
-            } elseif ($WPME_API->http->getResponseCode() == 200) {
-                // Good product in $product variable
-                
-            }
-        }
-        catch(Exception $e) {
-            if ($WPME_API->http->getResponseCode() == 404) {
-                // Looks like product not found
-                
-            }
-        }
-    }
-    // 3. Api key?
-    $apiKey = $WPME_API->key;
-});
 
-add_action('gform_loaded', array('GF__gravityform_Bootstrap','load') , 5);
-class GF__gravityform_Bootstrap {
-    public static function load() {
-        if (!method_exists('GFForms', 'include_addon_framework')) {
+            //changed callcustom api for leads submit
+            if (method_exists($WPME_API, 'callCustom')):
+                try
+                {
+                    $response = $WPME_API->callCustom('/leadformsubmit', 'POST', $values);
+                    if ($WPME_API
+                        ->http
+                        ->getResponseCode() == 204): // No values based on folderdid onchange! Ooops
+                        elseif ($WPME_API
+                            ->http
+                            ->getResponseCode() == 200):
+
+                        endif;
+                    }
+                    catch(Exception $e)
+                    {
+                        if ($WPME_API
+                            ->http
+                            ->getResponseCode() == 404):
+                            // Looks like leadfields not found
+                            
+                        endif;
+                    }
+                endif;
+                $geno_ids = $response->genoo_id;
+                setcookie('_gtld', $geno_ids, time() + (10 * 365 * 24 * 60 * 60));
+
+            endif;
+        endif;
+    }
+    add_action('wp_action_to_modify', function ()
+    {
+        // Get WPME api object, same in both Genoo and WPME plugins
+        global $WPME_API;
+        // It's set on INIT, if it's not present, this hook runs too early and you
+        if (!$WPME_API)
+        {
             return;
         }
-        //include the class file
-        require_once ('class-gravityformextension.php');
-        GFAddOn::register('Gravityformextension');
-    }
-}
-
-function gf_gravityform() {
-    return Gravityformextension::get_instance();
-}
-add_action('gform_field_standard_settings', function ($position, $form_id) {
-    // position -1 for adding third party(Genoo/WPMktgEngine Field:) as last
-    if ($position == - 1):
-        global $WPME_API;
-        //calling leadfields api for showing dropdown
-          if (method_exists($WPME_API, 'callCustom')):
-        try {
-         $customfields = $WPME_API->callCustom('/leadfields', 'GET', NULL);
-           if ($WPME_API->http->getResponseCode() == 204): // No leadfields based on folderdid onchange! Ooops
-                elseif ($WPME_API->http->getResponseCode() == 200):
-                    $customfieldsjson = $customfields;
-                endif;
-            }
-          catch(Exception $e) {
-                if ($WPME_API->http->getResponseCode() == 404):
-                    // Looks like leadfields not found
+        // Do things
+        // Get or save to settings repository
+        $settings = $WPME_API->settingsRepo;
+        // Value from custom setttings above
+        $settingsCipher = $settings->getOption('extension_cipher_key', 'Extension');
+        // Do something with settings value from custom settings?
+        // Make api calls, that are baked into the plugin
+        // 1. Get lead by email address
+        try
+        {
+            $lead = $WPME_API->getLeadByEmail('lead@email.com');
+        }
+        catch(\Exception $e)
+        {
+        }
+        // 2. Call custom API, newly created, etc.
+        if (method_exists($WPME_API, 'callCustom'))
+        {
+            try
+            {
+                $product_id_external = 1;
+                // Make a GET request, to Genoo / WPME api, for that rest endpoint
+                $product = $WPME_API->callCustom('/wpmeproductbyextid/' . $product_id_external, 'GET', NULL);
+                if ($WPME_API
+                    ->http
+                    ->getResponseCode() == 204)
+                {
+                    // No product! Ooops
                     
-                endif;
+                }
+                elseif ($WPME_API
+                    ->http
+                    ->getResponseCode() == 200)
+                {
+                    // Good product in $product variable
+                    
+                }
             }
-                
+            catch(Exception $e)
+            {
+                if ($WPME_API
+                    ->http
+                    ->getResponseCode() == 404)
+                {
+                    // Looks like product not found
+                    
+                }
+            }
+        }
+        // 3. Api key?
+        $apiKey = $WPME_API->key;
+    });
+
+    add_action('gform_loaded', array(
+        'GF__gravityform_Bootstrap',
+        'load'
+    ) , 5);
+    class GF__gravityform_Bootstrap
+    {
+        public static function load()
+        {
+            if (!method_exists('GFForms', 'include_addon_framework'))
+            {
+                return;
+            }
+            //include the class file
+            require_once ('class-gravityformextension.php');
+            GFAddOn::register('Gravityformextension');
+        }
+    }
+
+    function gf_gravityform()
+    {
+        return Gravityformextension::get_instance();
+    }
+    add_action('gform_field_standard_settings', function ($position, $form_id)
+    {
+        // position -1 for adding third party(Genoo/WPMktgEngine Field:) as last
+        if ($position == - 1):
+            global $WPME_API;
+            //calling leadfields api for showing dropdown
+            if (method_exists($WPME_API, 'callCustom')):
+                try
+                {
+                    $customfields = $WPME_API->callCustom('/leadfields', 'GET', NULL);
+                    if ($WPME_API
+                        ->http
+                        ->getResponseCode() == 204): // No leadfields based on folderdid onchange! Ooops
+                        elseif ($WPME_API
+                            ->http
+                            ->getResponseCode() == 200):
+                            $customfieldsjson = $customfields;
+                        endif;
+                    }
+                    catch(Exception $e)
+                    {
+                        if ($WPME_API
+                            ->http
+                            ->getResponseCode() == 404):
+                            // Looks like leadfields not found
+                            
+                        endif;
+                    }
+
                 endif;
-        // right after Admin Field Label
-        // $pre_mapped_fields for should not show the premapped fields
-        $pre_mapped_fields = array(
-            'First Name','Last Name','Email','Address 1','Address 2','City','State','Postal Code',
-            'Country','Phone #','Zip','Province','GDPR Consent','GDPR Consent Text','Web Site URL'
-        );
+                // right after Admin Field Label
+                // $pre_mapped_fields for should not show the premapped fields
+                $pre_mapped_fields = array(
+                    'First Name',
+                    'Last Name',
+                    'Email',
+                    'Address 1',
+                    'Address 2',
+                    'City',
+                    'State',
+                    'Postal Code',
+                    'Country',
+                    'Phone #',
+                    'Zip',
+                    'Province',
+                    'GDPR Consent',
+                    'GDPR Consent Text',
+                    'Web Site URL'
+                );
 ?>
     
         <li class="thirdparty_input_setting field_setting">
-      <label class="section_label" for="field_admin_label"><?php _e('Genoo/WPMktgEngine Field:'); ?></label>
-    
-          <select id="field_thirdparty_input" onchange="SetFieldProperty('thirdPartyInput', this.value);" class="fieldwidth-3" >
+         <label class="section_label" for="field_admin_label"><?php _e('Genoo/WPMktgEngine Field:'); ?></label>
+         <select id="field_thirdparty_input" onchange="SetFieldProperty('thirdPartyInput', this.value);" class="fieldwidth-3" >
             <option value="">Do not map fields</option>
             
              <?php
-        //showing labels of leadfields
-        foreach ($customfieldsjson as $customfields):
-            //comparing labels with premapped labels in trim_custom_array
-            if (!in_array(trim($customfields->label) , $pre_mapped_fields)):
+                //showing labels of leadfields
+                foreach ($customfieldsjson as $customfields):
+                    //comparing labels with premapped labels in trim_custom_array
+                    if (!in_array(trim($customfields->label) , $pre_mapped_fields)):
 ?>
                      <option value="<?php echo $customfields->key; ?>"> <?php echo trim($customfields->label); ?></option>
              <?php
-            endif;
-        endforeach;
+                    endif;
+                endforeach;
 ?>
        </select>
    <?php
-    endif;
-}
-, 10, 2);
-// gform_editor_js function for restricting types to show Genoo/WPMktgEngine Field:
-add_action('gform_editor_js', function () {
-    //standard, advanced,post,price field types without premapped fields
-    $all_default_types = array(
-        'text','textarea','multiselect','checkbox','number','captcha','fileupload','list',
-        'product','quantity','creditcard','post_title','html','select','page','section',
-        'radio','post_category','post_image','post_tags','post_excerpt','post_custom_field',
-        'option','total','shipping','post_content','date','time','hidden'
-    );
-    foreach ($all_default_types as $default_type):
+            endif;
+        }
+        , 10, 2);
+        // gform_editor_js function for restricting types to show Genoo/WPMktgEngine Field:
+        add_action('gform_editor_js', function ()
+        {
+            //standard, advanced,post,price field types without premapped fields
+            $all_default_types = array(
+                'text',
+                'textarea',
+                'multiselect',
+                'checkbox',
+                'number',
+                'captcha',
+                'fileupload',
+                'list',
+                'product',
+                'quantity',
+                'creditcard',
+                'post_title',
+                'html',
+                'select',
+                'page',
+                'section',
+                'radio',
+                'post_category',
+                'post_image',
+                'post_tags',
+                'post_excerpt',
+                'post_custom_field',
+                'option',
+                'total',
+                'shipping',
+                'post_content',
+                'date',
+                'time',
+                'hidden'
+            );
+            foreach ($all_default_types as $default_type):
 ?>
     <script type="text/javascript">
         var type = '<?php echo $default_type; ?>';
@@ -372,93 +490,109 @@ add_action('gform_editor_js', function () {
       });
     </script>
    <?php
-    endforeach;
-});
-//save while create the new form
-add_action('gform_after_save_form', 'after_save_form', 10, 2 );
-function after_save_form( $form, $is_new ) {
-    global $wpdb,$WPME_API;
-    $gf_form_table = $wpdb->prefix.'gf_form';
-    $gf_save_form_id = $wpdb->prefix.'postmeta';
-    $get_form_name = $wpdb->get_row("SELECT * from $gf_form_table WHERE `id` = ".$form['id']."");
-   
-    if($is_new){
-   $values = array();
-   $values['form_name'] = $get_form_name->title;
-          //changed callcustom api for Save Form   
-          
-         if (method_exists($WPME_API, 'callCustom')):
-        try {
-     
-      $count_extension = $wpdb->get_var("SELECT count(*) from $gf_save_form_id  WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
-          if ($count_extension == 0):
-           $user = wp_get_current_user();    
-         $response = $WPME_API->callCustom('/saveGravityForm','PUT',$values);
-          if ($WPME_API->http->getResponseCode() == 204): // No values 
-              elseif ($WPME_API->http->getResponseCode() == 200):
-             //inserting form response data into post_meta table
-               $formresponsestore = array(
-                        'genoo_form_id' => $response->genoo_form_id,
-                        'form_title' => $values['form_name'] ,
-                        'form_id' => $form['id']
-                        );
-            add_post_meta($form['id'],'form_values',$formresponsestore);
-          
-              endif;
-          else:
-         //if the same data with same form id then update the values.
-         update_post_meta($form['id'],'form_values',$form_serilize);
-      
-                endif;
-       
-        }
-        catch(Exception $e) {
-                if ($WPME_API->http->getResponseCode() == 404):
- 
-                endif;
-            }
-        endif;
-       
-    
-    }
+            endforeach;
+        });
+        //save while create the new form
+        add_action('gform_after_save_form', 'after_save_form', 10, 2);
+        function after_save_form($form, $is_new)
+        {
+            global $wpdb, $WPME_API;
+            $gf_form_table = $wpdb->prefix . 'gf_form';
+            $gf_save_form_id = $wpdb->prefix . 'postmeta';
+            $get_form_name = $wpdb->get_row("SELECT * from $gf_form_table WHERE `id` = " . $form['id'] . "");
+
+            if ($is_new)
+            {
+                $values = array();
+                $values['form_name'] = $get_form_name->title;
+                //changed callcustom api for Save Form
+                if (method_exists($WPME_API, 'callCustom')):
+                    try
+                    {
+
+                        $count_extension = $wpdb->get_var("SELECT count(*) from $gf_save_form_id  WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
+                        if ($count_extension == 0):
+                            $user = wp_get_current_user();
+                            $response = $WPME_API->callCustom('/saveGravityForm', 'PUT', $values);
+                            if ($WPME_API
+                                ->http
+                                ->getResponseCode() == 204): // No values
+                                elseif ($WPME_API
+                                    ->http
+                                    ->getResponseCode() == 200):
+                                    //inserting form response data into post_meta table
+                                    $formresponsestore = array(
+                                        'genoo_form_id' => $response->genoo_form_id,
+                                        'form_title' => $values['form_name'],
+                                        'form_id' => $form['id']
+                                    );
+                                    add_post_meta($form['id'], 'form_values', $formresponsestore);
+
+                                endif;
+                            else:
+                                //if the same data with same form id then update the values.
+                                update_post_meta($form['id'], 'form_values', $form_serilize);
+
+                            endif;
+
+                        }
+                        catch(Exception $e)
+                        {
+                            if ($WPME_API
+                                ->http
+                                ->getResponseCode() == 404):
+
+                            endif;
+                        }
+                    endif;
+
+                }
 
 
 }
 
-//delete while click the delete permanantly
+            //delete while click the delete permanantly
+            add_action('gform_before_delete_form', 'log_form_deleted');
+            function log_form_deleted($form_id)
+            {
+                global $wpdb;
+                global $WPME_API;
+                $values = array();
+                $gf_save_form_id = $wpdb->prefix . 'postmeta';
+                $get_form_name = $wpdb->get_row("SELECT * from $gf_save_form_id WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
+                $unserilized = unserialize($get_form_name->meta_value);
+                $form_genoo_id = $unserilized['genoo_form_id'];
+                $form_genoo_title = $unserilized['form_title'];
+                $values['form_name'] = $form_genoo_title;
+                $values['form_id'] = $form_genoo_id;
+                if (method_exists($WPME_API, 'callCustom')):
 
-add_action( 'gform_before_delete_form', 'log_form_deleted' );
-function log_form_deleted( $form_id ) {
-    global $wpdb;
-    global $WPME_API;
-   $values = array();
-   $gf_save_form_id = $wpdb->prefix.'postmeta';
-   $get_form_name = $wpdb->get_row("SELECT * from $gf_save_form_id WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
-   $unserilized=unserialize($get_form_name->meta_value); 
-   $form_genoo_id = $unserilized['genoo_form_id'];
-   $form_genoo_title = $unserilized['form_title'];
-   $values['form_name'] = $form_genoo_title;
-   $values['form_id'] = $form_genoo_id;
-if (method_exists($WPME_API, 'callCustom')):
-       
-        try {
-         $response = $WPME_API->callCustom('/deleteGravityForm','DELETE',$values);
-          if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
-                elseif ($WPME_API->http->getResponseCode() == 200):
-                  
-            $delete = $wpdb->query("DELETE FROM $gf_save_form_id WHERE `post_id` = '$form_id'"); 
-        //  print_r($WPME_API->http->getResponse());
-                endif;
-        }
-        catch(Exception $e) {
-                if ($WPME_API->http->getResponseCode() == 404):
-                    // Looks like formname or form id not found
-                    
-                endif;
-            }
-        endif; 
-    }
-    
+                    try
+                    {
+                        $response = $WPME_API->callCustom('/deleteGravityForm', 'DELETE', $values);
+                        if ($WPME_API
+                            ->http
+                            ->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
+                            elseif ($WPME_API
+                                ->http
+                                ->getResponseCode() == 200):
 
-require_once ('includes/api-functions.php');
+                                $delete = $wpdb->query("DELETE FROM $gf_save_form_id WHERE `post_id` = '$form_id'");
+                                //  print_r($WPME_API->http->getResponse());
+                                
+                            endif;
+                        }
+                        catch(Exception $e)
+                        {
+                            if ($WPME_API
+                                ->http
+                                ->getResponseCode() == 404):
+                                // Looks like formname or form id not found
+                                
+                            endif;
+                        }
+                    endif;
+                }
+
+                require_once ('includes/api-functions.php');
 ?>
