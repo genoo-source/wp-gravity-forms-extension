@@ -184,7 +184,6 @@
         }
         else
         {
-         jQuery("[name='gform-settings-save']").prop('disabled', false);
          jQuery("[name='gform-settings-save']").removeAttr("disabled");
          jQuery('.newleadtype').css('display','none'); 
          jQuery('#newleadtypecrt').prop('required',false);
