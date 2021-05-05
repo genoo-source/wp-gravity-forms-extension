@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.9
+Version: 2.2.10
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -264,9 +264,9 @@ function access_entry_via_field($entry, $form)
                 {
                     $response = $WPME_API->callCustom('/leadformsubmit', 'POST', $values);
                     if ($WPME_API->http->getResponseCode() == 204): // No values based on folderdid onchange! Ooops
-                        elseif ($WPME_API->http->getResponseCode() == 200):
+                    elseif ($WPME_API->http->getResponseCode() == 200):
 
-                        endif;
+                    endif;
                     }
                     catch(Exception $e)
                     {
@@ -371,14 +371,14 @@ function access_entry_via_field($entry, $form)
                 {
                     $customfields = $WPME_API->callCustom('/leadfields', 'GET', NULL);
                     if ($WPME_API->http->getResponseCode() == 204): // No leadfields based on folderdid onchange! Ooops
-                        elseif ($WPME_API->http->getResponseCode() == 200):
+                    elseif ($WPME_API->http->getResponseCode() == 200):
                             $customfieldsjson = $customfields;
-                        endif;
+                    endif;
                     }
                     catch(Exception $e)
                     { }
 
-                endif;
+                    endif;
                 // right after Admin Field Label
                 // $pre_mapped_fields for should not show the premapped fields
                 $pre_mapped_fields = array(
@@ -492,8 +492,8 @@ function access_entry_via_field($entry, $form)
                         if ($count_extension == 0):
                             $user = wp_get_current_user();
                             $response = $WPME_API->callCustom('/saveGravityForm', 'PUT', $values);
-                            if ($WPME_API->http->getResponseCode() == 204): // No values
-                                elseif ($WPME_API->http->getResponseCode() == 200):
+                        if ($WPME_API->http->getResponseCode() == 204): // No values
+                        elseif ($WPME_API->http->getResponseCode() == 200):
                                     //inserting form response data into post_meta table
                                     $formresponsestore = array(
                                         'genoo_form_id' => $response->genoo_form_id,
@@ -502,12 +502,12 @@ function access_entry_via_field($entry, $form)
                                     );
                                     add_post_meta($form['id'], 'form_values', $formresponsestore);
 
-                                endif;
-                            else:
-                                //if the same data with same form id then update the values.
-                                update_post_meta($form['id'], 'form_values', $form_serilize);
+                        endif;
+                        else:
+                            //if the same data with same form id then update the values.
+                            update_post_meta($form['id'], 'form_values', $form_serilize);
 
-                            endif;
+                        endif;
 
                         }
                         catch(Exception $e)
@@ -539,12 +539,12 @@ function access_entry_via_field($entry, $form)
                     {
                         $response = $WPME_API->callCustom('/deleteGravityForm', 'DELETE', $values);
                         if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
-                            elseif ($WPME_API->http->getResponseCode() == 200):
+                        elseif ($WPME_API->http->getResponseCode() == 200):
 
-                                $delete = $wpdb->query("DELETE FROM $gf_save_form_id WHERE `post_id` = '$form_id'");
+                            $delete = $wpdb->delete($gf_save_form_id,array('post_id' => $form_id));
                                 //  print_r($WPME_API->http->getResponse());
                                 
-                            endif;
+                        endif;
                         }
                         catch(Exception $e)
                         {  }
