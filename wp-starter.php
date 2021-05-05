@@ -541,7 +541,7 @@ function access_entry_via_field($entry, $form)
                         if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
                         elseif ($WPME_API->http->getResponseCode() == 200):
 
-                                $delete = $wpdb->query("DELETE FROM $gf_save_form_id WHERE `post_id` = '$form_id'");
+                            $delete = $wpdb->delete($gf_save_form_id,array('post_id' => $form_id));
                                 //  print_r($WPME_API->http->getResponse());
                                 
                         endif;
