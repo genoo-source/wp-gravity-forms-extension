@@ -112,7 +112,7 @@
                 foreach($webinars as $webinar) : 
               ?>   
                  <option value="<?php echo $webinar->id; ?>" <?php if($webinar->id==$select_webinar) : ?> selected="selected" 
-                     <?php endif; ?> ><?php echo $webinar->name; ?>
+                     <?php endif; ?> ><?php echo $webinar->startdate . "::" . $webinar->name; ?>
                   </option>
               <?php  
                  endforeach;  
@@ -179,11 +179,15 @@
         if(value=='createleadtype'){
           jQuery('.newleadtype').css('display','block');
           jQuery('#newleadtypecrt').prop('required',true);
+          jQuery("[name='gform-settings-save']").prop('disabled', true);
+   
         }
         else
         {
+         jQuery("[name='gform-settings-save']").removeAttr("disabled");
          jQuery('.newleadtype').css('display','none'); 
-          jQuery('#newleadtypecrt').prop('required',false);
+         jQuery('#newleadtypecrt').prop('required',false);
+         jQuery('#selectleadtypes').prop('required',false);
         }
         
       }); 
@@ -243,6 +247,7 @@
             success: function(data){
             console.log(data);
             jQuery('#newleadtypecrt').prop('required',false);
+             jQuery("[name='gform-settings-save']").removeAttr("disabled");
             jQuery('.newleadtype').css('display','none');
             jQuery('#selectleadtypes').append('<option value="'+data+'" selected="selected">'+getval+'</option>'); 
             jQuery("#selectleadtypes").val(data);

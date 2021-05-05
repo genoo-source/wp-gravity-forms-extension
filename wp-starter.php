@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.8
+Version: 2.2.9
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -74,6 +74,7 @@ register_activation_hook(__FILE__, function ()
             id mediumint(8) unsigned not null auto_increment,
             form_id mediumint(8) unsigned not null,
             is_active tinyint(1),
+	        select_lead_folder varchar(255),
             select_leadtype  varchar(255),
             select_folder  varchar(255),
             select_email varchar(255),
@@ -262,20 +263,14 @@ function access_entry_via_field($entry, $form)
                 try
                 {
                     $response = $WPME_API->callCustom('/leadformsubmit', 'POST', $values);
-                    if ($WPME_API
-                        ->http
-                        ->getResponseCode() == 204): // No values based on folderdid onchange! Ooops
-                        elseif ($WPME_API
-                            ->http
-                            ->getResponseCode() == 200):
+                    if ($WPME_API->http->getResponseCode() == 204): // No values based on folderdid onchange! Ooops
+                        elseif ($WPME_API->http->getResponseCode() == 200):
 
                         endif;
                     }
                     catch(Exception $e)
                     {
-                        if ($WPME_API
-                            ->http
-                            ->getResponseCode() == 404):
+                        if ($WPME_API->http->getResponseCode() == 404):
                             // Looks like leadfields not found
                             
                         endif;
@@ -319,16 +314,12 @@ function access_entry_via_field($entry, $form)
                 $product_id_external = 1;
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
                 $product = $WPME_API->callCustom('/wpmeproductbyextid/' . $product_id_external, 'GET', NULL);
-                if ($WPME_API
-                    ->http
-                    ->getResponseCode() == 204)
+                if ($WPME_API->http->getResponseCode() == 204)
                 {
                     // No product! Ooops
                     
                 }
-                elseif ($WPME_API
-                    ->http
-                    ->getResponseCode() == 200)
+                elseif ($WPME_API->http->getResponseCode() == 200)
                 {
                     // Good product in $product variable
                     
@@ -336,9 +327,7 @@ function access_entry_via_field($entry, $form)
             }
             catch(Exception $e)
             {
-                if ($WPME_API
-                    ->http
-                    ->getResponseCode() == 404)
+                if ($WPME_API->http->getResponseCode() == 404)
                 {
                     // Looks like product not found
                     
@@ -381,24 +370,13 @@ function access_entry_via_field($entry, $form)
                 try
                 {
                     $customfields = $WPME_API->callCustom('/leadfields', 'GET', NULL);
-                    if ($WPME_API
-                        ->http
-                        ->getResponseCode() == 204): // No leadfields based on folderdid onchange! Ooops
-                        elseif ($WPME_API
-                            ->http
-                            ->getResponseCode() == 200):
+                    if ($WPME_API->http->getResponseCode() == 204): // No leadfields based on folderdid onchange! Ooops
+                        elseif ($WPME_API->http->getResponseCode() == 200):
                             $customfieldsjson = $customfields;
                         endif;
                     }
                     catch(Exception $e)
-                    {
-                        if ($WPME_API
-                            ->http
-                            ->getResponseCode() == 404):
-                            // Looks like leadfields not found
-                            
-                        endif;
-                    }
+                    { }
 
                 endif;
                 // right after Admin Field Label
@@ -514,12 +492,8 @@ function access_entry_via_field($entry, $form)
                         if ($count_extension == 0):
                             $user = wp_get_current_user();
                             $response = $WPME_API->callCustom('/saveGravityForm', 'PUT', $values);
-                            if ($WPME_API
-                                ->http
-                                ->getResponseCode() == 204): // No values
-                                elseif ($WPME_API
-                                    ->http
-                                    ->getResponseCode() == 200):
+                            if ($WPME_API->http->getResponseCode() == 204): // No values
+                                elseif ($WPME_API->http->getResponseCode() == 200):
                                     //inserting form response data into post_meta table
                                     $formresponsestore = array(
                                         'genoo_form_id' => $response->genoo_form_id,
@@ -537,13 +511,7 @@ function access_entry_via_field($entry, $form)
 
                         }
                         catch(Exception $e)
-                        {
-                            if ($WPME_API
-                                ->http
-                                ->getResponseCode() == 404):
-
-                            endif;
-                        }
+                        {  }
                     endif;
 
                 }
@@ -570,12 +538,8 @@ function access_entry_via_field($entry, $form)
                     try
                     {
                         $response = $WPME_API->callCustom('/deleteGravityForm', 'DELETE', $values);
-                        if ($WPME_API
-                            ->http
-                            ->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
-                            elseif ($WPME_API
-                                ->http
-                                ->getResponseCode() == 200):
+                        if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
+                            elseif ($WPME_API->http->getResponseCode() == 200):
 
                                 $delete = $wpdb->query("DELETE FROM $gf_save_form_id WHERE `post_id` = '$form_id'");
                                 //  print_r($WPME_API->http->getResponse());
@@ -583,14 +547,7 @@ function access_entry_via_field($entry, $form)
                             endif;
                         }
                         catch(Exception $e)
-                        {
-                            if ($WPME_API
-                                ->http
-                                ->getResponseCode() == 404):
-                                // Looks like formname or form id not found
-                                
-                            endif;
-                        }
+                        {  }
                     endif;
                 }
 
