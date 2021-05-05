@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.8
+Version: 2.2.9
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -74,6 +74,7 @@ register_activation_hook(__FILE__, function ()
             id mediumint(8) unsigned not null auto_increment,
             form_id mediumint(8) unsigned not null,
             is_active tinyint(1),
+	    select_lead_folder varchar(255),
             select_leadtype  varchar(255),
             select_folder  varchar(255),
             select_email varchar(255),
@@ -584,9 +585,7 @@ function access_entry_via_field($entry, $form)
                         }
                         catch(Exception $e)
                         {
-                            if ($WPME_API
-                                ->http
-                                ->getResponseCode() == 404):
+                            if ($WPME_API->http->getResponseCode() == 404):
                                 // Looks like formname or form id not found
                                 
                             endif;
