@@ -556,9 +556,8 @@ function access_entry_via_field($entry, $form)
 
         function lead_folder_field_creation( $upgrader_object, $options ) {
              global $wpdb;
-             
-            $site = get_bloginfo( 'name' );
-            $is_plugin_updated = false;
+            
+             $is_plugin_updated = false;
           
             if ( isset( $options['plugins'] ) && is_array( $options['plugins'] ) ) {
                 foreach ( $options['plugins'] as $index => $plugin ) {
