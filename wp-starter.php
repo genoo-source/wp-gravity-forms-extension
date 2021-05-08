@@ -552,16 +552,25 @@ function access_entry_via_field($entry, $form)
                 }
                 
                 
+    //update the hook for create new field in database addon table.     
+                
      add_action( 'upgrader_process_complete', 'lead_folder_field_creation', 10, 2 );
 
         function lead_folder_field_creation( $upgrader_object, $options ) {
+           
              global $wpdb;
-            
+             
+             //get plugin file.
+             
+              $our_plugin = plugin_basename( __FILE__ );
+
              $is_plugin_updated = false;
+             
+             //check plugin is active
           
             if ( isset( $options['plugins'] ) && is_array( $options['plugins'] ) ) {
                 foreach ( $options['plugins'] as $index => $plugin ) {
-                    if ( 'wp-gravity-forms-extension-master/wp-starter.php' === $plugin ) {
+                    if ($our_plugin === $plugin ) {
                         $is_plugin_updated = true;
                         break;
                     }
@@ -576,17 +585,19 @@ function access_entry_via_field($entry, $form)
              $existing_columns = $wpdb->get_col("DESC {$gf_addon_wpextenstion}", 0);
 
              // Implode to a string suitable for inserting into the SQL query
+             
              $sql[] = implode( ', ', $existing_columns );
              
             if(!in_array('select_lead_folder',$sql)):
-                  
-              $wpdb->query("ALTER TABLE $gf_addon_wpextenstion ADD select_lead_folder VARCHAR(255)");
+                 
+             //updated field in addon table 
+             $wpdb->query("ALTER TABLE $gf_addon_wpextenstion ADD select_lead_folder VARCHAR(255)");
 
-              endif;
+            endif;
               
+             
          
         }   
                         
-                
         require_once ('includes/api-functions.php');
 ?>
