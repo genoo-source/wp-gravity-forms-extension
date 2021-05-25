@@ -81,7 +81,7 @@ function saveformdata() {
 
     $values['form_name'] = $form_name;
 
-    $values['form_type'] = 'EF';
+    $values['form_type'] = 'GF';
 
     $post_meta_value  = get_post_meta( $post_id, $formid, true );
 
