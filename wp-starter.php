@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.11
+Version: 2.2.12
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -474,50 +474,55 @@ function access_entry_via_field($entry, $form)
         add_action('gform_after_save_form', 'after_save_form', 10, 2);
         function after_save_form($form, $is_new)
         {
-            global $wpdb, $WPME_API;
+        global $wpdb, $WPME_API;
             $gf_form_table = $wpdb->prefix . 'gf_form';
             $gf_save_form_id = $wpdb->prefix . 'postmeta';
             $get_form_name = $wpdb->get_row("SELECT * from $gf_form_table WHERE `id` = " . $form['id'] . "");
-
+            $genoo_form_id = get_post_meta($form['id'],$form['id'],true);
+              $values = array();
             if ($is_new)
             {
-                $values = array();
                 $values['form_name'] = $get_form_name->title;
+                $values['form_id'] = '0';
+                $values['form_type'] = 'GF';
+                
+            }
+            else
+            {
+                $values['form_name'] = $get_form_name->title;
+                $values['form_id'] = $genoo_form_id;
+                $values['form_type'] = 'GF';
+            }
+                
                 //changed callcustom api for Save Form
                 if (method_exists($WPME_API, 'callCustom')):
-                    try
-                    {
-
-                        $count_extension = $wpdb->get_var("SELECT count(*) from $gf_save_form_id  WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
-                        if ($count_extension == 0):
-                            $user = wp_get_current_user();
-                            $response = $WPME_API->callCustom('/saveGravityForm', 'PUT', $values);
-                        if ($WPME_API->http->getResponseCode() == 204): // No values
-                        elseif ($WPME_API->http->getResponseCode() == 200):
-                                    //inserting form response data into post_meta table
-                                    $formresponsestore = array(
-                                        'genoo_form_id' => $response->genoo_form_id,
-                                        'form_title' => $values['form_name'],
-                                        'form_id' => $form['id']
-                                    );
-                                    add_post_meta($form['id'], 'form_values', $formresponsestore);
-
-                        endif;
-                        else:
-                            //if the same data with same form id then update the values.
-                            update_post_meta($form['id'], 'form_values', $form_serilize);
-
-                        endif;
-
+       try {
+                $response = $WPME_API->callCustom('/saveExternalForm','POST',$values);
+                
+               if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
+                elseif ($WPME_API->http->getResponseCode() == 200):
+                    
+                    if($genoo_form_id==$response->genoo_form_id):
+                      update_post_meta($form['id'],$form['id'],$response->genoo_form_id);
+                    else:
+                      add_post_meta($form['id'],$form['id'],$response->genoo_form_id);  
+                    endif;
+                     
+                endif;
+                    }
+            catch(Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+                                // Looks like formname or form id not found
+                                
+                endif;
                         }
-                        catch(Exception $e)
-                        {  }
+
+                       
                     endif;
 
-                }
 
 
-}
+       }
 
             //delete while click the delete permanantly
             add_action('gform_before_delete_form', 'log_form_deleted');
@@ -597,7 +602,21 @@ function access_entry_via_field($entry, $form)
               
              
          
-        }   
+        }
+    add_action('admin_enqueue_scripts', 'adminEnqueueScripts', 10, 1);
+        
+         function adminEnqueueScripts($hook)
+        {
+            // scripts
+         wp_enqueue_script( 'my_custom_script', plugin_dir_url( __FILE__ ) . 'includes/updatefile.js', array(), '1.0' );
+        }
+        
+       add_action('wp_head', 'myplugin_ajaxurl');
+            function myplugin_ajaxurl() {
+                echo '<script type="text/javascript">
+                       var ajaxurl = "' . admin_url('admin-ajax.php') . '";
+                     </script>';
+            }
                         
         require_once ('includes/api-functions.php');
 ?>
