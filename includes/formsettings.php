@@ -144,6 +144,7 @@
   </script>
 <?php endif; ?>
   <script>
+   
      //hide the email block and webinar when page onload
      $(".send-email").hide();
      $(".title-send-email").hide();
@@ -170,8 +171,8 @@
     <script>
         // script for call function of emails based on email folder id on change
       jQuery(document).ready(function() {
-          
-       //Script for select leadtypes on change 
+  
+      //Script for select leadtypes on change 
        //create lead type api call
       jQuery('.newleadtype').css('display','none');
       jQuery('#selectleadtypes').on('change',function(){
@@ -302,6 +303,10 @@
              }
           });
         });
+        
+    
+         
+        
      });
    </script>
 
