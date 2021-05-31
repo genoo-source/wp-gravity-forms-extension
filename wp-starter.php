@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.13
+Version: 2.2.14
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -504,8 +504,10 @@ function access_entry_via_field($entry, $form)
                     
                     if($genoo_form_id==$response->genoo_form_id):
                       update_post_meta($form['id'],$form['id'],$response->genoo_form_id);
+                      update_post_meta($form['id'],'form_title',$get_form_name->title); 
                     else:
-                      add_post_meta($form['id'],$form['id'],$response->genoo_form_id);  
+                      add_post_meta($form['id'],$form['id'],$response->genoo_form_id); 
+                      add_post_meta($form['id'],'form_title',$get_form_name->title); 
                     endif;
                      
                 endif;
@@ -528,16 +530,13 @@ function access_entry_via_field($entry, $form)
             add_action('gform_before_delete_form', 'log_form_deleted');
             function log_form_deleted($form_id)
             {
-                global $wpdb;
-                global $WPME_API;
+                global $wpdb,$WPME_API;
                 $values = array();
-                $gf_save_form_id = $wpdb->prefix . 'postmeta';
-                $get_form_name = $wpdb->get_row("SELECT * from $gf_save_form_id WHERE `post_id` = '$form_id' AND `meta_key` = 'form_values'");
-                $unserilized = unserialize($get_form_name->meta_value);
-                $form_genoo_id = $unserilized['genoo_form_id'];
-                $form_genoo_title = $unserilized['form_title'];
-                $values['form_name'] = $form_genoo_title;
-                $values['form_id'] = $form_genoo_id;
+               
+                $form_genoo_title = get_post_meta($form_id,'form_title',true);
+                $form_genoo_id = get_post_meta($form_id,$form_id,true);
+                 $values['form_name'] = $form_genoo_title;
+                 $values['form_id'] = $form_genoo_id;
                 if (method_exists($WPME_API, 'callCustom')):
 
                     try
@@ -546,7 +545,8 @@ function access_entry_via_field($entry, $form)
                         if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
                         elseif ($WPME_API->http->getResponseCode() == 200):
 
-                            $delete = $wpdb->delete($gf_save_form_id,array('post_id' => $form_id));
+                            $delete =  delete_post_meta($form_id,'form_title',true);
+                            $deleteid =  delete_post_meta($form_id,$form_id,true);
                                 //  print_r($WPME_API->http->getResponse());
                                 
                         endif;
