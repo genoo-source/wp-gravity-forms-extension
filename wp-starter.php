@@ -547,8 +547,7 @@ function access_entry_via_field($entry, $form)
 
                             $delete =  delete_post_meta($form_id,'form_title',true);
                             $deleteid =  delete_post_meta($form_id,$form_id,true);
-                                //  print_r($WPME_API->http->getResponse());
-                                
+                               
                         endif;
                         }
                         catch(Exception $e)
