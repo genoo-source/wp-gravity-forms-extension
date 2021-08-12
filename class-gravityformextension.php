@@ -91,16 +91,19 @@ class Gravityformextension extends GFAddOn {
         //click the save setting button call the below process
         if ( isset( $_POST['gform-settings-save'] ) ):
         global $wpdb;
+
         //geting all form post values while click save sattings button
         $gf_addon_wpextenstion = $wpdb->prefix.'gf_settings';
         $leadtypes = $emailfolder = $Webinar = $form_id = $select_email = $check_webinnar =   $leadfolder = '';
-        $leadfolder = isset( $_POST['selectleadtypefolders'] ) ? $_POST['selectleadtypefolders'] : '';
-        $leadtypes = isset( $_POST['selectleadtypes'] ) ? $_POST['selectleadtypes'] : '';
-        $emailfolder = isset( $_POST['leadingemailfolders'] ) ? $_POST['leadingemailfolders'] : '';
-        $Webinar = isset( $_POST['leadwebinars'] ) ? $_POST['leadwebinars'] : '';
+
+        $leadfolder = isset( $_POST['_gform_setting_selectleadtypefolders'] ) ? $_POST['_gform_setting_selectleadtypefolders'] : '';
+        $leadtypes = isset( $_POST['_gform_setting_selectleadtypes'] ) ? $_POST['_gform_setting_selectleadtypes'] : '';
+        $emailfolder = isset( $_POST['_gform_setting_leadingemailfolders'] ) ? $_POST['_gform_setting_leadingemailfolders'] : '';
+        $Webinar = isset( $_POST['_gform_setting_leadwebinars'] ) ? $_POST['_gform_setting_leadwebinars'] : '';
         $form_id = isset( $_GET['id'] ) ? $_GET['id'] : '';
-        $select_email = isset( $_POST['leademail'] ) ? $_POST['leademail'] : '';
-        $check_webinnar = isset( $_POST['check_webinnar'] ) ? $_POST['check_webinnar'] : '';
+        $select_email = isset( $_POST['_gform_setting_leademail'] ) ? $_POST['_gform_setting_leademail'] : '';
+        $check_webinnar = isset( $_POST['_gform_setting_check_webinnar'] ) ? $_POST['_gform_setting_check_webinnar'] : '';
+
         $count_extension = $wpdb->get_var( "SELECT count(*) from $gf_addon_wpextenstion  WHERE `form_id` = '$form_id'" );
         if ( $count_extension == 0 ):
         //inserting setting data into table
@@ -163,11 +166,156 @@ class Gravityformextension extends GFAddOn {
             endif;
         }
         endif;
-        require_once ( 'includes/formsettings.php' );
+        // require_once ( 'includes/formsettings.php' );
         endif;
+        $array = array();
+        $leadtypearray = array();
+        $leademailfolderarray = array();
+        $getemailsarray = array();
+        $webinararray = array();
+
+        $array[] =  array( 'label' => esc_html__( 'Select Lead Type Folders', 'Gravity Forms WPMktgEngine Extension' ), 'value' => '' );
+        foreach ( $leadTypefolder as $leadTypefolders ) {
+            $array[] =
+            array( 'label' => esc_html__( $leadTypefolders->name, 'Gravity Forms WPMktgEngine Extension' ),
+            'value' => $leadTypefolders->type_id );
+
+        }
+        $leadtypearray[] = array( 'label' => esc_html__( 'Select Lead Types', 'Gravity Forms WPMktgEngine Extension' ), 'value'=>'' );
+        $leadtypearray[] = array( 'label' => esc_html__( 'Create Lead Types', 'Gravity Forms WPMktgEngine Extension' ),
+        'value' => 'createleadtype' );
+
+        foreach ( $leadTypes as $leadType ) {
+            if ( $leadfolder == $leadType->folder_id ):
+            $leadtypearray[] = array( 'label' => esc_html__( $leadType->name, 'Gravity Forms WPMktgEngine Extension' ),
+            'value' => $leadType->id );
+            endif;
+        }
+        $leademailfolderarray[] = array( 'label' => esc_html__( 'Select Email Folders', 'Gravity Forms WPMktgEngine Extension' ), 'value' => '' );
+
+        foreach ( $leademailfolders as $leademailfolder ) {
+            $leademailfolderarray[] = array( 'label' => esc_html__( $leademailfolder->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $leademailfolder->id );
+        }
+        if ( !empty( $select_email_id ) && !empty( $getemails ) ) :
+        foreach ( $getemails as $getemail ) {
+            $getemailsarray[] = array( 'label' => esc_html__( $getemail->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $getemail->id );
+
+        } else:
+        $getemailsarray[] = array( 'label' => esc_html__( 'no email here', 'Gravity Forms WPMktgEngine Extension' ), 'value' => '' );
+
+        endif;
+
+        foreach ( $webinars as $webinar ) {
+
+            $webinararray[] = array( 'label' => esc_html__( $webinar->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $webinar->id );
+
+        }
+
+        require_once ( 'includes/formsettings.php' );
+        return array(
+            array(
+                'title'  => esc_html__( 'Simple Form Settings', 'Gravity Forms WPMktgEngine Extension' ),
+                'fields' => array(
+                    array(
+                        'label'   => esc_html__( 'Select LeadType Folders:', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'    => 'select',
+                        'name'    => 'selectleadtypefolders',
+                        'tooltip' => esc_html__( 'This is the tooltip', '' ),
+                        'choices' =>
+                        $array
+
+                    ),
+                    array(
+                        'label'   => esc_html__( 'Select LeadType (where leads will be put who submit this form):', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'    => 'select',
+                        'name'    => 'selectleadtypes',
+                        'tooltip' => esc_html__( 'This is the tooltip', '' ),
+                        'choices' =>
+                        $leadtypearray
+
+                    ),
+                    array(
+                        'type'              => 'text',
+                        'name'              => '',
+                        'tooltip'           => esc_html__( 'This is the tooltip', 'Gravity Forms WPMktgEngine Extension' ),
+                        'class'             => 'newleadtype',
+                        'id' => 'newleadtypecrt',
+                        'feedback_callback' => array( $this, 'is_valid_setting' ),
+                    ),
+                    array(
+
+                        'type'              => 'button',
+                        'name'              => 'leadtypesaving',
+                        'id' => 'leadtypesaving',
+                        'feedback_callback' => array( $this, 'is_valid_setting' ),
+                    ),
+                    array(
+                        'label'             => esc_html__( 'My Text Box', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'              => 'hidden',
+                        'name'              => 'form_title',
+                        'value' => $select_for_title->title,
+                        'class'             => 'form_title',
+                        'feedback_callback' => array( $this, 'is_valid_setting' ),
+                    ),
+                    array(
+                        'label'             => esc_html__( 'My Text Box', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'              => 'hidden',
+                        'name'              => 'folder_id',
+                        'value' => $select_folder_id,
+                        'tooltip'           => esc_html__( 'This is the tooltip', 'Gravity Forms WPMktgEngine Extension' ),
+                        'class'             => 'folder_id',
+                        'feedback_callback' => array( $this, 'is_valid_setting' ),
+                    ),
+                    array(
+                        'label'   => esc_html__( 'Select Email Folders:', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'    => 'select',
+                        'name'    => 'leadingemailfolders',
+                        'class' => 'leademailfolders',
+                        'tooltip' => esc_html__( 'This is the tooltip', '' ),
+                        'choices' =>
+                        $leademailfolderarray
+
+                    ),
+                    array(
+                        'label'   => esc_html__( 'Select Email to Send:', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'    => 'select',
+                        'class' => 'send-email email-show',
+                        'name'    => 'leademail',
+                        'tooltip' => esc_html__( 'This is the tooltip', '' ),
+                        'choices' =>
+                        $getemailsarray
+
+                    ),
+                    array(
+                        'name'    => 'check_webinnar',
+                        'type'    => 'checkbox',
+                        'class' => 'check_webinnar',
+                        'choices' => array(
+                            array(
+                                'label' => esc_html__( 'Register User into Webinar', 'Gravity Forms WPMktgEngine Extension' ),
+                                'name'  => 'check_webinnar',
+                            ),
+                        ),
+                    ),
+                    array(
+                        'label'   => esc_html__( 'Select Lead Webinars:', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'    => 'select',
+                        'class' => 'leadwebinars',
+                        'name'    => 'leadwebinars',
+                        'tooltip' => esc_html__( 'This is the tooltip', '' ),
+                        'choices' =>
+                        $webinararray
+
+                    ),
+
+                ),
+            ),
+        );
+
     }
 
     public function settings_save( $field, $echo = true ) {
+
     }
 
     public function render_settings( $sections ) {
