@@ -62,6 +62,7 @@ jQuery(document).ready(function() {
         } else {
             jQuery("[name='gform-settings-save']").removeAttr("disabled");
             jQuery('.newleadtype').css('display', 'none');
+              jQuery('#gform_setting_leadtypesaving').css('display', 'none');
             jQuery('#newleadtypecrt').prop('required', false);
             jQuery('#selectleadtypes').prop('required', false);
             jQuery(".validationleadvalue").remove();
@@ -144,10 +145,15 @@ jQuery(document).ready(function() {
                     jQuery("[name='gform-settings-save']").removeAttr("disabled");
                      jQuery(".validationleadvalue").remove();
                      jQuery(".validationtype").remove();
+                     jQuery(".validationlead").remove();
                     jQuery('.newleadtype').css('display', 'none');
+                    
                     jQuery('#selectleadtypes').append('<option value="' + data +
                         '" selected="selected">' + getval + '</option>');
                     jQuery("#selectleadtypes").val(data);
+                    
+                    jQuery("#leadtypesaving").css("display","none");
+               
 
                 },
 
