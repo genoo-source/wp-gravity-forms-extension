@@ -166,7 +166,6 @@ class Gravityformextension extends GFAddOn {
             endif;
         }
         endif;
-        // require_once ( 'includes/formsettings.php' );
         endif;
         $array = array();
         $leadtypearray = array();

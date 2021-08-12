@@ -1,18 +1,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> </script>
-<?php if($select_folder_id != ''): ?>
-<script>
-//jQuery("select#leademail.send-email").prop("required", true);
-</script>
-<?php endif; ?>
-
 <?php 
 if($is_active=='1'): ?>
 <script>
 jQuery(document).ready(function() {
     jQuery(".leadwebinars").css('display', 'block');
     jQuery("#gform_setting_leadwebinars > div > label").css('display', 'block');
-    
-   
 });
 </script>
 <?php 
@@ -27,18 +19,15 @@ $('.leadwebinars option:selected').removeAttr('selected');
 <script>
 // script for call function of emails based on email folder id on change
 jQuery(document).ready(function() {
-
     //Script for select leadtypes on change 
     //create lead type api call
     jQuery('.newleadtype').css('display', 'none');
     jQuery('.email-show').css('display', 'none');
     jQuery('#gform_setting_leademail > div > label').css('display', 'none');
-
     var typeid = jQuery('#selectleadtypes').val();
-
     if (typeid == '') {
         jQuery("[name='gform-settings-save']").prop('disabled', true);
-         jQuery("#selectleadtypes").after("<div class='validationlead' style='color:red;margin-bottom: 20px;'>required</div>");
+        jQuery("#selectleadtypes").after("<div class='validationlead' style='color:red;margin-bottom: 20px;'>required</div>");
     } else {
         jQuery("[name='gform-settings-save']").removeAttr("disabled");
          jQuery(".validationlead").remove();
@@ -62,13 +51,12 @@ jQuery(document).ready(function() {
         } else {
             jQuery("[name='gform-settings-save']").removeAttr("disabled");
             jQuery('.newleadtype').css('display', 'none');
-              jQuery('#gform_setting_leadtypesaving').css('display', 'none');
+            jQuery('#gform_setting_leadtypesaving').css('display', 'none');
             jQuery('#newleadtypecrt').prop('required', false);
             jQuery('#selectleadtypes').prop('required', false);
             jQuery(".validationleadvalue").remove();
-             jQuery(".validationlead").remove();
-             jQuery(".validationleadvaluefolder").remove();
-            
+            jQuery(".validationlead").remove();
+            jQuery(".validationleadvaluefolder").remove();
             jQuery(".validationtype").remove();
             
         }
@@ -79,9 +67,7 @@ jQuery(document).ready(function() {
         jQuery('.newleadtype').css('display', 'none');
         jQuery("#selectleadtypes").prop("required", true);
         var folder_id = jQuery(this).val();
-
         if (folder_id != '') {
-            // jQuery("[name='gform-settings-save']").removeAttr("disabled");
             jQuery.ajax({
                 url: '<?php echo admin_url("admin-ajax.php") ?>',
                 type: 'POST',
@@ -151,7 +137,6 @@ jQuery(document).ready(function() {
                     jQuery('#selectleadtypes').append('<option value="' + data +
                         '" selected="selected">' + getval + '</option>');
                     jQuery("#selectleadtypes").val(data);
-                    
                     jQuery("#leadtypesaving").css("display","none");
                
 
@@ -261,7 +246,7 @@ jQuery(document).ready(function() {
     );
     
         jQuery('#leademail').on('change',function()
-    {
+         {
         var leademail = jQuery(this).val();
         
         if(leademail=='')
