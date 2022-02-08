@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.2.15
+Version: 2.2.16
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -518,14 +518,51 @@ function access_entry_via_field($entry, $form)
                                 
                 endif;
                         }
+         endif;
+    }
+       add_filter( 'gform_pre_render', 'populate_dropdown' );
+       add_filter( 'gform_pre_validation', 'populate_dropdown' );
+       add_filter( 'gform_pre_submission_filter', 'populate_dropdown' );
+       add_filter( 'gform_admin_pre_render', 'populate_dropdown' );
+       
+       function populate_dropdown($form){
 
-                       
+        global $WPME_API;
+        if ( method_exists( $WPME_API, 'callCustom' ) ):
+            try {
+                // Make a GET request, to Genoo / WPME api, for that rest endpoint
+                $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
+                if ( $WPME_API->http->getResponseCode() == 204 ): // No leadtypes, zoomwebinars, emailfolders ! Ooops
+                    elseif ( $WPME_API->http->getResponseCode() == 200 ):
+                    // Good product in $leadtypes, $zoomwebinars, $emailfolders variable
+        
                     endif;
+                } catch( Exception $e ) {
+                    if ( $WPME_API->http->getResponseCode() == 404 ):
+                    // Looks like folders not found
+        
+                    endif;
+                }
+                endif;
+ 
+         $choices = array();
 
+       $choices[] = array("text" => "Select a leadtype", "value" => "");
 
-
+       foreach($leadTypes as $leadType)
+       {
+       $choices[] = array("text" => $leadType->name, "value" => $leadType->id);
        }
+      
+       foreach($form["fields"] as $field){
 
+       if($field->thirdPartyInput=='leadtypes')
+       {
+      $field["choices"] = $choices;
+        }
+         }
+        return $form;
+       }
             //delete while click the delete permanantly
             add_action('gform_before_delete_form', 'log_form_deleted');
             function log_form_deleted($form_id)

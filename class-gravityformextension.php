@@ -173,7 +173,9 @@ class Gravityformextension extends GFAddOn {
         $getemailsarray = array();
         $webinararray = array();
 
-        $array[] =  array( 'label' => esc_html__( 'Select Lead Type Folders', 'Gravity Forms WPMktgEngine Extension' ), 'value' => '' );
+        $array[] =  array( 'label' => esc_html__( 'Select Lead Type Folders', 'Gravity Forms WPMktgEngine Extension' ), 'value' => 'selectleadtypefolder' );
+        $array[] = array( 'label' => esc_html__( 'Create Lead Type Folder', 'Gravity Forms WPMktgEngine Extension' ),
+        'value' => 'createleadtypefolder' );
         foreach ( $leadTypefolder as $leadTypefolders ) {
             $array[] =
             array( 'label' => esc_html__( $leadTypefolders->name, 'Gravity Forms WPMktgEngine Extension' ),
@@ -216,7 +218,7 @@ class Gravityformextension extends GFAddOn {
                 'title'  => esc_html__( 'Simple Form Settings', 'Gravity Forms WPMktgEngine Extension' ),
                 'fields' => array(
                     array(
-                        'label'   => esc_html__( 'Select LeadType Folders:', 'Gravity Forms WPMktgEngine Extension' ),
+                        'label'   => esc_html__( 'LeadType Folder:', 'Gravity Forms WPMktgEngine Extension' ),
                         'type'    => 'select',
                         'name'    => 'selectleadtypefolders',
                         'tooltip' => esc_html__( 'This is the tooltip', '' ),
@@ -225,7 +227,23 @@ class Gravityformextension extends GFAddOn {
 
                     ),
                     array(
-                        'label'   => esc_html__( 'Select LeadType (where leads will be put who submit this form):', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'              => 'text',
+                        'name'              => '',
+                        'tooltip'           => esc_html__( 'This is the tooltip', 'Gravity Forms WPMktgEngine Extension' ),
+                        'class'             => 'newleadtypefolder',
+                        'id' => 'newleadtypefolder',
+                        'feedback_callback' => array( $this, 'is_valid_setting' ),
+                    ),
+                    array(
+
+                        'type'              => 'button',
+                        'name'              => 'leadtypefoldersaving',
+                       'class'             => 'leadtypefoldersaving',
+                        'id' => 'leadtypefoldersaving',
+                        'feedback_callback' => array( $this, 'is_valid_setting' ),
+                    ),
+                    array(
+                        'label'   => esc_html__( 'Lead Type dropdowns (Lead Type where submissions should be put):', 'Gravity Forms WPMktgEngine Extension' ),
                         'type'    => 'select',
                         'name'    => 'selectleadtypes',
                         'tooltip' => esc_html__( 'This is the tooltip', '' ),
@@ -266,6 +284,16 @@ class Gravityformextension extends GFAddOn {
                         'feedback_callback' => array( $this, 'is_valid_setting' ),
                     ),
                     array(
+                        'label'             => esc_html__( 'Select Your Confirmation Email:', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'              => 'text',
+                        'name'              => 'label_class_email_gravity',
+                        'value' => '',
+                        'class' => 'label_class_email_gravity',
+                        'tooltip'           => esc_html__( 'This is the tooltip', 'Gravity Forms WPMktgEngine Extension' ),
+                        'feedback_callback' => array( $this, 'is_valid_setting' ),
+                    ),
+                    array(
+                       
                         'label'   => esc_html__( 'Select Email Folders:', 'Gravity Forms WPMktgEngine Extension' ),
                         'type'    => 'select',
                         'name'    => 'leadingemailfolders',

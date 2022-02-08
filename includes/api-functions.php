@@ -3,6 +3,7 @@ add_action( 'wp_ajax_getleadEmail', 'getleadEmail' );
 add_action( 'wp_ajax_createleadtype', 'createleadtype' );
 add_action( 'wp_ajax_leadtypefilter', 'leadtypefilter' );
 add_action( 'wp_ajax_saveformdata', 'saveformdata' );
+add_action('wp_ajax_create_gravity_lead_folder','create_gravity_lead_folder');
 //for ajax call to get emails based on folderid when on change function works.
 
 function getleadEmail( $folderid ) {
@@ -20,6 +21,45 @@ function getleadEmail( $folderid ) {
     } catch( Exception $e ) {
     }
     endif;
+}
+
+function create_gravity_lead_folder()
+{
+   global $WPME_API;
+    $lead_folder = [];
+    $lead_folder['name'] = $_REQUEST['folder_id'];
+    $lead_folder['description'] = $_REQUEST['description'];
+
+    if (method_exists($WPME_API, 'callCustom')):
+        try {
+            $createfolders = $WPME_API->callCustom(
+                '/listLeadTypeFoldersByName/' . $lead_folder['name'],
+                'GET','NULL'
+            );
+
+           
+              if (empty($createfolders)):
+
+                   try {
+                        $createfolder = $WPME_API->callCustom(
+                            '/saveLeadTypeFolder',
+                            'POST',
+                            $lead_folder
+                        );
+
+                      
+
+                        wp_send_json($createfolder->id);
+                    } catch (Exception $e) {
+                         //To DO
+                    }
+                endif;
+           
+        } catch (Exception $e) {
+             //To DO
+        }
+    endif;
+
 }
 
 function createleadtype() {
