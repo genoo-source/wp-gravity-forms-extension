@@ -621,50 +621,48 @@ function access_entry_via_field($entry, $form)
                 }
                 endif;
  
-       
-       $leaddetailsoptions = false;
+                $choices = array();
 
-       foreach($form["fields"] as $field)
-       {
-        $i=0;
-            foreach($leadTypes as $leadType)
-            {
-            $encryptField_value = 'encryptField'.$i;
 
-                if($field->$encryptField_value==$leadType->id)
+                $choices[] = array("text" => "Select a leadtype", "value" => "");
+                
+                $leaddetailsoptions = false;
+
+                foreach($form["fields"] as $field)
                 {
-                $encryptField_values[] = $field->$encryptField_value;
+                    
+                $i=0;
+                foreach($leadTypes as $leadType)
+                {
+                    
+                    $encryptField_value = 'encryptField'.$i;
+                    
+                if($field->$encryptField_value==$leadType->id)
+                        {
+                    $choices[] = array("text" => $leadType->name, "value" => $field->$encryptField_value);
+                    
+                
                 }
-        $i++;  
-        }
-    $enc_array = array_filter($encryptField_values);
-    
-   if($field->thirdPartyInput=='leadtypes')
-    {
-        $leaddetailsoptions = true;
-    }
-    else{
-        $leaddetailsoptions = false;
-    } 
-    }
-          $j=0;
-    $choices = array();
-    $choices[] = array("text" => "Select a leadtype", "value" => "");
-    foreach($field['choices'] as $choices_text){
-        if($choices_text['text']!='Select a leadtype')
-        {
-        $choices[] = array("text" => $choices_text['text'], "value" => $enc_array[$j]);
+                $i++;    
+                }
+                if($field->thirdPartyInput=='leadtypes')
+                {
+                    $leaddetailsoptions = true;
+                }
+                else{
+                    $leaddetailsoptions = false;
+                }
+                }
+        
+     
+                if($leaddetailsoptions) 
+                {
+                
+                $field["choices"] = $choices;
+                
+                }
+      
 
-        $j++;
-    }
-}
-     if($leaddetailsoptions) 
-     {
-
-        $field["choices"] = $choices;
-
-    } 
-   
       return $form;
       
        }
