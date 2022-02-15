@@ -363,6 +363,8 @@ function access_entry_via_field($entry, $form)
     add_action('gform_field_standard_settings', function ($position, $form_id)
     {
         // position -1 for adding third party(Genoo/WPMktgEngine Field:) as last
+       
+          
         if ($position == - 1):
             global $WPME_API;
             //calling leadfields api for showing dropdown
@@ -417,14 +419,64 @@ function access_entry_via_field($entry, $form)
                 endforeach;
 ?>
        </select>
-   <?php
-            endif;
+            </li>
+              
+                    <?php
+                         if (method_exists($WPME_API, 'callCustom')):
+                            try
+                            {
+                                $leadtypes_optional = $WPME_API->callCustom('/leadtypes', 'GET', NULL);
+                                if ($WPME_API->http->getResponseCode() == 204): // No leadfields based on folderdid onchange! Ooops
+                                elseif ($WPME_API->http->getResponseCode() == 200):
+                                    $i=0;
+                                   foreach($leadtypes_optional as $leadtypes_optional_values){ ?>
+                        <li class="encrypt_setting_leadtypes field_setting">
+        
+                <input type="checkbox" id="field_encrypt_value<?php echo $i?>" name="field_encrypt_value<?php echo $i?>" value="<?php echo $leadtypes_optional_values->id; ?>" onclick="SetFieldProperty('encryptField<?php echo $i; ?>', this.value);" />
+                <label for="field_encrypt_value<?php echo $i?>" style="display:inline;">
+                    <?php _e($leadtypes_optional_values->name, "Gravity Forms WPMktgEngine Extension"); ?>
+                    <?php gform_tooltip("form_field_encrypt_value") ?>
+                </label>  </li>
+                     
+                                   <?php  $i++; }
+                                endif;
+                                }
+                                catch(Exception $e)
+                                { }
+            
+                                endif;
+                    ?>
+           
+           
+           
+         <?php   endif;
+         
+   
         }
         , 10, 2);
         // gform_editor_js function for restricting types to show Genoo/WPMktgEngine Field:
         add_action('gform_editor_js', function ()
         {
             //standard, advanced,post,price field types without premapped fields
+          global $WPME_API;
+            if (method_exists($WPME_API, 'callCustom')):
+                try
+                {
+                    $leadtypes_optional = $WPME_API->callCustom('/leadtypes', 'GET', NULL);
+                    $count = count($leadtypes_optional);
+                    if ($WPME_API->http->getResponseCode() == 204): // No leadfields based on folderdid onchange! Ooops
+                    elseif ($WPME_API->http->getResponseCode() == 200):
+                    endif;
+                }
+                catch(Exception $e)
+                {
+                      //To DO
+                }
+
+            endif;
+
+
+
             $all_default_types = array(
                 'text',
                 'textarea',
@@ -459,13 +511,37 @@ function access_entry_via_field($entry, $form)
             foreach ($all_default_types as $default_type):
 ?>
     <script type="text/javascript">
+    
         var type = '<?php echo $default_type; ?>';
+       
+     
       fieldSettings[type] += ', .thirdparty_input_setting';
+      fieldSettings[type] += ', .encrypt_setting_leadtypes';
       
+    
       // Make sure our field gets populated with its saved value
     jQuery(document).on("gform_load_field_settings", function(event, field, form) {
+        var leadtypescount = '<?php echo $count; ?>';
+    
+        var third_party_value = field['thirdPartyInput'];
+        
             jQuery("#field_thirdparty_input").val(field["thirdPartyInput"]);
+
+           for (i = 0; i < leadtypescount; i++) {
+         
+            jQuery("#field_encrypt_value"+i).prop( 'checked', ( rgar( field, 'encryptField'+i )) );
+
+           }
+                
+            if(third_party_value!='leadtypes')
+            {
+             jQuery('.encrypt_setting_leadtypes').css('display','none');   
+            }
+           
       });
+     
+        //binding to the load field settings event to initialize the checkbox
+
     </script>
    <?php
             endforeach;
@@ -545,23 +621,52 @@ function access_entry_via_field($entry, $form)
                 }
                 endif;
  
-         $choices = array();
+       
+       $leaddetailsoptions = false;
 
-       $choices[] = array("text" => "Select a leadtype", "value" => "");
-
-       foreach($leadTypes as $leadType)
+       foreach($form["fields"] as $field)
        {
-       $choices[] = array("text" => $leadType->name, "value" => $leadType->id);
-       }
-      
-       foreach($form["fields"] as $field){
+        $i=0;
+            foreach($leadTypes as $leadType)
+            {
+            $encryptField_value = 'encryptField'.$i;
 
-       if($field->thirdPartyInput=='leadtypes')
-       {
-      $field["choices"] = $choices;
+                if($field->$encryptField_value==$leadType->id)
+                {
+                $encryptField_values[] = $field->$encryptField_value;
+                }
+        $i++;  
         }
-         }
-        return $form;
+    $enc_array = array_filter($encryptField_values);
+    
+   if($field->thirdPartyInput=='leadtypes')
+    {
+        $leaddetailsoptions = true;
+    }
+    else{
+        $leaddetailsoptions = false;
+    } 
+    }
+          $j=0;
+    $choices = array();
+    $choices[] = array("text" => "Select a leadtype", "value" => "");
+    foreach($field['choices'] as $choices_text){
+        if($choices_text['text']!='Select a leadtype')
+        {
+        $choices[] = array("text" => $choices_text['text'], "value" => $enc_array[$j]);
+
+        $j++;
+    }
+}
+     if($leaddetailsoptions) 
+     {
+
+        $field["choices"] = $choices;
+
+    } 
+   
+      return $form;
+      
        }
             //delete while click the delete permanantly
             add_action('gform_before_delete_form', 'log_form_deleted');
@@ -653,6 +758,8 @@ function access_entry_via_field($entry, $form)
                        var ajaxurl = "' . admin_url('admin-ajax.php') . '";
                      </script>';
             }
+
+        
                         
         require_once ('includes/api-functions.php');
 ?>
