@@ -1,4 +1,6 @@
 jQuery(document).ready(function () {
+  jQuery(".encrypt_setting_leadtypes").css("display","none");
+
   jQuery(document).on(
     "click",
     ".add-buttons > .edit-form-footer > input",
@@ -26,4 +28,22 @@ jQuery(document).ready(function () {
       });
     }
   );
+
+    jQuery(function ($) {
+      jQuery("#field_thirdparty_input").on("change", function () {
+  
+    if (jQuery(this).val() === "leadtypes")
+    {
+     
+       jQuery(".encrypt_setting_leadtypes").css("display","block");
+    }
+      else {
+      jQuery(".encrypt_setting_leadtypes").html("");
+      }
+      });
+  });
+
+
+//jQuery('body').
+
 });

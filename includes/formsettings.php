@@ -367,4 +367,8 @@ jQuery(document).ready(function() {
 {
 display: none !important;       
 }
+.encrypt_setting_leadtypes
+{
+display: none !important; 
+}
 </style>
