@@ -535,178 +535,189 @@ function access_entry_via_field($entry, $form)
                 
             if(third_party_value!='leadtypes')
             {
-             jQuery('.encrypt_setting_leadtypes').css('display','none');   
+             jQuery('.leadtypecheckbox').css('display','none');   
+             jQuery('.leadtypeselected').css('display','none');   
+
             }
+
+           
            
       });
      
         //binding to the load field settings event to initialize the checkbox
 
     </script>
-   <?php
-            endforeach;
-        });
-        //save while create the new form
-        add_action('gform_after_save_form', 'after_save_form', 10, 2);
-        function after_save_form($form, $is_new)
-        {
-        global $wpdb, $WPME_API;
-            $gf_form_table = $wpdb->prefix . 'gf_form';
-            $gf_save_form_id = $wpdb->prefix . 'postmeta';
-            $get_form_name = $wpdb->get_row("SELECT * from $gf_form_table WHERE `id` = " . $form['id'] . "");
-            $genoo_form_id = get_post_meta($form['id'],$form['id'],true);
-              $values = array();
-            if ($is_new)
-            {
-                $values['form_name'] = $get_form_name->title;
-                $values['form_id'] = '0';
-                $values['form_type'] = 'GF';
-                
-            }
-            else
-            {
-                $values['form_name'] = $get_form_name->title;
-                $values['form_id'] = $genoo_form_id;
-                $values['form_type'] = 'GF';
-            }
-                
-                //changed callcustom api for Save Form
-                if (method_exists($WPME_API, 'callCustom')):
-       try {
-                $response = $WPME_API->callCustom('/saveExternalForm','POST',$values);
-                
-               if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
-                elseif ($WPME_API->http->getResponseCode() == 200):
-                    
-                    if($genoo_form_id==$response->genoo_form_id):
-                      update_post_meta($form['id'],$form['id'],$response->genoo_form_id);
-                      update_post_meta($form['id'],'form_title',$get_form_name->title); 
-                    else:
-                      add_post_meta($form['id'],$form['id'],$response->genoo_form_id); 
-                      add_post_meta($form['id'],'form_title',$get_form_name->title); 
-                    endif;
-                     
-                endif;
-                    }
-            catch(Exception $e) {
-                if ($WPME_API->http->getResponseCode() == 404):
-                                // Looks like formname or form id not found
-                                
-                endif;
-                        }
-         endif;
+   <?php endforeach;
+});
+//save while create the new form
+add_action('gform_after_save_form', 'after_save_form', 10, 2);
+function after_save_form($form, $is_new)
+{
+    global $wpdb, $WPME_API;
+    $gf_form_table = $wpdb->prefix . 'gf_form';
+    $gf_save_form_id = $wpdb->prefix . 'postmeta';
+    $get_form_name = $wpdb->get_row(
+        "SELECT * from $gf_form_table WHERE `id` = " . $form['id'] . ''
+    );
+    $genoo_form_id = get_post_meta($form['id'], $form['id'], true);
+    $values = [];
+    if ($is_new) {
+        $values['form_name'] = $get_form_name->title;
+        $values['form_id'] = '0';
+        $values['form_type'] = 'GF';
+    } else {
+        $values['form_name'] = $get_form_name->title;
+        $values['form_id'] = $genoo_form_id;
+        $values['form_type'] = 'GF';
     }
-       add_filter( 'gform_pre_render', 'populate_dropdown' );
-       add_filter( 'gform_pre_validation', 'populate_dropdown' );
-       add_filter( 'gform_pre_submission_filter', 'populate_dropdown' );
-       add_filter( 'gform_admin_pre_render', 'populate_dropdown' );
-       
-       function populate_dropdown($form){
 
-        global $WPME_API;
-        if ( method_exists( $WPME_API, 'callCustom' ) ):
-            try {
-                // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
-                if ( $WPME_API->http->getResponseCode() == 204 ): // No leadtypes, zoomwebinars, emailfolders ! Ooops
-                    elseif ( $WPME_API->http->getResponseCode() == 200 ):
-                    // Good product in $leadtypes, $zoomwebinars, $emailfolders variable
-        
-                    endif;
-                } catch( Exception $e ) {
-                    if ( $WPME_API->http->getResponseCode() == 404 ):
-                    // Looks like folders not found
-        
-                    endif;
-                }
+    //changed callcustom api for Save Form
+    if (method_exists($WPME_API, 'callCustom')):
+        try {
+            $response = $WPME_API->callCustom(
+                '/saveExternalForm',
+                'POST',
+                $values
+            );
+
+            if ($WPME_API->http->getResponseCode() == 204):
+                // No values based on form name,form id onchange! Ooops
+
+
+            elseif ($WPME_API->http->getResponseCode() == 200):
+                if ($genoo_form_id == $response->genoo_form_id):
+                    update_post_meta(
+                        $form['id'],
+                        $form['id'],
+                        $response->genoo_form_id
+                    );
+                    update_post_meta(
+                        $form['id'],
+                        'form_title',
+                        $get_form_name->title
+                    );
+                else:
+                    add_post_meta(
+                        $form['id'],
+                        $form['id'],
+                        $response->genoo_form_id
+                    );
+                    add_post_meta(
+                        $form['id'],
+                        'form_title',
+                        $get_form_name->title
+                    );
                 endif;
- 
-                $choices = array();
+            endif;
+        } catch (Exception $e) {
+            if ($WPME_API->http->getResponseCode() == 404):
 
 
-                $choices[] = array("text" => "Select a leadtype", "value" => "");
-                
-                $leaddetailsoptions = false;
+                // Looks like formname or form id not found
+            endif;
+        }
+    endif;
+}
+add_filter(
+    'gform_field_choice_markup_pre_render',
+    function ($choice_markup, $choice) {
+        if (rgar($choice, 'value') == 'First Choice') {
+            return '';
+        }
 
-                foreach($form["fields"] as $field)
-                {
-                    
-                $i=0;
-                foreach($leadTypes as $leadType)
-                {
-                    
-                    $encryptField_value = 'encryptField'.$i;
-                    
-                if($field->$encryptField_value==$leadType->id)
-                        {
-                    $choices[] = array("text" => $leadType->name, "value" => $field->$encryptField_value);
-                    
-                
-                }
-                $i++;    
-                }
-                if($field->thirdPartyInput=='leadtypes')
-                {
-                    $leaddetailsoptions = true;
-                }
-                else{
-                    $leaddetailsoptions = false;
-                }
-                }
-        
-     
-                if($leaddetailsoptions) 
-                {
-                
-                $field["choices"] = $choices;
-                
-                }
-      
+        return $choice_markup;
+    },
+    10,
+    2
+);
+add_filter('gform_pre_render', 'populate_dropdown');
+add_filter('gform_pre_validation', 'populate_dropdown');
+add_filter('gform_pre_submission_filter', 'populate_dropdown');
+add_filter('gform_admin_pre_render', 'populate_dropdown');
 
-      return $form;
-      
-       }
-            //delete while click the delete permanantly
-            add_action('gform_before_delete_form', 'log_form_deleted');
-            function log_form_deleted($form_id)
-            {
-                global $wpdb,$WPME_API;
-                $values = array();
-               
-                $form_genoo_title = get_post_meta($form_id,'form_title',true);
-                $form_genoo_id = get_post_meta($form_id,$form_id,true);
-                 $values['form_name'] = $form_genoo_title;
-                 $values['form_id'] = $form_genoo_id;
-                if (method_exists($WPME_API, 'callCustom')):
+function populate_dropdown($form)
+{
+    global $WPME_API, $wpdb;
 
-                    try
-                    {
-                        $response = $WPME_API->callCustom('/deleteGravityForm', 'DELETE', $values);
-                        if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
-                        elseif ($WPME_API->http->getResponseCode() == 200):
+    // Make a GET request, to Genoo / WPME api, for that rest endpoint
 
-                            $delete =  delete_post_meta($form_id,'form_title',true);
-                            $deleteid =  delete_post_meta($form_id,$form_id,true);
-                               
-                        endif;
-                        }
-                        catch(Exception $e)
-                        {  }
-                    endif;
-                }
-                
-                
-    //update the hook for create new field in database addon table.     
-                
-     add_action( 'upgrader_process_complete', 'lead_folder_field_creation', 10, 2 );
+    $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save';
 
-        function lead_folder_field_creation( $upgrader_object, $options ) {
-           
-             global $wpdb;
-             
-             //get plugin file.
-             
-              $our_plugin = plugin_basename( __FILE__ );
+    // $inputs = array();
+
+    $leaddetailsoptions = false;
+
+    foreach ($form['fields'] as $field) {
+        $i = 0;
+        $choices = [];
+        $choices[] = ['text' => 'Select a leadtype', 'value' => ''];
+        $leadTypes = $wpdb->get_results(
+            "select `label_name`,`label_value` from $leadtype_form_save where field_id=$field->id and form_id=$field->formId"
+        );
+        foreach ($leadTypes as $leadType) {
+            $choices[] = [
+                'text' => $leadType->label_name,
+                'value' => $leadType->label_value,
+            ];
+
+            $i++;
+        }
+        if ($field->thirdPartyInput == 'leadtypes') {
+            $leaddetailsoptions = true;
+        } else {
+            $leaddetailsoptions = false;
+        }
+    }
+
+    if ($leaddetailsoptions) {
+        $field['choices'] = $choices;
+        //  $field["inputs"] = $inputs;
+    }
+
+    return $form;
+}
+//delete while click the delete permanantly
+add_action('gform_before_delete_form', 'log_form_deleted');
+function log_form_deleted($form_id)
+{
+    global $wpdb, $WPME_API;
+    $values = [];
+
+    $form_genoo_title = get_post_meta($form_id, 'form_title', true);
+    $form_genoo_id = get_post_meta($form_id, $form_id, true);
+    $values['form_name'] = $form_genoo_title;
+    $values['form_id'] = $form_genoo_id;
+    if (method_exists($WPME_API, 'callCustom')):
+        try {
+            $response = $WPME_API->callCustom(
+                '/deleteGravityForm',
+                'DELETE',
+                $values
+            );
+            if ($WPME_API->http->getResponseCode() == 204):
+                // No values based on form name,form id onchange! Ooops
+
+
+            elseif ($WPME_API->http->getResponseCode() == 200):
+                $delete = delete_post_meta($form_id, 'form_title', true);
+                $deleteid = delete_post_meta($form_id, $form_id, true);
+            endif;
+        } catch (Exception $e) {
+        }
+    endif;
+}
+
+//update the hook for create new field in database addon table.
+
+add_action('upgrader_process_complete', 'lead_folder_field_creation', 10, 2);
+
+function lead_folder_field_creation($upgrader_object, $options)
+{
+    global $wpdb;
+
+    //get plugin file.
+
+    $our_plugin = plugin_basename(__FILE__);
 
              $is_plugin_updated = false;
              
@@ -728,32 +739,74 @@ function access_entry_via_field($entry, $form)
              
              $existing_columns = $wpdb->get_col("DESC {$gf_addon_wpextenstion}", 0);
 
-             // Implode to a string suitable for inserting into the SQL query
-             
-             $sql[] = implode( ', ', $existing_columns );
-             
-            if(!in_array('select_lead_folder',$sql)):
-                 
-             //updated field in addon table 
-             $wpdb->query("ALTER TABLE $gf_addon_wpextenstion ADD select_lead_folder VARCHAR(255)");
+    // Implode to a string suitable for inserting into the SQL query
 
-            endif;
-              
-             
-         
-        }
-    add_action('admin_enqueue_scripts', 'adminEnqueueScripts', 10, 1);
-        
-         function adminEnqueueScripts($hook)
-        {
-            // scripts
-         wp_enqueue_script( 'my_custom_script', plugin_dir_url( __FILE__ ) . 'includes/updatefile.js', array(), '1.0' );
-        }
-        
-       add_action('wp_head', 'myplugin_ajaxurl');
-            function myplugin_ajaxurl() {
-                echo '<script type="text/javascript">
-                       var ajaxurl = "' . admin_url('admin-ajax.php') . '";
+    $sql[] = implode(', ', $existing_columns);
+
+    if (!in_array('select_lead_folder', $sql)):
+        //updated field in addon table
+        $wpdb->query(
+            "ALTER TABLE $gf_addon_wpextenstion ADD select_lead_folder VARCHAR(255)"
+        );
+    endif;
+    $sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}leadtype_form_save (
+        id int(11) unsigned not null auto_increment,
+        form_id int(11) unsigned not null,
+        field_id int(11) unsigned not null,
+        label_name varchar(255),
+        label_value int(11), PRIMARY KEY(id)) $charset_collate;";
+    gf_upgrade()->dbDelta($sql);
+}
+add_action('admin_enqueue_scripts', 'adminEnqueueScripts', 10, 1);
+
+add_action('wp_ajax_lead_type_option_submit', 'lead_type_option_submit');
+
+function lead_type_option_submit()
+{
+    global $wpdb;
+
+    $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save';
+
+    $leadtype_save_values = $_REQUEST['inservalues'];
+
+    $field_id = $_REQUEST['field_id'];
+
+    $form_id = $_REQUEST['form_id'];
+
+    foreach ($leadtype_save_values as $leadtype_save_value) {
+        $wpdb->delete($leadtype_form_save, [
+            'form_id' => $form_id,
+            'field_id' => $field_id,
+            'label_value' => $leadtype_save_value['labelvalue'],
+        ]);
+
+        $wpdb->insert($leadtype_form_save, [
+            'form_id' => $form_id,
+            'field_id' => $field_id,
+            'label_name' => $leadtype_save_value['label'],
+            'label_value' => $leadtype_save_value['labelvalue'],
+        ]);
+    }
+}
+
+function adminEnqueueScripts($hook)
+{
+    // scripts
+    wp_enqueue_script(
+        'my_custom_script',
+        plugin_dir_url(__FILE__) . 'includes/updatefile.js',
+        [],
+        '1.0'
+    );
+}
+
+add_action('wp_head', 'myplugin_ajaxurl');
+function myplugin_ajaxurl()
+{
+    echo '<script type="text/javascript">
+                       var ajaxurl = "' .
+        admin_url('admin-ajax.php') .
+        '";
                      </script>';
             }
 

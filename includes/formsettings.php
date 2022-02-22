@@ -367,8 +367,14 @@ jQuery(document).ready(function() {
 {
 display: none !important;       
 }
-.encrypt_setting_leadtypes
+.leadtypecheckbox
 {
-display: none !important; 
+display: none !important;
+height: 400px !important;
+overflow: auto !important;
+}
+#field_id_input_label_text
+{
+    display: none !important;
 }
 </style>
