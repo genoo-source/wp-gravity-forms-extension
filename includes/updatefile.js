@@ -1,5 +1,6 @@
 jQuery(document).ready(function () {
-  //jQuery(".encrypt_setting_leadtypes").css("display","none");
+  jQuery(".leadtypecheckbox h1").addClass("editheader");
+
 
   jQuery(document).on(
     "click",
@@ -69,9 +70,10 @@ jQuery(document).ready(function () {
 
 
 jQuery(".leadtypeselected").on("click",function(){
+ // jQuery(".leadtypecheckbox").removeAttr("style");
+  jQuery(".leadtypecheckbox").scrollTop(0);
+  jQuery(".leadtypecheckbox h1").removeClass("editheader");
 
-  var allval = [];
-  var allval1 = [];
 
   
 jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]').each(function() {
@@ -135,7 +137,9 @@ jQuery(".leadtypeupdate").on("click",function(){
 
         jQuery('.encrypt_setting_leadtypes').css('display','none');
         jQuery('.leadtypeupdate').css('display','none');
-      
+        jQuery(".leadtypecheckbox h1").addClass("editheader");
+        jQuery(".leadtypecheckbox").removeAttr("style");
+
       },
   
       error: function (errorThrown) {

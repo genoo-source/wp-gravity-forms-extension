@@ -428,7 +428,7 @@ add_action(
                 'Web Site URL',
             ];
             ?>
-    
+    <div>
         <li class="thirdparty_input_setting field_setting">
          <label class="section_label" for="field_admin_label"><?php _e(
              'Genoo/WPMktgEngine Field:'
@@ -443,11 +443,11 @@ add_action(
                  ): ?>
                      <option value="<?php echo $customfields->key; ?>"> <?php echo trim(
     $customfields->label
-); ?></option>
-             <?php endif;
+); ?></option> <?php endif;
              endforeach; ?>
        </select>
             </li>
+            </div>
               
                     <?php if (method_exists($WPME_API, 'callCustom')):
                         try {
@@ -461,23 +461,33 @@ add_action(
 
 
                             elseif ($WPME_API->http->getResponseCode() == 200):
-                                $i = 0;
-                                foreach (
-                                    $leadtypes_optional
-                                    as $leadtypes_optional_values
-                                ) { ?>
+                                $i = 0; ?>
+                                      <div class="leadtypecheckbox" style="height:200px;overflow: auto";>
+                                      <h1 class="editheader">Edit Label Here:</h1>
+                                    <?php foreach (
+                                        $leadtypes_optional
+                                        as $leadtypes_optional_values
+                                    ) { ?>
                         <li class="encrypt_setting_leadtypes field_setting">
         
-                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" onclick="SetFieldProperty('encryptField<?php echo $i; ?>', this.value);" />
-                <label for="field_encrypt_value<?php echo $i; ?>" style="display:inline;">
+                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> value="<?php echo $leadtypes_optional_values->id; ?>" onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.value);" />
+                <label for="field_encrypt_value<?php echo $i; ?>" class="leadtype_value_label<?php echo $i; ?>" style="display:inline;">
                     <?php _e(
                         $leadtypes_optional_values->name,
                         'Gravity Forms WPMktgEngine Extension'
                     ); ?>
                     <?php gform_tooltip('form_field_encrypt_value'); ?>
-                </label>  </li>
+                </label>  
+                <input type="text" id="field_id_input_label_text" class="field_id_input_label_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->name; ?>" style="display: none;"/>
+
+                <input type="text" id="field_id_input_label_text" class="field_id_input_value_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" style="display: none;"/>
+            </li>
                      
-                                   <?php $i++;}
+                                   <?php $i++;} ?>
+                   </div>
+                   <div> <button type="button" class="leadtypeselected">submit</button></div>
+                   <div> <button type="button" class="leadtypeupdate" style="display: none;">update</button></div>
+                                   <?php
                             endif;
                         } catch (Exception $e) {
                         }
@@ -486,7 +496,10 @@ add_action(
            
            
          <?php
-        endif;
+        endif; ?>
+         
+
+    <?php
     },
     10,
     2
@@ -564,10 +577,12 @@ add_action('gform_editor_js', function () {
             jQuery("#field_thirdparty_input").val(field["thirdPartyInput"]);
 
            for (i = 0; i < leadtypescount; i++) {
-         
+
+            
             jQuery("#field_encrypt_value"+i).prop( 'checked', ( rgar( field, 'encryptField'+i )) );
 
-           }
+            
+        }
                 
             if(third_party_value!='leadtypes')
             {
@@ -831,6 +846,12 @@ function adminEnqueueScripts($hook)
     wp_enqueue_script(
         'my_custom_script',
         plugin_dir_url(__FILE__) . 'includes/updatefile.js',
+        [],
+        '1.0'
+    );
+    wp_enqueue_style(
+        'my_custom_style',
+        plugin_dir_url(__FILE__) . 'includes/leadtype.css',
         [],
         '1.0'
     );
