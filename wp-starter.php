@@ -79,6 +79,7 @@ register_activation_hook(__FILE__, function () {
             select_folder  varchar(255),
             select_email varchar(255),
             select_webinar  varchar(250),
+            source varchar(250),
             PRIMARY KEY  (id),
             UNIQUE KEY form_id (form_id)
                   ) $charset_collate;";
@@ -175,11 +176,15 @@ function access_entry_via_field($entry, $form)
         $select_webinar = isset($form_settings->select_webinar)
             ? $form_settings->select_webinar
             : '';
-        if ($select_lead_id != ''):
+            $source = isset($form_settings->source)
+            ? $form_settings->source
+            : '';
+        if ($select_lead_id != '' && $source!=''):
             $values = [];
             $values['form_name'] = $form['title'];
             $values['client_ip_address'] = $entry['ip'];
             $values['lead_type_id'] = $select_lead_id;
+            $values['source'] = $source;
             //$values['form_type'] = 'opt-in form';
             $values['page_url'] = $entry['source_url'];
             $values['form_type'] = 'GF';

@@ -103,6 +103,7 @@ class Gravityformextension extends GFAddOn {
         $form_id = isset( $_GET['id'] ) ? $_GET['id'] : '';
         $select_email = isset( $_POST['_gform_setting_leademail'] ) ? $_POST['_gform_setting_leademail'] : '';
         $check_webinnar = isset( $_POST['_gform_setting_check_webinnar'] ) ? $_POST['_gform_setting_check_webinnar'] : '';
+        $source = isset( $_POST['_gform_setting_source_gravity'] ) ? $_POST['_gform_setting_source_gravity'] : '';
 
         $count_extension = $wpdb->get_var( "SELECT count(*) from $gf_addon_wpextenstion  WHERE `form_id` = '$form_id'" );
         if ( $count_extension == 0 ):
@@ -112,6 +113,7 @@ class Gravityformextension extends GFAddOn {
             'is_active' => $check_webinnar,
             'select_lead_folder' => $leadfolder,
             'select_leadtype' => $leadtypes,
+            'source' => $source,
             'select_folder' => $emailfolder,
             'select_email' => $select_email,
             'select_webinar' => $Webinar
@@ -123,6 +125,7 @@ class Gravityformextension extends GFAddOn {
             'is_active' => $check_webinnar,
             'select_lead_folder' => $leadfolder,
             'select_leadtype' => $leadtypes,
+            'source' => $source,
             'select_folder' => $emailfolder,
             'select_email' => $select_email,
             'select_webinar' => $Webinar
@@ -148,6 +151,7 @@ class Gravityformextension extends GFAddOn {
         $is_active = isset( $select_lead->is_active ) ? $select_lead->is_active : '';
         $select_webinar = isset( $select_lead->select_webinar ) ? $select_lead->select_webinar : '';
         $leadfolder = isset( $select_lead->select_lead_folder ) ? $select_lead->select_lead_folder : '';
+        $source = isset( $select_lead->source ) ? $select_lead->source : '';
         //to pass the folder id to show emails based on folderid
         if ( method_exists( $WPME_API, 'callCustom' ) ):
         try {
@@ -281,6 +285,15 @@ class Gravityformextension extends GFAddOn {
                         'value' => $select_folder_id,
                         'tooltip'           => esc_html__( 'This is the tooltip', 'Gravity Forms WPMktgEngine Extension' ),
                         'class'             => 'folder_id',
+                        'feedback_callback' => array( $this, 'is_valid_setting' ),
+                    ),
+                    array(
+                        'label'             => esc_html__( 'Source:', 'Gravity Forms WPMktgEngine Extension' ),
+                        'type'              => 'text',
+                        'name'              => 'source_gravity',
+                        'value' => $source,
+                        'class' => 'label_source_gravity',
+                        'tooltip'           => esc_html__( 'This is the tooltip', 'Gravity Forms WPMktgEngine Extension' ),
                         'feedback_callback' => array( $this, 'is_valid_setting' ),
                     ),
                     array(
