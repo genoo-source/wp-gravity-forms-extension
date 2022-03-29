@@ -475,7 +475,7 @@ add_action(
                                     ) { ?>
                         <li class="encrypt_setting_leadtypes field_setting">
         
-                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> value="<?php echo $leadtypes_optional_values->id; ?>" onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.value);" />
+                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?>  onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
                 <label for="field_encrypt_value<?php echo $i; ?>" class="leadtype_value_label<?php echo $i; ?>" style="display:inline;">
                     <?php _e(
                         $leadtypes_optional_values->name,
@@ -575,6 +575,7 @@ add_action('gform_editor_js', function () {
     
       // Make sure our field gets populated with its saved value
     jQuery(document).on("gform_load_field_settings", function(event, field, form) {
+        
         var leadtypescount = '<?php echo $count; ?>';
     
         var third_party_value = field['thirdPartyInput'];
@@ -583,7 +584,7 @@ add_action('gform_editor_js', function () {
 
            for (i = 0; i < leadtypescount; i++) {
 
-            
+          
             jQuery("#field_encrypt_value"+i).prop( 'checked', ( rgar( field, 'encryptField'+i )) );
 
             
@@ -829,12 +830,14 @@ function lead_type_option_submit()
 
     $form_id = $_REQUEST['form_id'];
 
-    foreach ($leadtype_save_values as $leadtype_save_value) {
-        $wpdb->delete($leadtype_form_save, [
+      $wpdb->delete($leadtype_form_save, [
             'form_id' => $form_id,
             'field_id' => $field_id,
-            'label_value' => $leadtype_save_value['labelvalue'],
+            
         ]);
+
+    foreach ($leadtype_save_values as $leadtype_save_value) {
+      
 
         $wpdb->insert($leadtype_form_save, [
             'form_id' => $form_id,

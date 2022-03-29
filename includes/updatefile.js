@@ -62,7 +62,8 @@ jQuery(document).ready(function () {
     }
     else{
      
-      jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]').css('display','none');
+      jQuery(this).css('display','none');
+      jQuery(this).val('');
     }
 
 });
