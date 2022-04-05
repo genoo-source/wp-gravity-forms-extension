@@ -6,3 +6,21 @@
 {
 margin:20px !important;
 }
+
+.leadtypeselected span
+{
+display : none;
+}
+.leadtypeupdate span
+{
+display : none;
+}
+.leadtypeselected
+{
+padding: 5px;
+}
+.leadtypeupdate
+{
+padding: 5px;
+}
+

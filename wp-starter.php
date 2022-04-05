@@ -487,11 +487,10 @@ add_action(
 
                 <input type="text" id="field_id_input_label_text" class="field_id_input_value_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" style="display: none;"/>
             </li>
-                     
-                                   <?php $i++;} ?>
+              <?php $i++;} ?>
                    </div>
-                   <div> <button type="button" class="leadtypeselected">submit</button></div>
-                   <div> <button type="button" class="leadtypeupdate" style="display: none;">update</button></div>
+                   <div> <input type="button" class="leadtypeselected" value="Submit" /></div>
+                   <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
                                    <?php
                             endif;
                         } catch (Exception $e) {
@@ -589,12 +588,21 @@ add_action('gform_editor_js', function () {
 
             
         }
+
                 
             if(third_party_value!='leadtypes')
             {
              jQuery('.leadtypecheckbox').css('display','none');   
              jQuery('.leadtypeselected').css('display','none');   
+         
 
+            }
+            else{
+             jQuery('.leadtypecheckbox').css('display','block');   
+             jQuery('.leadtypeselected').css('display','block'); 
+             jQuery(".leadtypecheckbox").css("height", "200px");
+            jQuery('.leadtypecheckbox').css("overflow","auto");
+            jQuery(".leadtypecheckbox").css("display","block");      
             }
 
            
@@ -689,9 +697,8 @@ add_filter(
 );
 add_filter('gform_pre_render', 'populate_dropdown');
 add_filter('gform_pre_validation', 'populate_dropdown');
-add_filter('gform_pre_submission_filter', 'populate_dropdown');
 add_filter('gform_admin_pre_render', 'populate_dropdown');
-
+add_filter('gform_pre_submission_filter', 'populate_dropdown');
 function populate_dropdown($form)
 {
     global $WPME_API, $wpdb;
@@ -814,7 +821,7 @@ function lead_folder_field_creation($upgrader_object, $options)
         label_value int(11), PRIMARY KEY(id)) $charset_collate;";
     gf_upgrade()->dbDelta($sql);
 }
-add_action('admin_enqueue_scripts', 'adminEnqueueScripts', 10, 1);
+add_action('admin_init', 'adminEnqueueScripts');
 
 add_action('wp_ajax_lead_type_option_submit', 'lead_type_option_submit');
 
@@ -848,20 +855,18 @@ function lead_type_option_submit()
     }
 }
 
-function adminEnqueueScripts($hook)
+function adminEnqueueScripts()
 {
     // scripts
     wp_enqueue_script(
-        'my_custom_script',
+        'gravityform-script',
         plugin_dir_url(__FILE__) . 'includes/updatefile.js',
         [],
         '1.0'
     );
     wp_enqueue_style(
-        'my_custom_style',
-        plugin_dir_url(__FILE__) . 'includes/leadtype.css',
-        [],
-        '1.0'
+        'gravityform-style',
+        plugin_dir_url(__FILE__) . 'includes/leadtype.css'
     );
 }
 

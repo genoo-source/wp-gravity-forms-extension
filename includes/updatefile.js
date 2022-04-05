@@ -102,7 +102,7 @@ jQuery(this).parent().css("display","none");
 jQuery(".leadtypeupdate").on("click",function(){
 
   var allvalues = [];
-
+  
  jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]:checked').each(function() {
   var data = {};
   var labelattribute = jQuery(this).attr("id");
@@ -117,6 +117,8 @@ jQuery(".leadtypeupdate").on("click",function(){
   data.labelvalue =  jQuery(field_id_input_value_text).val(); 
   
   allvalues.push(data);
+
+
 
  });
 
@@ -141,6 +143,8 @@ jQuery(".leadtypeupdate").on("click",function(){
         jQuery(".leadtypecheckbox h1").addClass("editheader");
         jQuery(".leadtypecheckbox").removeAttr("style");
 
+        jQuery('.encrypt_setting_leadtypes  > input').css('display','none');
+           
       },
   
       error: function (errorThrown) {
