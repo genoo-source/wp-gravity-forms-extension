@@ -83,7 +83,19 @@ register_activation_hook(__FILE__, function () {
             PRIMARY KEY  (id),
             UNIQUE KEY form_id (form_id)
                   ) $charset_collate;";
-        gf_upgrade()->dbDelta($sql);}
+        gf_upgrade()->dbDelta($sql);
+    
+        $leadsql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}leadtype_form_save (
+            id int(11) unsigned not null auto_increment,
+            form_id int(11) unsigned not null,
+            field_id int(11) unsigned not null,
+            label_name varchar(255),
+            label_value int(11), PRIMARY KEY(id)) $charset_collate;";
+        gf_upgrade()->dbDelta($leadsql);
+    
+    
+    
+    }
 });
 
 /**
