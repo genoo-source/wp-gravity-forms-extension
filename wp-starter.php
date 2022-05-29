@@ -331,6 +331,7 @@ function access_entry_via_field($entry, $form)
                         // Looks like leadfields not found
                     endif;
                 }
+
             endif;
             $geno_ids = $response->genoo_id;
             setcookie('_gtld', $geno_ids, time() + 10 * 365 * 24 * 60 * 60);
@@ -402,11 +403,14 @@ function gf_gravityform()
 add_action(
     'gform_field_standard_settings',
     function ($position, $form_id) {
+        
+      
+
         // position -1 for adding third party(Genoo/WPMktgEngine Field:) as last
 
         if ($position == -1):
 
-            global $WPME_API;
+            global $WPME_API,$wpdb;
             //calling leadfields api for showing dropdown
             if (method_exists($WPME_API, 'callCustom')):
                 try {
@@ -473,21 +477,63 @@ add_action(
                                 'GET',
                                 null
                             );
+                            $leadTypefolders = $WPME_API->callCustom(
+                                '/listLeadTypeFolders/Uncategorized',
+                                'GET',
+                                'NULL'
+                            );
                             if ($WPME_API->http->getResponseCode() == 204):
                                 // No leadfields based on folderdid onchange! Ooops
 
 
                             elseif ($WPME_API->http->getResponseCode() == 200):
-                                $i = 0; ?>
-                                      <div class="leadtypecheckbox" style="height:200px;overflow: auto";>
+
+                            endif;
+                                $i = 0;
+                            ?>
+                        <div class="folderupdates"> 
+                        <label class="section_label" for="field_admin_label"><?php _e(
+             'Select Lead Folders:'
+         ); ?></label>
+                            <div class="leadtypefolder">
+                          
+                            <?php foreach (
+                                        $leadTypefolders
+                                        as $leadTypefolder
+                                    ) { ?>
+                        <li class="encrypt_setting_folders field_setting" >
+
+                
+        
+                <input type="checkbox" id="leadfolder_encrypt_value<?php echo $i; ?>" name="leadfolder_encrypt_value<?php echo $i; ?>" dataidvalue=<?php echo $leadTypefolder->type_id; ?>  onchange="SetFieldProperty('leadfolder<?php echo $i; ?>', this.checked);" />
+                <label for="leadfolder_encrypt_value<?php echo $i; ?>" class="leadtype_folder_label<?php echo $i; ?>" style="display:inline;">
+                    <?php _e(
+                        $leadTypefolder->name,
+                        'Gravity Forms WPMktgEngine Extension'
+                    ); ?>
+                    <?php gform_tooltip('form_field_encrypt_value'); ?>
+                </label>  
+           
+
+            </li>
+              <?php $i++;} ?>
+                  </div>
+                <div><input type="button" class="leadfolderselected" value="Submit" /></div> 
+                </div>   
+
+                <div class="leadtypecheckbox" style="height:100px;overflow: auto";>
                                       <h1 class="editheader">Edit Label Here:</h1>
+
+                                      <label class="section_label" for="field_admin_label"><?php _e(
+             'Select Lead Types:'
+         ); ?></label>
                                     <?php foreach (
                                         $leadtypes_optional
                                         as $leadtypes_optional_values
                                     ) { ?>
-                        <li class="encrypt_setting_leadtypes field_setting">
+                        <li class="encrypt_setting_leadtypes field_setting"  datafolder-id="<?php echo $leadtypes_optional_values->folder_id;?>">
         
-                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?>  onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
+                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
                 <label for="field_encrypt_value<?php echo $i; ?>" class="leadtype_value_label<?php echo $i; ?>" style="display:inline;">
                     <?php _e(
                         $leadtypes_optional_values->name,
@@ -497,14 +543,14 @@ add_action(
                 </label>  
                 <input type="text" id="field_id_input_label_text" class="field_id_input_label_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->name; ?>" style="display: none;"/>
 
-                <input type="text" id="field_id_input_label_text" class="field_id_input_value_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" style="display: none;"/>
-            </li>
-              <?php $i++;} ?>
-                   </div>
-                   <div> <input type="button" class="leadtypeselected" value="Submit" /></div>
-                   <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
+<input type="text" id="field_id_input_label_text" class="field_id_input_value_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" style="display: none;"/>
+</li>
+<?php $i++;} ?>
+   </div>
+   <div> <input type="button" class="leadtypeselected" value="Submit" /></div>
+   <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
                                    <?php
-                            endif;
+                          
                         } catch (Exception $e) {
                         }
                     endif; ?>
@@ -522,26 +568,40 @@ add_action(
 );
 // gform_editor_js function for restricting types to show Genoo/WPMktgEngine Field:
 add_action('gform_editor_js', function () {
-    //standard, advanced,post,price field types without premapped fields
-    global $WPME_API;
-    if (method_exists($WPME_API, 'callCustom')):
-        try {
-            $leadtypes_optional = $WPME_API->callCustom(
-                '/leadtypes',
-                'GET',
-                null
-            );
-            $count = count($leadtypes_optional);
-            if ($WPME_API->http->getResponseCode() == 204):
-                // No leadfields based on folderdid onchange! Ooops
+    
+
+    ?>
+  
+    <?php
 
 
-            elseif ($WPME_API->http->getResponseCode() == 200):
-            endif;
-        } catch (Exception $e) {
-            //To DO
-        }
-    endif;
+global $WPME_API;
+if (method_exists($WPME_API, 'callCustom')):
+    try {
+        $leadtypes_optional = $WPME_API->callCustom(
+            '/leadtypes',
+            'GET',
+            null
+        );
+        $leadfoders_optional =  $WPME_API->callCustom(
+            '/listLeadTypeFolders/Uncategorized',
+            'GET',
+            null
+        );
+       
+        if ($WPME_API->http->getResponseCode() == 204):
+            // No leadfields based on folderdid onchange! Ooops
+
+
+        elseif ($WPME_API->http->getResponseCode() == 200):
+        endif;
+    } catch (Exception $e) {
+        //To DO
+    }
+endif;  
+
+$count = count($leadtypes_optional);
+$folder_count = count($leadfoders_optional);
 
     $all_default_types = [
         'text',
@@ -576,22 +636,64 @@ add_action('gform_editor_js', function () {
     ];
     foreach ($all_default_types as $default_type): ?>
     <script type="text/javascript">
-    
+         jQuery('.leadtypeupdating').hide();
+
         var type = '<?php echo $default_type; ?>';
        
      
       fieldSettings[type] += ', .thirdparty_input_setting';
+      fieldSettings[type] += ', .encrypt_setting_folders';
       fieldSettings[type] += ', .encrypt_setting_leadtypes';
+      fieldSettings[type] += ', .select_gravity_input_settings';
+      fieldSettings[type] += ', .leadtypeupdating';
+      
+     
+
+     // console.log(fieldSettings);
       
     
       // Make sure our field gets populated with its saved value
     jQuery(document).on("gform_load_field_settings", function(event, field, form) {
         
-        var leadtypescount = '<?php echo $count; ?>';
+     var value = [];
+       var leadtypescount = '<?php echo $count; ?>';
+
+       var leadfolderscount = '<?php echo $folder_count; ?>';
     
         var third_party_value = field['thirdPartyInput'];
         
-            jQuery("#field_thirdparty_input").val(field["thirdPartyInput"]);
+        
+          jQuery('.leadtypeupdating').css('display','none');
+
+
+        jQuery("#field_thirdparty_input").val(field["thirdPartyInput"]);
+
+
+        for (i = 0; i < leadfolderscount; i++) {
+
+          
+jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolder'+i )) );
+
+     
+ }
+
+
+ jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]').each(function() {
+       
+
+    if(jQuery(this).is(":checked")){
+    var objectvalue = jQuery(this).closest('.encrypt_setting_leadtypes');
+                  var parentDivision =jQuery(objectvalue);
+             parentDivision.css('display','block');      
+    
+    }
+    else{
+        var objectvalue = jQuery(this).closest('.encrypt_setting_leadtypes');
+                  var parentDivision =jQuery(objectvalue);
+             parentDivision.css('display','none');      
+    
+    }
+    });
 
            for (i = 0; i < leadtypescount; i++) {
 
@@ -604,17 +706,16 @@ add_action('gform_editor_js', function () {
                 
             if(third_party_value!='leadtypes')
             {
-             jQuery('.leadtypecheckbox').css('display','none');   
-             jQuery('.leadtypeselected').css('display','none');   
-         
-
+             jQuery('.folderupdates').css('display','none');
+             jQuery(".leadtypecheckbox").css("display","none");
+            jQuery(".leadtypeselected").css("display","none");   
+                
             }
             else{
-             jQuery('.leadtypecheckbox').css('display','block');   
-             jQuery('.leadtypeselected').css('display','block'); 
-             jQuery(".leadtypecheckbox").css("height", "200px");
-            jQuery('.leadtypecheckbox').css("overflow","auto");
-            jQuery(".leadtypecheckbox").css("display","block");      
+                jQuery('.folderupdates').css('display','block');  
+                jQuery(".leadtypecheckbox").css("display","block");
+                jQuery(".leadtypeselected").css("display","block");
+           
             }
 
            
@@ -835,6 +936,49 @@ function lead_folder_field_creation($upgrader_object, $options)
 }
 add_action('admin_init', 'adminEnqueueScripts');
 
+add_action('wp_ajax_gravity_form_get_lead_id', 'gravity_form_get_lead_id');
+function gravity_form_get_lead_id(){
+    global $WPME_API;
+ $lead_id = $_REQUEST['lead_id'];
+
+
+   if (method_exists($WPME_API, 'callCustom')):
+                        try {
+                             
+                            $leadtypes_optional_value = $WPME_API->callCustom(
+                                '/leadtypes',
+                                'GET',
+                                null
+                            );
+                          
+                           
+                               $leadtypes_optional = array();
+
+                        foreach($leadtypes_optional_value as $leadtypes_optional_values):
+
+                            if($leadtypes_optional_values->folder_id==$lead_id):
+                      $leadtypes_optional[$leadtypes_optional_values->id]=$leadtypes_optional_values->name;
+                            endif;
+                endforeach;
+ 
+               
+            }
+             catch (Exception $e) {
+            //To DO
+        }
+
+   endif;      
+
+ //  $count_check_Value = count($leadtypes_optional);
+
+
+
+ //return $lead_id;
+ wp_send_json($leadtypes_optional);
+
+
+}
+
 add_action('wp_ajax_lead_type_option_submit', 'lead_type_option_submit');
 
 function lead_type_option_submit()
@@ -848,7 +992,7 @@ function lead_type_option_submit()
     $field_id = $_REQUEST['field_id'];
 
     $form_id = $_REQUEST['form_id'];
-
+  
       $wpdb->delete($leadtype_form_save, [
             'form_id' => $form_id,
             'field_id' => $field_id,

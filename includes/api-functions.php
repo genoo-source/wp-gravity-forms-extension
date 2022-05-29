@@ -4,6 +4,9 @@ add_action( 'wp_ajax_createleadtype', 'createleadtype' );
 add_action( 'wp_ajax_leadtypefilter', 'leadtypefilter' );
 add_action( 'wp_ajax_saveformdata', 'saveformdata' );
 add_action('wp_ajax_create_gravity_lead_folder','create_gravity_lead_folder');
+add_action('wp_ajax_display_selected_gravity_leadtypes','display_selected_gravity_leadtypes');
+add_action('wp_ajax_display_updating_leadtype_box','display_updating_leadtype_box');
+
 //for ajax call to get emails based on folderid when on change function works.
 
 function getleadEmail( $folderid ) {
@@ -21,6 +24,32 @@ function getleadEmail( $folderid ) {
     } catch( Exception $e ) {
     }
     endif;
+}
+function display_updating_leadtype_box()
+{
+    global $WPME_API;
+     $lead_gravity_id = $_REQUEST['ledtype_ids'];
+    
+     if (method_exists($WPME_API, 'callCustom')) :
+        try {
+            $leadTypes = $WPME_API->callCustom('/leadtypes', 'GET', null);
+
+
+            foreach ($leadTypes as $leadType) {
+              if (in_array($leadType->id, $lead_gravity_id)) :
+                        $leadtype_values[$leadType->id] = $leadType->name;
+
+                    endif;
+                    
+            }
+               wp_send_json($leadtype_values);    
+       
+            }
+         catch (Exception $e) {
+            //To Do
+        }
+        endif;
+    
 }
 
 function create_gravity_lead_folder()
@@ -60,6 +89,36 @@ function create_gravity_lead_folder()
         }
     endif;
 
+}
+function display_selected_gravity_leadtypes()
+{
+    global $WPME_API;
+    
+    $lead_gravity_id = $_REQUEST['folderid'];
+    
+  
+    
+     if (method_exists($WPME_API, 'callCustom')) :
+        try {
+            $leadTypes = $WPME_API->callCustom('/leadtypes', 'GET', null);
+
+
+            foreach ($leadTypes as $leadType) {
+              if (in_array($leadType->folder_id, $lead_gravity_id)) :
+                        $leadtype_values[$leadType->id] = $leadType->name;
+
+                    endif;
+                    
+            }
+               wp_send_json($leadtype_values);    
+       
+            }
+         catch (Exception $e) {
+            //To Do
+        }
+        endif;
+        
+     
 }
 
 function createleadtype() {
@@ -108,6 +167,8 @@ function leadtypefilter() {
     endif;
 
 }
+
+
 
 function saveformdata() {
 
