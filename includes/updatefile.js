@@ -38,7 +38,8 @@ jQuery(document).ready(function () {
     {
       jQuery(".folderupdates").css("display","block");
      jQuery(".leadtypecheckbox").css("display","block");
-     jQuery(".leadtypeselected").css("display","block");
+     jQuery(".encrypt_section_label").css("display","none");
+      jQuery(".leadtypeselected").css("display","none");
       jQuery(".leadtypecheckbox").css("height", "200px");
      jQuery('.leadtypecheckbox').css("overflow","auto");
     }
@@ -46,8 +47,9 @@ jQuery(document).ready(function () {
    
       jQuery(".folderupdates").css("display","none");
       jQuery(".leadtypecheckbox").css("display","none");
-    //  jQuery(".leadtypeselected").css("display","none");
-      
+     jQuery(".leadtypeselected").css("display","none");
+    jQuery(".encrypt_section_label").css("display","none");
+
       }
       });
   }); 
@@ -56,6 +58,8 @@ jQuery(document).ready(function () {
  jQuery(".leadfolderselected").on(
       "click",
       function (event) {
+          
+              
  
         var objectvalue = jQuery(this).closest('.folderupdates');
         var dataleadid = [];
@@ -63,12 +67,17 @@ jQuery(document).ready(function () {
 
         parentDiv.find(".leadtypefolder > .encrypt_setting_folders  > input:checked").each(function(){
 
-         
           dataleadid.push(jQuery(this).attr("dataidvalue"));
 
          });
 
-         
+           jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]:checked').each(function() {
+             var id = jQuery(this).attr("data-value-id");
+          if(jQuery.inArray(id, dataleadid) == -1){
+          jQuery(this).attr('checked', false).trigger('click');
+          }
+
+           }); 
 
 
          jQuery('.encrypt_setting_leadtypes').each(function() {
@@ -78,27 +87,23 @@ jQuery(document).ready(function () {
          if(jQuery.inArray(folderid, dataleadid) != -1)
           {
            // alert(folderid);
-        jQuery(this).css('display','block'); 
+          jQuery(this).css('display','block'); 
+                   jQuery(".encrypt_section_label").css("display","block");
+
           }
           else{
+      
             jQuery(this).css('display','none'); 
+                     jQuery(".encrypt_section_label").css("display","none");
+
  
           }
-
-
-          
-
-         });
-         jQuery(".leadtypeselected").css("display","block");
+     });
+          jQuery(".leadtypeselected").css("display","block");
+         jQuery(".encrypt_section_label").css("display","block");
 
   });
 
-   
- 
-
-
-
- 
 
   jQuery(".leadtypeselected").on("click",function(){
     // jQuery(".leadtypecheckbox").removeAttr("style");
@@ -167,7 +172,7 @@ jQuery(document).ready(function () {
            form_id:formid,
          },
          success: function (data) {
-   
+          jQuery('.encrypt_section_label').css('display','none');
            jQuery('.encrypt_setting_leadtypes').css('display','none');
            jQuery('.leadtypeupdate').css('display','none');
            jQuery(".leadtypecheckbox h1").addClass("editheader");

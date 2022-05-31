@@ -524,8 +524,7 @@ add_action(
                 <div class="leadtypecheckbox" style="height:100px;overflow: auto";>
                                       <h1 class="editheader">Edit Label Here:</h1>
 
-                                      <label class="section_label" for="field_admin_label"><?php _e(
-             'Select Lead Types:'
+                                      <label class="leadtype_label encrypt_section_label" for="field_admin_label"><?php _e('Select Lead Types:'
          ); ?></label>
                                     <?php foreach (
                                         $leadtypes_optional
@@ -533,7 +532,7 @@ add_action(
                                     ) { ?>
                         <li class="encrypt_setting_leadtypes field_setting"  datafolder-id="<?php echo $leadtypes_optional_values->folder_id;?>">
         
-                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
+                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> data-value-id=<?php echo $leadtypes_optional_values->folder_id;?> onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
                 <label for="field_encrypt_value<?php echo $i; ?>" class="leadtype_value_label<?php echo $i; ?>" style="display:inline;">
                     <?php _e(
                         $leadtypes_optional_values->name,
@@ -543,12 +542,12 @@ add_action(
                 </label>  
                 <input type="text" id="field_id_input_label_text" class="field_id_input_label_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->name; ?>" style="display: none;"/>
 
-<input type="text" id="field_id_input_label_text" class="field_id_input_value_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" style="display: none;"/>
-</li>
-<?php $i++;} ?>
-   </div>
-   <div> <input type="button" class="leadtypeselected" value="Submit" /></div>
-   <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
+        <input type="text" id="field_id_input_label_text" class="field_id_input_value_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" style="display: none;"/>
+        </li>
+        <?php $i++;} ?>
+           </div>
+           <div> <input type="button" class="leadtypeselected" value="Submit" /></div>
+           <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
                                    <?php
                           
                         } catch (Exception $e) {
@@ -708,13 +707,17 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
             {
              jQuery('.folderupdates').css('display','none');
              jQuery(".leadtypecheckbox").css("display","none");
-            jQuery(".leadtypeselected").css("display","none");   
+            jQuery(".leadtypeselected").css("display","none"); 
+            jQuery(".encrypt_section_label").css("display","none");
+
                 
             }
             else{
                 jQuery('.folderupdates').css('display','block');  
                 jQuery(".leadtypecheckbox").css("display","block");
                 jQuery(".leadtypeselected").css("display","block");
+                jQuery(".encrypt_section_label").css("display","block");
+
            
             }
 

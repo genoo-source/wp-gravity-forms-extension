@@ -2,14 +2,19 @@
 {
     display:none !important;
 }
-.leadtypecheckbox
-{
-margin:20px !important;
-}
 
 .leadtypeselected span
 {
 display : none;
+}
+/*label.section_label {
+    margin-bottom: 8px;
+    float: left;
+    width: 100%;
+}*/
+.leadtypefolder {
+    overflow: auto;
+    height: 130px;
 }
 .leadtypeupdate span
 {
@@ -23,18 +28,24 @@ padding: 5px;
 {
 padding: 5px;
 }
-.leadtypefolder
+.leadtype_label
 {
-overflow:auto;
-height:200px;
+    margin:5px;
+    float:left;
+    width:100%;
 }
 
+.leadtypecheckbox {
+    margin: 20px 0 !important;
+    overflow: auto;
+    height: 150px;
+}
 .leadtypeselected
 {
 background: #3e7da6 !important;
     border: #3e7da6 !important;
     color: #fff !important;
-    margin: 10px;
+    margin: 10px 0px;
     padding: 6px;
 }
 .leadfolderselected
@@ -42,7 +53,7 @@ background: #3e7da6 !important;
 background: #3e7da6 !important;
     border: #3e7da6 !important;
     color: #fff !important;
-    margin: 10px;
+    margin: 10px 0px;
     padding: 6px;
 }
 
