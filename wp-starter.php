@@ -11,12 +11,10 @@ Author: Genoo LLC
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -492,10 +490,17 @@ add_action(
                                 $i = 0;
                             ?>
                         <div class="folderupdates"> 
+                        
+                            <div class="folderleadupdates">
+                                </div>
+                      
+                        
                         <label class="section_label" for="field_admin_label"><?php _e(
              'Select Lead Folders:'
          ); ?></label>
-                            <div class="leadtypefolder">
+         
+                       <i class="leadfolderarrow down"></i>         
+                       <div class="leadtypefolder">
                           
                             <?php foreach (
                                         $leadTypefolders
@@ -503,9 +508,7 @@ add_action(
                                     ) { ?>
                         <li class="encrypt_setting_folders field_setting" >
 
-                
-        
-                <input type="checkbox" id="leadfolder_encrypt_value<?php echo $i; ?>" name="leadfolder_encrypt_value<?php echo $i; ?>" dataidvalue=<?php echo $leadTypefolder->type_id; ?>  onchange="SetFieldProperty('leadfolder<?php echo $i; ?>', this.checked);" />
+                   <input type="checkbox" id="leadfolder_encrypt_value<?php echo $i; ?>" name="leadfolder_encrypt_value<?php echo $i; ?>" dataidvalue=<?php echo $leadTypefolder->type_id; ?> leadfoldername="<?php echo $leadTypefolder->name; ?>" onchange="SetFieldProperty('leadfolder<?php echo $i; ?>', this.checked);" />
                 <label for="leadfolder_encrypt_value<?php echo $i; ?>" class="leadtype_folder_label<?php echo $i; ?>" style="display:inline;">
                     <?php _e(
                         $leadTypefolder->name,
@@ -520,19 +523,22 @@ add_action(
                   </div>
                 <div><input type="button" class="leadfolderselected" value="Submit" /></div> 
                 </div>   
-
-                <div class="leadtypecheckbox" style="height:100px;overflow: auto";>
-                                      <h1 class="editheader">Edit Label Here:</h1>
-
-                                      <label class="leadtype_label encrypt_section_label" for="field_admin_label"><?php _e('Select Lead Types:'
+                <div class="leadtypeselectoption">
+	     <div class="leadtypeupdates"> 
+		 </div>
+		   <h1 class="editheader">Edit Label Here:</h1>
+              <label class="leadtype_label encrypt_section_label" for="field_admin_label"><?php _e('Select Lead Types:'
          ); ?></label>
-                                    <?php foreach (
+		   <i class="leadtypesarrow down"></i>
+
+                <div class="leadtypecheckbox">
+                     <?php foreach (
                                         $leadtypes_optional
                                         as $leadtypes_optional_values
                                     ) { ?>
                         <li class="encrypt_setting_leadtypes field_setting"  datafolder-id="<?php echo $leadtypes_optional_values->folder_id;?>">
         
-                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> data-value-id=<?php echo $leadtypes_optional_values->folder_id;?> onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
+                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> data-value-id=<?php echo $leadtypes_optional_values->folder_id;?> dataidvalue=<?php echo $leadtypes_optional_values->id; ?> leadfoldername="<?php echo $leadtypes_optional_values->name; ?>" onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
                 <label for="field_encrypt_value<?php echo $i; ?>" class="leadtype_value_label<?php echo $i; ?>" style="display:inline;">
                     <?php _e(
                         $leadtypes_optional_values->name,
@@ -548,6 +554,7 @@ add_action(
            </div>
            <div> <input type="button" class="leadtypeselected" value="Submit" /></div>
            <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
+		   </div>
                                    <?php
                           
                         } catch (Exception $e) {
@@ -642,15 +649,17 @@ $folder_count = count($leadfoders_optional);
      
       fieldSettings[type] += ', .thirdparty_input_setting';
       fieldSettings[type] += ', .encrypt_setting_folders';
+    //  fieldSettings[type] += ',.leadingbox';
       fieldSettings[type] += ', .encrypt_setting_leadtypes';
       fieldSettings[type] += ', .select_gravity_input_settings';
       fieldSettings[type] += ', .leadtypeupdating';
-      
+         var alreadyAdded = [];
+         var leadtypearray = [];
      
 
      // console.log(fieldSettings);
       
-    
+      jQuery('.folderleadupdates').empty();
       // Make sure our field gets populated with its saved value
     jQuery(document).on("gform_load_field_settings", function(event, field, form) {
         
@@ -674,7 +683,43 @@ $folder_count = count($leadfoders_optional);
 jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolder'+i )) );
 
      
- }
+   
+    }
+  
+
+    jQuery('.encrypt_setting_folders > input[type="checkbox"]').each(function() {
+     
+       var objectvalue = jQuery(this).closest('.folderupdates');
+        var foldername = jQuery(this).attr("leadfoldername");
+       var folderid = jQuery(this).attr("dataidvalue");
+        var parentDiv=jQuery(objectvalue);
+     if(jQuery(this).is(':checked')){
+     
+   if(jQuery.inArray(foldername, alreadyAdded) == -1)
+      {
+       alreadyAdded.push(foldername); 
+       
+       if(jQuery("#" + folderid).length == 0) {
+     parentDiv.find('.folderleadupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>');
+     }
+      }
+     else
+     {
+        
+     }
+ 
+     }
+     else
+     {
+       var folderremove = '.'+folderid;
+      jQuery(folderremove).remove();
+      
+     }
+   
+
+ 
+       
+   });
 
 
  jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]').each(function() {
@@ -693,6 +738,33 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
     
     }
     });
+    
+     jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]').each(function() {
+          var objectvalue = jQuery(this).closest('.leadtypeselectoption');
+         var parentDivision =jQuery(objectvalue);   
+          var foldername = jQuery(this).attr("leadfoldername");
+        var folderid = jQuery(this).attr("dataidvalue");
+        
+       // jQuery('.leadtypeupdates').empty();
+    if(jQuery(this).is(":checked")){
+  
+    
+       if(jQuery.inArray(foldername, leadtypearray) == -1)
+      {
+       leadtypearray.push(foldername); 
+              if(jQuery("#" + folderid).length == 0) {
+
+     parentDivision.find('.leadtypeupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>');
+     }
+      }
+     else
+     {
+        
+     }
+    
+    }
+
+    });
 
            for (i = 0; i < leadtypescount; i++) {
 
@@ -706,17 +778,21 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
             if(third_party_value!='leadtypes')
             {
              jQuery('.folderupdates').css('display','none');
-             jQuery(".leadtypecheckbox").css("display","none");
+            // jQuery(".leadtypecheckbox").css("display","none");
             jQuery(".leadtypeselected").css("display","none"); 
             jQuery(".encrypt_section_label").css("display","none");
 
-                
+            jQuery(".leadtypesarrow").css("display","none");     
             }
             else{
+               jQuery('.leadfolderarrow').trigger("click");
+                 jQuery('.leadtypesarrow').trigger("click");
+
                 jQuery('.folderupdates').css('display','block');  
-                jQuery(".leadtypecheckbox").css("display","block");
+                //jQuery(".leadtypecheckbox").css("display","block");
                 jQuery(".leadtypeselected").css("display","block");
                 jQuery(".encrypt_section_label").css("display","block");
+                 jQuery(".leadtypesarrow").css("display","block");   
 
            
             }

@@ -37,18 +37,27 @@ jQuery(document).ready(function () {
     if (jQuery(this).val() === "leadtypes")
     {
       jQuery(".folderupdates").css("display","block");
-     jQuery(".leadtypecheckbox").css("display","block");
+    // jQuery(".leadtypecheckbox").css("display","block");
      jQuery(".encrypt_section_label").css("display","none");
+    jQuery(".leadtypesarrow").css("display","none");
+
+  //    jQuery(".leadtypesarrow").css("display","none");
       jQuery(".leadtypeselected").css("display","none");
-      jQuery(".leadtypecheckbox").css("height", "200px");
+    
+      //jQuery(".leadtypecheckbox").css("height", "200px");
      jQuery('.leadtypecheckbox').css("overflow","auto");
+     jQuery('.leadfolderarrow').trigger("click");
     }
     else {
    
       jQuery(".folderupdates").css("display","none");
-      jQuery(".leadtypecheckbox").css("display","none");
+   //   jQuery(".leadtypecheckbox").css("display","none");
      jQuery(".leadtypeselected").css("display","none");
     jQuery(".encrypt_section_label").css("display","none");
+      jQuery(".leadtypesarrow").css("display","none");
+
+         // jQuery(".leadtypesarrow").css("display","none");
+
 
       }
       });
@@ -86,21 +95,30 @@ jQuery(document).ready(function () {
 
          if(jQuery.inArray(folderid, dataleadid) != -1)
           {
-           // alert(folderid);
+         
           jQuery(this).css('display','block'); 
-                   jQuery(".encrypt_section_label").css("display","block");
+           jQuery(".encrypt_section_label").css("display","block");
+                jQuery(".leadtypesarrow").css("display","block");
+
 
           }
           else{
       
             jQuery(this).css('display','none'); 
                      jQuery(".encrypt_section_label").css("display","none");
+                     
+                
+              
 
  
           }
      });
+
           jQuery(".leadtypeselected").css("display","block");
+            jQuery(".leadtypesarrow").css("display","block");
          jQuery(".encrypt_section_label").css("display","block");
+          jQuery('.leadtypesarrow').trigger("click");
+
 
   });
 
@@ -172,7 +190,7 @@ jQuery(document).ready(function () {
            form_id:formid,
          },
          success: function (data) {
-          jQuery('.encrypt_section_label').css('display','none');
+       //   jQuery('.encrypt_section_label').css('display','none');
            jQuery('.encrypt_setting_leadtypes').css('display','none');
            jQuery('.leadtypeupdate').css('display','none');
            jQuery(".leadtypecheckbox h1").addClass("editheader");
@@ -188,5 +206,60 @@ jQuery(document).ready(function () {
        });
    
    });
+  jQuery(document).on(
+  "change",
+  ".encrypt_setting_folders > input[type='checkbox']",
+  function (event) {
+        var objectvalue = jQuery(this).closest('.folderupdates');
+        var foldername = jQuery(this).attr("leadfoldername");
+        var folderid = jQuery(this).attr("dataidvalue");
+          var parentDiv=jQuery(objectvalue);
+     if(jQuery(this).is(':checked') ){
+    
+        parentDiv.find('.folderleadupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>')
+     }
+     else
+     {
+       var folderremove = '.'+folderid;
+      jQuery(folderremove).remove();
+      
+     }
   });
-
+  
+  
+   jQuery(".leadfolderarrow").on(
+      "click",
+      function (event) {
+       jQuery(".leadtypefolder").toggle();
+       
+        
+      });
+      
+        jQuery(document).on(
+  "change",
+  ".encrypt_setting_leadtypes > input[type='checkbox']",
+  function (event) {
+        var objectvalue = jQuery(this).closest('.leadtypeselectoption');
+        var foldername = jQuery(this).attr("leadfoldername");
+        var folderid = jQuery(this).attr("dataidvalue");
+          var parentDiv=jQuery(objectvalue);
+     if(jQuery(this).is(':checked') ){
+    
+        parentDiv.find('.leadtypeupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>')
+     }
+     else
+     {
+       var folderremove = '.'+folderid;
+      jQuery(folderremove).remove();
+      
+     }
+  });
+       
+  jQuery(".leadtypesarrow").on(
+      "click",
+      function (event) {
+       jQuery(".leadtypecheckbox").toggle();
+       
+        
+      });
+  });

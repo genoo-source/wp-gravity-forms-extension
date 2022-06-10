@@ -12,10 +12,10 @@ display : none;
     float: left;
     width: 100%;
 }*/
-.leadtypefolder {
+/*.leadtypefolder {
     overflow: auto;
     height: 130px;
-}
+}*/
 .leadtypeupdate span
 {
 display : none;
@@ -35,11 +35,11 @@ padding: 5px;
     width:100%;
 }
 
-.leadtypecheckbox {
+/*.leadtypecheckbox {
     margin: 20px 0 !important;
     overflow: auto;
     height: 150px;
-}
+}*/
 .leadtypeselected
 {
 background: #3e7da6 !important;
@@ -60,10 +60,109 @@ background: #3e7da6 !important;
 .leadingoption div input {
     margin-bottom: 10px;
 }
+
 input.gravityleadtypeupdate {
     width: 100%;
     height: 36px;
     background-color: #3e7da6 !important;
     color: #fff !important;
     border: solid 1px #3e7da6;
+}
+
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+/*.folderupdates > div {
+    background: url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%239092B2%22%2F%3E%3C%2Fsvg%3E) no-repeat right 0.6rem top 55%;
+    background-color: #fff;
+    background-size: 16px 16px;
+    border: 1px solid #9092b2;
+    border-radius: 3px;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #242748;
+    font-size: .8125rem;
+    line-height: 1.6875rem;
+    max-height: 250px;
+    min-height: 2.25rem;
+    padding: 0 2rem 0 0.8125rem;
+    width: 100%;
+}*/
+.leadfolderarrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    margin: 0;
+    position: relative;
+    left: 93%;
+    top: -30px;
+}
+.leadtypesarrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    margin: 0;
+    position: relative;
+    left: 53%;
+    top: 2px;
+    width: 0%;
+    height: 6%;
+  
+}
+.leadtypefolder {
+    max-height: 180px;
+    overflow: auto;
+}
+.folderleadupdates, .leadtypeupdates {
+    float: left;
+    width: 100%;
+    height: auto;
+    border: solid 1px rgba(0,0,0,0.5);
+    min-height: 36px;
+    margin-bottom: 10px;
+    max-height: 150px;
+    overflow: auto;
+    padding: 0 5px;
+    border-radius: 3px;
+}
+.folderupdates label.section_label, .leadtype_label.encrypt_section_label {
+	width: 100%;
+	float: left;
+	height: 40px;
+	border: solid 1px rgba(0,0,0,0.5);
+	padding: 5px;
+	line-height: 28px;
+	margin-bottom: -1px;
+}
+.leadtypesarrow.down {
+	position: relative;
+    left: 93%;
+    top: 58px;
+}
+.folderleadupdates span, .leadtypeupdates span {
+	float: left;
+	width: 100%;
+	line-height: 24px;
+}
+.leadtypefolder {
+	max-height: 180px;
+	overflow: auto;
+	border: solid 1px rgba(0,0,0,0.5);
+	padding: 10px;
+	margin-top: -18px;
+}
+.leadtype_label.encrypt_section_label {
+	margin: 0;
+}
+.leadtypecheckbox {
+	max-height: 180px;
+	overflow: auto;
+	border: solid 1px rgba(0,0,0,0.5);
+	padding: 10px;
+	margin-top: -20px;
 }
