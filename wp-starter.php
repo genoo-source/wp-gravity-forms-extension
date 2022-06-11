@@ -521,7 +521,7 @@ add_action(
             </li>
               <?php $i++;} ?>
                   </div>
-                <div><input type="button" class="leadfolderselected" value="Submit" /></div> 
+                <div><input type="button" class="leadfolderselected" value="Show lead types" /></div> 
                 </div>   
                 <div class="leadtypeselectoption">
 	     <div class="leadtypeupdates"> 
@@ -552,7 +552,7 @@ add_action(
         </li>
         <?php $i++;} ?>
            </div>
-           <div> <input type="button" class="leadtypeselected" value="Submit" /></div>
+           <div> <input type="button" class="leadtypeselected" value="Update label" /></div>
            <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
 		   </div>
                                    <?php
@@ -745,7 +745,6 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
           var foldername = jQuery(this).attr("leadfoldername");
         var folderid = jQuery(this).attr("dataidvalue");
         
-       // jQuery('.leadtypeupdates').empty();
     if(jQuery(this).is(":checked")){
   
     
@@ -763,13 +762,18 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
      }
     
     }
+     else
+     {
+       var folderremove = '.'+folderid;
+      jQuery(folderremove).remove();
+      
+     }
 
     });
 
-           for (i = 0; i < leadtypescount; i++) {
+         for (i = 0; i < leadtypescount; i++) {
 
-          
-            jQuery("#field_encrypt_value"+i).prop( 'checked', ( rgar( field, 'encryptField'+i )) );
+          jQuery("#field_encrypt_value"+i).prop( 'checked', ( rgar( field, 'encryptField'+i )) );
 
             
         }
@@ -778,21 +782,22 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
             if(third_party_value!='leadtypes')
             {
              jQuery('.folderupdates').css('display','none');
+             jQuery(".leadtypeselectoption").css("display","none");
+
             // jQuery(".leadtypecheckbox").css("display","none");
             jQuery(".leadtypeselected").css("display","none"); 
             jQuery(".encrypt_section_label").css("display","none");
-
-            jQuery(".leadtypesarrow").css("display","none");     
+          jQuery(".leadtypesarrow").css("display","none");     
             }
             else{
                jQuery('.leadfolderarrow').trigger("click");
-                 jQuery('.leadtypesarrow').trigger("click");
+               jQuery('.leadtypesarrow').trigger("click");
 
                 jQuery('.folderupdates').css('display','block');  
-                //jQuery(".leadtypecheckbox").css("display","block");
+                jQuery(".leadtypeselectoption").css("display","block");
                 jQuery(".leadtypeselected").css("display","block");
-                jQuery(".encrypt_section_label").css("display","block");
-                 jQuery(".leadtypesarrow").css("display","block");   
+               /* jQuery(".encrypt_section_label").css("display","block");
+                 jQuery(".leadtypesarrow").css("display","block");  */ 
 
            
             }
