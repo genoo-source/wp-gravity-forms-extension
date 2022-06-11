@@ -490,8 +490,9 @@ add_action(
                                 $i = 0;
                             ?>
                         <div class="folderupdates"> 
-                        
+                         <h2>Selected lead folders</h2>
                             <div class="folderleadupdates">
+                               
                                 </div>
                       
                         
@@ -524,7 +525,10 @@ add_action(
                 <div><input type="button" class="leadfolderselected" value="Show lead types" /></div> 
                 </div>   
                 <div class="leadtypeselectoption">
+                  <h2>Selected lead types</h2>
+
 	     <div class="leadtypeupdates"> 
+	     
 		 </div>
 		   <h1 class="editheader">Edit Label Here:</h1>
               <label class="leadtype_label encrypt_section_label" for="field_admin_label"><?php _e('Select Lead Types:'
@@ -791,7 +795,7 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
             }
             else{
                jQuery('.leadfolderarrow').trigger("click");
-               jQuery('.leadtypesarrow').trigger("click");
+                 jQuery('.leadtypesarrow').trigger("click");
 
                 jQuery('.folderupdates').css('display','block');  
                 jQuery(".leadtypeselectoption").css("display","block");
