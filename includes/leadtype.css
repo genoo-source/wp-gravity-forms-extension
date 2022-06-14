@@ -46,6 +46,7 @@ background: #3e7da6 !important;
     color: #fff !important;
     margin: 10px 0px;
     padding: 6px;
+    float:left;
 }
 .leadfolderselected
 {
@@ -162,6 +163,18 @@ input.gravityleadtypeupdate {
     transition: background .1s ease;
     margin: 2px 0px;
     font-size:12px;
+}
+.leadtypesarrow.down {
+    position: absolute;
+    left: auto;
+    top: 13px;
+    right: 9px;
+    height: auto;
+}
+.select-arrow-item {
+    position: relative;
+    float: left;
+    width: 100%;
 }
 .leadtypefolder {
 	max-height: 180px;

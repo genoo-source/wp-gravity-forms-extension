@@ -531,9 +531,11 @@ add_action(
 	     
 		 </div>
 		   <h1 class="editheader">Edit Label Here:</h1>
+		   <div class="select-arrow-item">
               <label class="leadtype_label encrypt_section_label" for="field_admin_label"><?php _e('Select Lead Types:'
          ); ?></label>
 		   <i class="leadtypesarrow down"></i>
+		   </div>
 
                 <div class="leadtypecheckbox">
                      <?php foreach (
