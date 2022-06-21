@@ -496,11 +496,11 @@ add_action(
                                 </div>
                       
                         
-                        <label class="section_label" for="field_admin_label"><?php _e(
+                        <label class="section_label leadfolder" for="field_admin_label"><?php _e(
              'Select Lead Folders:'
          ); ?></label>
-         
-                       <i class="leadfolderarrow down"></i>         
+             
+                   <i class="leadfolderarrow down"></i>         
                        <div class="leadtypefolder">
                           
                             <?php foreach (
@@ -527,9 +527,9 @@ add_action(
                 <div class="leadtypeselectoption">
                   <h2>Selected lead types</h2>
 
-	     <div class="leadtypeupdates"> 
-	     
-		 </div>
+        	     <div class="leadtypeupdates"> 
+        	     
+        		 </div>
 		   <h1 class="editheader">Edit Label Here:</h1>
 		   <div class="select-arrow-item">
               <label class="leadtype_label encrypt_section_label" for="field_admin_label"><?php _e('Select Lead Types:'
@@ -557,9 +557,10 @@ add_action(
         <input type="text" id="field_id_input_label_text" class="field_id_input_value_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" style="display: none;"/>
         </li>
         <?php $i++;} ?>
+         <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
            </div>
            <div> <input type="button" class="leadtypeselected" value="Update label" /></div>
-           <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
+          
 		   </div>
                                    <?php
                           
@@ -701,9 +702,9 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
         var parentDiv=jQuery(objectvalue);
      if(jQuery(this).is(':checked')){
      
-   if(jQuery.inArray(foldername, alreadyAdded) == -1)
+   if(jQuery.inArray(folderid, alreadyAdded) == -1)
       {
-       alreadyAdded.push(foldername); 
+       alreadyAdded.push(folderid); 
        
        if(jQuery("#" + folderid).length == 0) {
      parentDiv.find('.folderleadupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>');
@@ -729,20 +730,23 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
 
 
  jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]').each(function() {
+     
+     
        
-
-    if(jQuery(this).is(":checked")){
+          var id = jQuery(this).attr("data-value-id");
+          if(jQuery.inArray(id, alreadyAdded) != -1){
+         
     var objectvalue = jQuery(this).closest('.encrypt_setting_leadtypes');
                   var parentDivision =jQuery(objectvalue);
              parentDivision.css('display','block');      
     
-    }
-    else{
-        var objectvalue = jQuery(this).closest('.encrypt_setting_leadtypes');
+   }
+   else{
+       var objectvalue = jQuery(this).closest('.encrypt_setting_leadtypes');
                   var parentDivision =jQuery(objectvalue);
-             parentDivision.css('display','none');      
-    
-    }
+            parentDivision.css('display','none');      
+
+   }
     });
     
      jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]').each(function() {
@@ -753,10 +757,21 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
         
     if(jQuery(this).is(":checked")){
   
+        var labelattribute = jQuery(this).attr("id");
+     
+       var myString = labelattribute.substring(19);
+       
+       var labelshow = '.field_id_input_label_text' + myString;
+     
+       jQuery(labelshow).css('display','none');
+   
+//   jQuery(".leadtypeselected").css("display","none");
+      jQuery(".leadtypeupdate").css("display","none");
     
-       if(jQuery.inArray(foldername, leadtypearray) == -1)
+    
+       if(jQuery.inArray(folderid, leadtypearray) == -1)
       {
-       leadtypearray.push(foldername); 
+       leadtypearray.push(folderid); 
               if(jQuery("#" + folderid).length == 0) {
 
      parentDivision.find('.leadtypeupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>');
@@ -777,7 +792,7 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
 
     });
 
-         for (i = 0; i < leadtypescount; i++) {
+    for (i = 0; i < leadtypescount; i++) {
 
           jQuery("#field_encrypt_value"+i).prop( 'checked', ( rgar( field, 'encryptField'+i )) );
 
@@ -879,9 +894,7 @@ function after_save_form($form, $is_new)
             endif;
         } catch (Exception $e) {
             if ($WPME_API->http->getResponseCode() == 404):
-
-
-                // Looks like formname or form id not found
+           // Looks like formname or form id not found
             endif;
         }
     endif;

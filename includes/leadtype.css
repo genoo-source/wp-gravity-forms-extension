@@ -164,6 +164,17 @@ input.gravityleadtypeupdate {
     margin: 2px 0px;
     font-size:12px;
 }
+
+
+.leadtypesarrow {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+
+
+
 .leadtypesarrow.down {
     position: absolute;
     left: auto;

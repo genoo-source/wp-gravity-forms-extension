@@ -65,9 +65,14 @@ jQuery(document).ready(function () {
   }); 
 
 
- jQuery(".leadfolderselected").on(
+jQuery(".leadfolderselected").on(
       "click",
       function (event) {
+          
+          
+           jQuery('.encrypt_setting_leadtypes > input[type="text"]').css('display','none');
+           
+           jQuery('.leadtypeupdate').css('display','none');
           
               
  
@@ -120,8 +125,7 @@ jQuery(document).ready(function () {
 
   });
 
-
-    jQuery(".leadtypeselected").on("click",function(){
+   jQuery(".leadtypeselected").on("click",function(){
     // jQuery(".leadtypecheckbox").removeAttr("style");
      jQuery(".leadtypecheckbox").scrollTop(0);
      jQuery(".leadtypecheckbox h1").removeClass("editheader");
@@ -138,7 +142,7 @@ jQuery(document).ready(function () {
      
    jQuery(labelshow).css('display','block');
    
-   jQuery(".leadtypeselected").css("display","none");
+//   jQuery(".leadtypeselected").css("display","none");
    jQuery(".leadtypeupdate").css("display","block");
    
      }
@@ -189,7 +193,7 @@ jQuery(document).ready(function () {
          },
          success: function (data) {
        //   jQuery('.encrypt_section_label').css('display','none');
-           jQuery('.encrypt_setting_leadtypes').css('display','none');
+          // jQuery('.encrypt_setting_leadtypes').css('display','none');
            jQuery('.leadtypeupdate').css('display','none');
            jQuery(".leadtypecheckbox h1").addClass("editheader");
            jQuery(".leadtypecheckbox").removeAttr("style");
@@ -263,4 +267,19 @@ jQuery(document).ready(function () {
        
         
       });
+      
+    jQuery(".leadtype_label").on(
+      "click",
+      function (event) {
+       jQuery(".leadtypecheckbox").toggle();
+       
+        
+      });
+      jQuery(".leadfolder").on("click",function (event){
+           jQuery(".leadtypefolder").toggle();
+    
+      });
+      
+      
+         
   });
