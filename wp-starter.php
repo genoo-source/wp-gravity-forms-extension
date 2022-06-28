@@ -530,6 +530,11 @@ add_action(
         	     <div class="leadtypeupdates"> 
         	     
         		 </div>
+        		 <h1 class="labelupdateoption optionremove">Updated Labels</h1>
+
+        		   <div class="updatedoptions">
+		       
+		   </div>
 		   <h1 class="editheader">Edit Label Here:</h1>
 		   <div class="select-arrow-item">
               <label class="leadtype_label encrypt_section_label" for="field_admin_label"><?php _e('Select Lead Types:'
@@ -557,11 +562,15 @@ add_action(
         <input type="text" id="field_id_input_label_text" class="field_id_input_value_text<?php echo $i; ?>" value="<?php echo $leadtypes_optional_values->id; ?>" style="display: none;"/>
         </li>
         <?php $i++;} ?>
-         <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
-           </div>
+        
+           <div> <input type="button" class="leadtypeupdate" value="Update" style="display: none;" /></div>
+        </div>
+      
+           
            <div> <input type="button" class="leadtypeselected" value="Update label" /></div>
-          
+         
 		   </div>
+		  
                                    <?php
                           
                         } catch (Exception $e) {
@@ -660,16 +669,15 @@ $folder_count = count($leadfoders_optional);
       fieldSettings[type] += ', .encrypt_setting_leadtypes';
       fieldSettings[type] += ', .select_gravity_input_settings';
       fieldSettings[type] += ', .leadtypeupdating';
-         var alreadyAdded = [];
-         var leadtypearray = [];
-     
+       
 
      // console.log(fieldSettings);
       
-      jQuery('.folderleadupdates').empty();
+      
       // Make sure our field gets populated with its saved value
     jQuery(document).on("gform_load_field_settings", function(event, field, form) {
-        
+  
+            
      var value = [];
        var leadtypescount = '<?php echo $count; ?>';
 
@@ -687,11 +695,15 @@ $folder_count = count($leadfoders_optional);
         for (i = 0; i < leadfolderscount; i++) {
 
           
-jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolder'+i )) );
+    jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolder'+i )) );
 
      
    
     }
+    
+      var alreadyAdded = [];
+         var leadtypearray = [];
+     
   
 
     jQuery('.encrypt_setting_folders > input[type="checkbox"]').each(function() {
@@ -775,6 +787,30 @@ jQuery("#leadfolder_encrypt_value"+i).prop( 'checked', ( rgar( field, 'leadfolde
               if(jQuery("#" + folderid).length == 0) {
 
      parentDivision.find('.leadtypeupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>');
+     
+     
+       jQuery.ajax({
+      url: ajaxurl,
+      type: "POST",
+      cache: false,
+      data: {
+        action: 'get_option_data',
+        field_id: field['id'],
+        form_id : folderid
+      },
+      success: function (data) {
+      parentDivision.find(".optionremove").removeClass('labelupdateoption');
+
+        jQuery.each(data, function (key, value) {
+          
+             parentDivision.find('.updatedoptions').append('<span id='+key+' class='+key+'>' + value + '</span>');
+                  
+             });
+       },
+      error: function (errorThrown) {
+        console.log(errorThrown);
+      },
+    });
      }
       }
      else
@@ -899,18 +935,7 @@ function after_save_form($form, $is_new)
         }
     endif;
 }
-add_filter(
-    'gform_field_choice_markup_pre_render',
-    function ($choice_markup, $choice) {
-        if (rgar($choice, 'value') == 'First Choice') {
-            return '';
-        }
 
-        return $choice_markup;
-    },
-    10,
-    2
-);
 add_filter('gform_pre_render', 'populate_dropdown');
 add_filter('gform_pre_validation', 'populate_dropdown');
 add_filter('gform_admin_pre_render', 'populate_dropdown');
@@ -926,14 +951,17 @@ function populate_dropdown($form)
     // $inputs = array();
 
     $leaddetailsoptions = false;
+    
+  
 
     foreach ($form['fields'] as $field) {
         $i = 0;
-        $choices = [];
-        $choices[] = ['text' => 'Select a leadtype', 'value' => ''];
+        
+       
         $leadTypes = $wpdb->get_results(
-            "select `label_name`,`label_value` from $leadtype_form_save where field_id=$field->id and form_id=$field->formId"
+            "select `label_name`,`label_value`,`field_id` from $leadtype_form_save where field_id=$field->id and form_id=$field->formId"
         );
+          $choices = [];
         foreach ($leadTypes as $leadType) {
             $choices[] = [
                 'text' => $leadType->label_name,
@@ -947,11 +975,14 @@ function populate_dropdown($form)
         } else {
             $leaddetailsoptions = false;
         }
-    }
+    
 
     if ($leaddetailsoptions) {
-        $field['choices'] = $choices;
-        //  $field["inputs"] = $inputs;
+        
+        
+         $field['choices'] = $choices;
+       
+    }
     }
 
     return $form;
@@ -1072,11 +1103,6 @@ function gravity_form_get_lead_id(){
 
    endif;      
 
- //  $count_check_Value = count($leadtypes_optional);
-
-
-
- //return $lead_id;
  wp_send_json($leadtypes_optional);
 
 
@@ -1112,6 +1138,29 @@ function lead_type_option_submit()
             'label_value' => $leadtype_save_value['labelvalue'],
         ]);
     }
+}
+
+add_action('wp_ajax_get_option_data','get_option_data');
+
+function get_option_data()
+{
+    global $wpdb;
+    
+    $leadtype_form_save = $wpdb->prefix.'leadtype_form_save';
+    $field_id = $_REQUEST['field_id'];
+    $form_id = $_REQUEST['form_id'];
+    
+      $leadTypes = $wpdb->get_results(
+            "select `label_name`,`label_value`,`field_id` from $leadtype_form_save where field_id=$field_id and label_value=$form_id"
+        );
+        
+         
+       foreach($leadTypes as $leadType)
+       {
+           $lead_results[$leadType->label_value] = $leadType->label_name;
+       }
+  
+   wp_send_json($lead_results); 
 }
 
 function adminEnqueueScripts()

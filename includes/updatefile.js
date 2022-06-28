@@ -121,6 +121,7 @@ jQuery(".leadfolderselected").on(
       jQuery(".encrypt_section_label").css("display","block");
       jQuery('.leadtypesarrow').trigger("click");
       jQuery(".leadtypeselectoption").css("display","block");
+       jQuery(".updatedoptions").css("display","none");
 
 
   });
@@ -157,8 +158,13 @@ jQuery(".leadfolderselected").on(
    jQuery(".leadtypeupdate").on("click",function(){
    
      var allvalues = [];
+            
+        var objectvalue = jQuery(this).closest('.leadtypeselectoption');
+                var parentDiv=jQuery(objectvalue);
+            parentDiv.find(".updatedoptions").css("display","block");
+       
      
-    jQuery('.encrypt_setting_leadtypes > input[type="checkbox"]:checked').each(function() {
+    parentDiv.find('.encrypt_setting_leadtypes > input[type="checkbox"]:checked').each(function() {
      var data = {};
      var labelattribute = jQuery(this).attr("id");
      var myString = labelattribute.substring(19);
@@ -166,8 +172,7 @@ jQuery(".leadfolderselected").on(
    
      var field_id_input_value_text = '.field_id_input_value_text' + myString;
    
-   
-   
+
      data.label = jQuery(labelshow).val();
      data.labelvalue =  jQuery(field_id_input_value_text).val(); 
      
@@ -176,10 +181,29 @@ jQuery(".leadfolderselected").on(
    
    
     });
+  
+         
+      parentDiv.find('.updatedoptions').html('');    
+      
+      
+        jQuery('.leadtypeupdate').css('display','none');
+           jQuery(".leadtypecheckbox h1").addClass("editheader");
+            parentDiv.find(".optionremove").removeClass('labelupdateoption');
+           jQuery(".leadtypecheckbox").removeAttr("style");
+   
+           jQuery('.encrypt_setting_leadtypes  > input').css('display','none');
+           
+           jQuery('.leadtypesarrow').trigger("click");
    
     var fieldid = jQuery("#sidebar_field_label").attr("data-fieldid");
      
     var formid = form['id'];
+   //  parentDiv.find('.updatedoptions').append('<h3>Updated Label</h3>');
+     jQuery.each(allvalues, function (key, value) {
+         
+        parentDiv.find('.updatedoptions').append('<span id='+value.labelvalue+' class='+value.labelvalue+'>' + value.label + '</span>');
+              
+});
    
      jQuery.ajax({
          url: ajaxurl,
@@ -192,17 +216,8 @@ jQuery(".leadfolderselected").on(
            form_id:formid,
          },
          success: function (data) {
-       //   jQuery('.encrypt_section_label').css('display','none');
-          // jQuery('.encrypt_setting_leadtypes').css('display','none');
-           jQuery('.leadtypeupdate').css('display','none');
-           jQuery(".leadtypecheckbox h1").addClass("editheader");
-           jQuery(".leadtypecheckbox").removeAttr("style");
-   
-           jQuery('.encrypt_setting_leadtypes  > input').css('display','none');
            
-           jQuery('.leadtypesarrow').trigger("click");
-
-              
+         
          },
      
          error: function (errorThrown) {
@@ -221,7 +236,7 @@ jQuery(".leadfolderselected").on(
           var parentDiv=jQuery(objectvalue);
      if(jQuery(this).is(':checked') ){
     
-        parentDiv.find('.folderleadupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>')
+        parentDiv.find('.folderleadupdates').append('<span id='+folderid+' class='+folderid+'>' + foldername + '</span>');
      }
      else
      {

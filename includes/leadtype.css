@@ -2,6 +2,15 @@
 {
     display:none !important;
 }
+.labelupdateoption
+{
+   display:none !important;  
+}
+.optionremove
+{
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
 
 .leadtypeselected span
 {
@@ -118,7 +127,7 @@ input.gravityleadtypeupdate {
     max-height: 180px;
     overflow: auto;
 }
-.folderleadupdates, .leadtypeupdates {
+.folderleadupdates, .leadtypeupdates, .updatedoptions {
     float: left;
     width: 100%;
     height: auto;
@@ -144,7 +153,8 @@ input.gravityleadtypeupdate {
     left: 93%;
     top: 58px;
 }
-.folderleadupdates span, .leadtypeupdates span {
+.folderleadupdates span, .leadtypeupdates span,.updatedoptions span
+{
 	float: left;
 	width: 100%;
     line-height: 11px;
