@@ -744,11 +744,11 @@ add_action(
                   <li class="encrypt_setting_option_leads field_setting" >
         
                 <input type="checkbox" id="encrypt_lead_option<?php echo $i; ?>" name="encrypt_lead_option<?php echo $i; ?>"  onchange="SetFieldProperty('encrypt_lead<?php echo $i; ?>', this.checked);" />
-                <label for="encrypt_lead_option<?php echo $i; ?>" style="display:inline;">
+                <label for="encrypt_lead_option<?php echo $i; ?>" style="display:inline;"><span class="editlabelheader">Edited Label :</span><span>
                 <?php if ($labelname != "") {
                     echo $labelname->label_name;
                 } ?>
-                  </label>  
+                 </span> </label>  
               
         </li></label>  
              
@@ -894,7 +894,14 @@ add_action("gform_editor_js", function () {
 
       // Make sure our field gets populated with its saved value
     jQuery(document).on("gform_load_field_settings", function(event, field, form) {
-  
+        
+       if(field['type']=='email')
+       {
+           if(!jQuery('#field_required').is(":checked")){
+          jQuery('#field_required').trigger("click");
+          //jQuery('#field_required').attr("checked", true).trigger("click");
+       }
+       }
       
      var value = [];
        var leadtypescount = '<?php echo $count; ?>';

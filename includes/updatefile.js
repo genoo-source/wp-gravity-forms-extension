@@ -169,7 +169,10 @@ jQuery(document).ready(function () {
       success: function (data) {
 
         parentDiv.find(".updateoptions").html("");
-
+            
+         parentDiv
+            .find(".updateoptions")
+            .append('<h4>Edit Label Here:</h4>');
         jQuery.each(data, function (key, value) {
             
          parentDiv.find(".loading > p").css("display", "none");
@@ -269,12 +272,12 @@ jQuery(document).ready(function () {
 
         var leadidvalue = value.labelvalue.split("-")[0];
         parentDiv
-          .find(
-            ".leadtypeupdates > .lead_value" +
-              leadidvalue +
-              "> .encrypt_setting_option_leads > label"
-          )
-          .html("" + value.label + "");
+        .find(
+          ".leadtypeupdates > .lead_value" +
+            leadidvalue +
+            "> .encrypt_setting_option_leads > label"
+        )
+        .html("<span class=editlabelheader>Edited Label : </span><span>" + value.label + "</span>");
         parentDiv
           .find(
             ".leadtypeupdates > .lead_value" +
