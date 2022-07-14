@@ -90,7 +90,13 @@ register_activation_hook(__FILE__, function () {
             label_name varchar(255),
             label_value int(11),
              folder_id int(11), PRIMARY KEY(id)) $charset_collate;";
-        gf_upgrade()->dbDelta($leadsql);}
+        gf_upgrade()->dbDelta($leadsql);
+              
+        $table = "ALTER TABLE {$wpdb->prefix}leadtype_form_save
+        ADD COLUMN folder_id int(11)";  
+
+                $wpdb->query($table);
+    }
 });
 
 /**
