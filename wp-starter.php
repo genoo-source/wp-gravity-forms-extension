@@ -319,6 +319,11 @@ function access_entry_via_field($entry, $form)
                         $leadvalues[] = $entry[$field["id"]];
                     endif;
                 endif;
+                  if ($field["type"] == "radio"):
+                    if ($field->thirdPartyInput == "leadtypes"):
+                        $leadvalues[] = $entry[$field["id"]];
+                    endif;
+                endif;
                 if ($field["type"] == "multiselect"):
                     if ($entry[$field["id"]] != ""):
                         if ($entry[$field["id"]] != ""):

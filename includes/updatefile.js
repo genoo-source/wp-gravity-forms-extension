@@ -42,7 +42,19 @@ jQuery(document).ready(function () {
 
     var formid = form["id"];
 
-    parentDiv
+ 
+    jQuery.ajax({
+      url: ajaxurl,
+      type: "POST",
+      cache: false,
+      data: {
+        action: "lead_type_delete",
+        inservalues: idvalue,
+        field_id: fieldid,
+        form_id: formid,
+      },
+      success: function (data) {
+             parentDiv
       .find(".leadtype_value_label" + idvalue)
       .attr("checked", false)
       .trigger("click");
@@ -54,17 +66,8 @@ jQuery(document).ready(function () {
           "> .encrypt_setting_option_leads > label"
       )
       .html("");
-    jQuery.ajax({
-      url: ajaxurl,
-      type: "POST",
-      cache: false,
-      data: {
-        action: "lead_type_delete",
-        inservalues: idvalue,
-        field_id: fieldid,
-        form_id: formid,
+          
       },
-      success: function (data) {},
       error: function (errorThrown) {
         console.log(errorThrown);
       },
@@ -127,8 +130,10 @@ jQuery(document).ready(function () {
   jQuery(".leadtypeselected").on("click", function () {
     var objectvalue = jQuery(this).closest(".leadtypeselectoption");
     var parentDiv = jQuery(objectvalue);
+    parentDiv.find(".updateoptions").css("display", "none");
+    parentDiv.find(".leadtypeupdate1").css("display", "none");
 
-    parentDiv.find(".loading > p").css("display", "block");
+    parentDiv.find(".leadtypeselected").css("display", "none");
 
     var allvalues = [];
 
@@ -144,7 +149,10 @@ jQuery(document).ready(function () {
 
         allvalues.push(data);
       });
-
+    
+      if(allvalues.length!=0){
+    parentDiv.find(".loading > p").css("display", "block");
+ 
     var fieldid = jQuery("#sidebar_field_label").attr("data-fieldid");
 
     var formid = form["id"];
@@ -159,36 +167,27 @@ jQuery(document).ready(function () {
         form_id: formid,
       },
       success: function (data) {
-        var leadarrayvalues = [];
 
         parentDiv.find(".updateoptions").html("");
 
         jQuery.each(data, function (key, value) {
-          var optiondata = {};
-
-          optiondata.label = value;
-          optiondata.labelvalue = key;
-
-          leadarrayvalues.push(optiondata);
-        });
-
-        jQuery.each(leadarrayvalues, function (key, value) {
-          parentDiv.find(".loading > p").css("display", "none");
+            
+         parentDiv.find(".loading > p").css("display", "none");
 
           parentDiv
             .find(".updateoptions")
             .append(
               '<input type="text" id="' +
-                value.labelvalue +
+                 key +
                 '" datavalueselectoption="' +
-                value.label +
+                value +
                 '" class="appendedleadtypes"  value="' +
-                value.label +
+                value +
                 '" />'
             );
         });
 
-        if (leadarrayvalues.length !== 0) {
+  if (data.length !== 0) {
           parentDiv.find(".updateoptions").css("display", "block");
 
           parentDiv.find(".leadtypeupdate1").css("display", "block");
@@ -197,12 +196,14 @@ jQuery(document).ready(function () {
 
           parentDiv.find(".leadtypeupdate1").css("display", "none");
         }
+     
       },
 
       error: function (errorThrown) {
         console.log(errorThrown);
       },
     });
+      }
   });
 
   jQuery(".leadtypeupdatecancel").on("click", function () {
@@ -217,6 +218,8 @@ jQuery(document).ready(function () {
 
     var objectvalue = jQuery(this).closest(".leadtypeselectoption");
     var parentDiv = jQuery(objectvalue);
+    
+    parentDiv.find(".leadtypeselected").css("display", "block");
 
     jQuery(".leadtypecheckbox").removeAttr("style");
 
@@ -308,8 +311,8 @@ jQuery(document).ready(function () {
       var folderid = jQuery(this).attr("dataidvalue");
       var fieldid = jQuery("#sidebar_field_label").attr("data-fieldid");
 
-      jQuery(".updateoptions").html("");
-      jQuery(".leadtypeupdate1").css("display", "block");
+      jQuery(".updateoptions").css("display", "none");
+      jQuery(".leadtypeupdate1").css("display", "none");
 
       var formid = form["id"];
       var parentDiv = jQuery(objectvalue);
@@ -405,8 +408,7 @@ jQuery(document).ready(function () {
 
       var formid = form["id"];
       var parentDiv = jQuery(objectvalue);
-      // $("input:checkbox:not(:checked)")
-
+      
       parentDiv
         .find(
           ".leadtypeupdates > .lead_value" +
@@ -414,6 +416,8 @@ jQuery(document).ready(function () {
             "> .encrypt_setting_option_leads > label"
         )
         .html("");
+            parentDiv.find(".leadtypeselected").css("display", "block");
+
 
       parentDiv.find(".updateoptions").html("");
       parentDiv.find(".leadtypeupdate1").css("display", "none");
@@ -437,6 +441,14 @@ jQuery(document).ready(function () {
             console.log(errorThrown);
           },
         });
+         parentDiv.find(".lead_value" + leadid).css("display", "none");
+             parentDiv
+      .find(
+        ".leadtypeupdates > .lead_value" +
+          leadid +
+          "> .encrypt_setting_option_leads > label"
+      )
+      .html("");
       }
       if (jQuery(this).is(":checked")) {
         jQuery.ajax({
@@ -459,8 +471,16 @@ jQuery(document).ready(function () {
         });
 
         parentDiv.find(".lead_value" + leadid).css("display", "block");
+  
       } else {
         parentDiv.find(".lead_value" + leadid).css("display", "none");
+            parentDiv
+      .find(
+        ".leadtypeupdates > .lead_value" +
+          leadid +
+          "> .encrypt_setting_option_leads > label"
+      )
+      .html("");
       }
     }
   );
@@ -471,10 +491,10 @@ jQuery(document).ready(function () {
 
   jQuery("#leadtypeupdatecancel").on("click", function () {
     var objectvalue = jQuery(this).closest(".leadtypeselectoption");
-
     var parentDiv = jQuery(objectvalue);
     parentDiv.find(".updateoptions").html("");
     parentDiv.find(".leadtypeupdate1").css("display", "none");
+    parentDiv.find(".leadtypeselected").css("display", "block");
   });
 
   jQuery(".leadtype_label").on("click", function (event) {
