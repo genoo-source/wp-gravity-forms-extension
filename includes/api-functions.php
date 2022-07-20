@@ -124,8 +124,8 @@ function display_selected_gravity_leadtypes()
 function createleadtype() {
     global $WPME_API;
     $createlead = array();
-    $createlead['name'] = urlencode($_REQUEST['leadtypevalue']);
-    $createlead['description'] = $_REQUEST['description'];
+    $createlead['name'] = stripslashes($_REQUEST['leadtypevalue']);
+    $createlead['description'] = stripslashes($_REQUEST['description']);
     $createlead['mngdlistind'] = $_REQUEST['mngdlistind'];
     $createlead['costforall'] = $_REQUEST['costforall'];
     $createlead['costperlead'] = $_REQUEST['costperlead'];
@@ -157,7 +157,7 @@ function leadtypefilter() {
         foreach ( $leadtypes as $leadtype ):
         if ( $lead_folder['folder_id'] == $leadtype->folder_id ):
         $leadnames[$leadtype
-        ->id] = $leadtype->name;
+        ->id] = stripslashes($leadtype->name);
         endif;
         endforeach;
         wp_send_json( $leadnames );
