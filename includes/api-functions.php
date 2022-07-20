@@ -124,7 +124,7 @@ function display_selected_gravity_leadtypes()
 function createleadtype() {
     global $WPME_API;
     $createlead = array();
-    $createlead['name'] = $_REQUEST['leadtypevalue'];
+    $createlead['name'] = urlencode($_REQUEST['leadtypevalue']);
     $createlead['description'] = $_REQUEST['description'];
     $createlead['mngdlistind'] = $_REQUEST['mngdlistind'];
     $createlead['costforall'] = $_REQUEST['costforall'];

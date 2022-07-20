@@ -203,7 +203,7 @@ function access_entry_via_field($entry, $form)
             ? $form_settings->select_webinar
             : "";
         $source = isset($form_settings->source) ? $form_settings->source : "";
-        if ($select_lead_id != "" && $source != ""):
+        if ($select_lead_id != ""):
             $values = [];
             $leadvalues = [];
             $values["form_name"] = $form["title"];
@@ -313,8 +313,7 @@ function access_entry_via_field($entry, $form)
                         $values[$field->thirdPartyInput] = $entry[$field["id"]];
                     endif;
                 endif;
-
-                if ($field["type"] == "select"):
+                      if ($field["type"] == "select"):
                     if ($field->thirdPartyInput == "leadtypes"):
                         $leadvalues[] = $entry[$field["id"]];
                     endif;
@@ -325,11 +324,18 @@ function access_entry_via_field($entry, $form)
                     endif;
                 endif;
                 if ($field["type"] == "multiselect"):
-                    if ($entry[$field["id"]] != ""):
-                        if ($entry[$field["id"]] != ""):
-                            $leadvalues[] = $entry[$field["id"]];
-                        endif;
-                    endif;
+                     if ($field->thirdPartyInput == "leadtypes"):
+                         $removequotes = str_replace('"', '', $entry[$field["id"]]);
+                        $multipleentry =  str_replace("["," ",$removequotes);
+                        $multipleentryremove = str_replace("]"," ",$multipleentry);
+                     $leadvaluesmultiples =  explode(',', $multipleentryremove);
+                    
+                     foreach($leadvaluesmultiples as $leadvaluesmultiple)
+                     {
+                        $leadvalues[] = $leadvaluesmultiple;  
+                     }
+                     
+                endif;     
                 endif;
 
                 if ($field["type"] == "checkbox"):
@@ -346,8 +352,8 @@ function access_entry_via_field($entry, $form)
                     endforeach;
                 endif;
             endforeach;
-
-            //changed callcustom api for leads submit
+          
+        //changed callcustom api for leads submit
             if (method_exists($WPME_API, "callCustom")):
                 try {
                     $response = $WPME_API->callCustom(
@@ -355,19 +361,12 @@ function access_entry_via_field($entry, $form)
                         "POST",
                         $values
                     );
-
-                    $atts = apply_filters(
-                        "genoo_wpme_lead_creation_attributes",
-
-                        [],
-
-                        "ecommerce-register-new-customer-lead"
-                    );
-
-                    foreach ($leadvalues as $leadvalues):
+                    
+        
+                    foreach ($leadvalues as $leadvalue):
                         $WPME_API->setLeadUpdate(
                             $response->genoo_id,
-                            $leadvalues,
+                            $leadvalue,
                             $values["email"],
                             $entry[$field_id . ".3"],
                             $entry[$field_id . ".6"]
@@ -393,6 +392,7 @@ function access_entry_via_field($entry, $form)
         endif;
     endif;
 }
+
 add_action("wp_action_to_modify", function () {
     // Get WPME api object, same in both Genoo and WPME plugins
     global $WPME_API;
@@ -697,14 +697,14 @@ add_action(
                              ) { ?>
                         <li class="encrypt_setting_leadtypes field_setting"  datafolder-id="<?php echo $leadtypes_optional_values->folder_id; ?>">
         
-                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> datafolder-id=<?php echo $leadtypes_optional_values->folder_id; ?> dataidvalue=<?php echo $leadtypes_optional_values->id; ?> leadfoldername="<?php echo $leadtypes_optional_values->name; ?>" onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
+                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> datafolder-id=<?php echo $leadtypes_optional_values->folder_id; ?> dataidvalue=<?php echo $leadtypes_optional_values->id; ?> leadfoldername="<?php echo stripslashes($leadtypes_optional_values->name); ?>" onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
                 <label for="field_encrypt_value<?php echo $i; ?>" class="leadtype_value_label<?php echo $leadtypes_optional_values->id; ?>" style="display:inline;">
                     
                         <?php
                         $folder_value = $foldername;
 
                         _e(
-                            $leadtypes_optional_values->name .
+                            stripslashes($leadtypes_optional_values->name) .
                                 "(" .
                                 $folder_value .
                                 ")",
@@ -737,7 +737,7 @@ add_action(
                              
                 <label style="display:none;" for="lead_value<?php echo $i; ?>" class="lead_value<?php echo $leadtypes_optional_values->id; ?>" style="display:inline;">
                     <?php _e(
-                        $leadtypes_optional_values->name,
+                       stripslashes($leadtypes_optional_values->name),
                         "Gravity Forms WPMktgEngine Extension"
                     ); ?>
                     <i class="fa fa-trash leadtypedelete" id="<?php echo $leadtypes_optional_values->id; ?>"></i>
@@ -746,7 +746,7 @@ add_action(
                 <input type="checkbox" id="encrypt_lead_option<?php echo $i; ?>" name="encrypt_lead_option<?php echo $i; ?>"  onchange="SetFieldProperty('encrypt_lead<?php echo $i; ?>', this.checked);" />
                 <label for="encrypt_lead_option<?php echo $i; ?>" style="display:inline;"><span class="editlabelheader">Edited Label :</span><span>
                 <?php if ($labelname != "") {
-                    echo $labelname->label_name;
+                    echo stripslashes($labelname->label_name);
                 } ?>
                  </span> </label>  
               
@@ -1142,13 +1142,20 @@ function populate_dropdown($form)
         $leadTypes = $wpdb->get_results(
             "select `label_name`,`label_value`,`field_id` from $leadtype_form_save where field_id=$field->id and form_id=$field->formId"
         );
+      if ($field->thirdPartyInput == "leadtypes") {
+        $field_id = $field->id;
+      }
         $choices = [];
+        $inputs = [];
+        $input_id = 1;
         foreach ($leadTypes as $leadType) {
             $choices[] = [
-                "text" => $leadType->label_name,
+                "text" => stripslashes($leadType->label_name),
                 "value" => $leadType->label_value,
             ];
-
+            $inputs[] = array('id' => "{$field_id}.{$input_id}", 'label' => stripslashes($leadType->label_name), 'name' => '');
+ 
+           $input_id++;
             $i++;
         }
         if ($field->thirdPartyInput == "leadtypes") {
@@ -1162,6 +1169,10 @@ function populate_dropdown($form)
 
         if ($leaddetailsoptions) {
             $field["choices"] = $choices;
+            if($field->type=='checkbox'){
+            $field->choices = $choices;
+             $field->inputs = $inputs;
+            }
         }
     }
 
