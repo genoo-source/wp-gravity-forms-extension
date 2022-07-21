@@ -38,7 +38,7 @@ jQuery(document).ready(function () {
     var fieldid = jQuery("#sidebar_field_label").attr("data-fieldid");
 
     parentDiv.find(".updateoptions").css("display", "none");
-    parentDiv.find(".leadtypeupdate1").css("display", "none");
+    parentDiv.find(".leadtypeupdatebtn").css("display", "none");
 
     var formid = form["id"];
 
@@ -131,7 +131,7 @@ jQuery(document).ready(function () {
     var objectvalue = jQuery(this).closest(".leadtypeselectoption");
     var parentDiv = jQuery(objectvalue);
     parentDiv.find(".updateoptions").css("display", "none");
-    parentDiv.find(".leadtypeupdate1").css("display", "none");
+    parentDiv.find(".leadtypeupdatebtn").css("display", "none");
 
     parentDiv.find(".leadtypeselected").css("display", "none");
 
@@ -193,11 +193,11 @@ jQuery(document).ready(function () {
   if (data.length !== 0) {
           parentDiv.find(".updateoptions").css("display", "block");
 
-          parentDiv.find(".leadtypeupdate1").css("display", "block");
+          parentDiv.find(".leadtypeupdatebtn").css("display", "block");
         } else {
           parentDiv.find(".updateoptions").css("display", "none");
 
-          parentDiv.find(".leadtypeupdate1").css("display", "none");
+          parentDiv.find(".leadtypeupdatebtn").css("display", "none");
         }
      
       },
@@ -264,7 +264,7 @@ jQuery(document).ready(function () {
       );
     } else {
       parentDiv.find(".updateoptions").css("display", "none");
-      parentDiv.find(".leadtypeupdate1").css("display", "none");
+      parentDiv.find(".leadtypeupdatebtn").css("display", "none");
       jQuery(".leadtypesarrow").trigger("click");
 
       jQuery.each(allvalues, function (key, value) {
@@ -315,7 +315,7 @@ jQuery(document).ready(function () {
       var fieldid = jQuery("#sidebar_field_label").attr("data-fieldid");
 
       jQuery(".updateoptions").css("display", "none");
-      jQuery(".leadtypeupdate1").css("display", "none");
+      jQuery(".leadtypeupdatebtn").css("display", "none");
 
       var formid = form["id"];
       var parentDiv = jQuery(objectvalue);
@@ -391,9 +391,9 @@ jQuery(document).ready(function () {
 
       jQuery(".leadtypeselectoption").css("display", "block");
 
-      jQuery(".leadtypeupdate1").css("display", "none");
+      jQuery(".leadtypeupdatebtn").css("display", "none");
     }
-    jQuery(".leadtypeupdate1").css("display", "none");
+    jQuery(".leadtypeupdatebtn").css("display", "none");
 
     jQuery(".updateoptions").css("display", "none");
   });
@@ -423,7 +423,7 @@ jQuery(document).ready(function () {
 
 
       parentDiv.find(".updateoptions").html("");
-      parentDiv.find(".leadtypeupdate1").css("display", "none");
+      parentDiv.find(".leadtypeupdatebtn").css("display", "none");
 
       if (!jQuery(this).is(":checked")) {
         jQuery.ajax({
@@ -496,7 +496,7 @@ jQuery(document).ready(function () {
     var objectvalue = jQuery(this).closest(".leadtypeselectoption");
     var parentDiv = jQuery(objectvalue);
     parentDiv.find(".updateoptions").html("");
-    parentDiv.find(".leadtypeupdate1").css("display", "none");
+    parentDiv.find(".leadtypeupdatebtn").css("display", "none");
     parentDiv.find(".leadtypeselected").css("display", "block");
   });
 

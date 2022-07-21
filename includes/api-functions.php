@@ -56,13 +56,13 @@ function create_gravity_lead_folder()
 {
    global $WPME_API;
     $lead_folder = [];
-    $lead_folder['name'] = $_REQUEST['folder_id'];
-    $lead_folder['description'] = $_REQUEST['description'];
+    $lead_folder['name'] = stripslashes($_REQUEST['folder_id']);
+    $lead_folder['description'] = stripslashes($_REQUEST['description']);
 
     if (method_exists($WPME_API, 'callCustom')):
         try {
             $createfolders = $WPME_API->callCustom(
-                '/listLeadTypeFoldersByName/' . $lead_folder['name'],
+                '/listLeadTypeFoldersByName/' . stripslashes($lead_folder['name']),
                 'GET','NULL'
             );
 

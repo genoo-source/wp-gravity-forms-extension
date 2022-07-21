@@ -392,7 +392,6 @@ function access_entry_via_field($entry, $form)
         endif;
     endif;
 }
-
 add_action("wp_action_to_modify", function () {
     // Get WPME api object, same in both Genoo and WPME plugins
     global $WPME_API;
@@ -771,7 +770,7 @@ add_action(
                     
                 </div>
       
-        		  <div class="leadtypeupdate1" style='display:none;'
+        		  <div class="leadtypeupdatebtn" style='display:none;'
         		  ><button type="button" id="leadtypeupdate">Save</button><button type="button" id="leadtypeupdatecancel">Cancel</button></div>
 		   </div>
 		  
@@ -1035,7 +1034,6 @@ add_action("gform_editor_js", function () {
                  jQuery('.leadtypesarrow').trigger("click");
 
                 jQuery('.folderupdates').css('display','block');  
-               // jQuery(".leadtypeselectoption").css("display","block");
                 jQuery(".leadtypeselected").css("display","block");
               
            
@@ -1300,10 +1298,7 @@ function lead_type_delete_option()
     $form_id = $_REQUEST["form_id"];
 
     $deletevalues = implode("','", $leadtypedeletevalues);
-
-    echo $deletevalues;
-
-    $get_folder_leadtypes = $wpdb->get_results(
+ $get_folder_leadtypes = $wpdb->get_results(
         "select `label_value` from $leadtype_form_save where label_value in ('$deletevalues')"
     );
 
@@ -1330,7 +1325,7 @@ function get_lead_options()
 
     foreach ($leadTypes as $leadType) {
         $lead_results[$leadType->label_value . "-" . $leadType->folder_id] =
-            $leadType->label_name;
+            stripslashes($leadType->label_name);
     }
 
     wp_send_json($lead_results);
@@ -1376,7 +1371,7 @@ function lead_type_option_change_submit()
         $wpdb->insert($leadtype_form_save, [
             "form_id" => $form_id,
             "field_id" => $field_id,
-            "label_name" => $label,
+            "label_name" => stripslashes($label),
             "label_value" => $labelvalue,
             "folder_id" => $folder_id,
         ]);
@@ -1462,7 +1457,7 @@ function lead_type_option_submit()
         $wpdb->insert($leadtype_form_save, [
             "form_id" => $form_id,
             "field_id" => $field_id,
-            "label_name" => $leadtype_save_value["label"],
+            "label_name" => stripslashes($leadtype_save_value["label"]),
             "label_value" => $result[0],
             "folder_id" => $result[1],
         ]);
