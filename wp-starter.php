@@ -696,14 +696,14 @@ add_action(
                              ) { ?>
                         <li class="encrypt_setting_leadtypes field_setting"  datafolder-id="<?php echo $leadtypes_optional_values->folder_id; ?>">
         
-                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> datafolder-id=<?php echo $leadtypes_optional_values->folder_id; ?> dataidvalue=<?php echo $leadtypes_optional_values->id; ?> leadfoldername="<?php echo stripslashes($leadtypes_optional_values->name); ?>" onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
+                <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> datafolder-id=<?php echo $leadtypes_optional_values->folder_id; ?> dataidvalue=<?php echo $leadtypes_optional_values->id; ?> leadfoldername="<?php echo $leadtypes_optional_values->name; ?>" onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
                 <label for="field_encrypt_value<?php echo $i; ?>" class="leadtype_value_label<?php echo $leadtypes_optional_values->id; ?>" style="display:inline;">
                     
                         <?php
                         $folder_value = $foldername;
 
                         _e(
-                            stripslashes($leadtypes_optional_values->name) .
+                            $leadtypes_optional_values->name .
                                 "(" .
                                 $folder_value .
                                 ")",
@@ -736,7 +736,7 @@ add_action(
                              
                 <label style="display:none;" for="lead_value<?php echo $i; ?>" class="lead_value<?php echo $leadtypes_optional_values->id; ?>" style="display:inline;">
                     <?php _e(
-                       stripslashes($leadtypes_optional_values->name),
+                       $leadtypes_optional_values->name,
                         "Gravity Forms WPMktgEngine Extension"
                     ); ?>
                     <i class="fa fa-trash leadtypedelete" id="<?php echo $leadtypes_optional_values->id; ?>"></i>
@@ -745,7 +745,7 @@ add_action(
                 <input type="checkbox" id="encrypt_lead_option<?php echo $i; ?>" name="encrypt_lead_option<?php echo $i; ?>"  onchange="SetFieldProperty('encrypt_lead<?php echo $i; ?>', this.checked);" />
                 <label for="encrypt_lead_option<?php echo $i; ?>" style="display:inline;"><span class="editlabelheader">Edited Label :</span><span>
                 <?php if ($labelname != "") {
-                    echo stripslashes($labelname->label_name);
+                    echo $labelname->label_name;
                 } ?>
                  </span> </label>  
               
@@ -1148,10 +1148,10 @@ function populate_dropdown($form)
         $input_id = 1;
         foreach ($leadTypes as $leadType) {
             $choices[] = [
-                "text" => stripslashes($leadType->label_name),
+                "text" => $leadType->label_name,
                 "value" => $leadType->label_value,
             ];
-            $inputs[] = array('id' => "{$field_id}.{$input_id}", 'label' => stripslashes($leadType->label_name), 'name' => '');
+            $inputs[] = array('id' => "{$field_id}.{$input_id}", 'label' => $leadType->label_name, 'name' => '');
  
            $input_id++;
             $i++;
@@ -1325,7 +1325,7 @@ function get_lead_options()
 
     foreach ($leadTypes as $leadType) {
         $lead_results[$leadType->label_value . "-" . $leadType->folder_id] =
-            stripslashes($leadType->label_name);
+            $leadType->label_name;
     }
 
     wp_send_json($lead_results);

@@ -157,7 +157,7 @@ function leadtypefilter() {
         foreach ( $leadtypes as $leadtype ):
         if ( $lead_folder['folder_id'] == $leadtype->folder_id ):
         $leadnames[$leadtype
-        ->id] = stripslashes($leadtype->name);
+        ->id] = $leadtype->name;
         endif;
         endforeach;
         wp_send_json( $leadnames );
