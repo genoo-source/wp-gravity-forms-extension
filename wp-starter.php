@@ -780,7 +780,7 @@ add_action("gform_editor_js", function () {
                 "GET",
                 null
             );
-            $leadfoders_optional = $WPME_API->callCustom(
+            $leadfolders_optional = $WPME_API->callCustom(
                 "/listLeadTypeFolders/Uncategorized",
                 "GET",
                 null
@@ -798,7 +798,7 @@ add_action("gform_editor_js", function () {
     endif;
 
     $count = count($leadtypes_optional);
-    $folder_count = count($leadfoders_optional);
+    $folder_count = count($leadfolders_optional);
 
     $all_default_types = [
         "text",

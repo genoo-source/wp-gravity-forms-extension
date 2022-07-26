@@ -116,7 +116,7 @@ jQuery(document).ready(function () {
     var parentDiv = jQuery(objectvalue);
     parentDiv.find(".updateoptions").css("display", "none");
     parentDiv.find(".leadtypeupdatebtn").css("display", "none");
-    arentDiv.find(".leadtypeselected").css("display", "none");
+    parentDiv.find(".leadtypeselected").css("display", "none");
 
     var allvalues = [];
 
