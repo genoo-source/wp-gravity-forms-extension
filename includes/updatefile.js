@@ -299,7 +299,7 @@ jQuery(document).ready(function () {
             type: "POST",
             cache: false,
             data: {
-              action: "folderoptiondelete",
+              action: "folder_option_delete",
               field_id: fieldid,
               form_id: formid,
               folder_id: folderid,
