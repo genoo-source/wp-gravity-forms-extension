@@ -19,18 +19,16 @@ class Gravityformextension extends GFAddOn {
         }
         return self::$_instance;
     }
-    /**
-     * 
-     */
-
-    public function init()
-    {
+   
+    public function init() {
         parent::init();
-        add_filter("gform_submit_button", [$this, "form_submit_button"], 10, 2);
-    }
+        add_filter( 'gform_submit_button', array(
+            $this,
+            'form_submit_button'
+        ), 10, 2 );
 
-  
-    function form_submit_button( $button, $form ) {
+    }
+ function form_submit_button( $button, $form ) {
         $settings = $this->get_form_settings( $form );
         if ( isset( $settings['enabled'] ) && true == $settings['enabled'] ) {
             $text = $this->get_plugin_setting( 'mytextbox' );
@@ -38,7 +36,6 @@ class Gravityformextension extends GFAddOn {
         }
         return $button;
     }
-
     // ADMIN FUNCTIONS
 
     /**
@@ -53,11 +50,15 @@ class Gravityformextension extends GFAddOn {
         if ( method_exists( $WPME_API, 'callCustom' ) ):
         try {
             // Make a GET request, to Genoo / WPME api, for that rest endpoint
-            $lead_types = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
+            $leadtypeoptions = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
             $webinars = $WPME_API->callCustom( '/zoomwebinars/all', 'GET', NULL );
             $leademailfolders = $WPME_API->callCustom( '/emailfolders', 'GET', NULL );
             $leadTypefolder = $WPME_API->callCustom( '/listLeadTypeFolders/Uncategorized', 'GET', 'NULL' );
-          
+            if ( $WPME_API->http->getResponseCode() == 204 ): // No leadtypes, zoomwebinars, emailfolders ! Ooops
+            elseif ( $WPME_API->http->getResponseCode() == 200 ):
+            // Good product in $leadtypes, $zoomwebinars, $emailfolders variable
+
+            endif;
         } catch( Exception $e ) {
             if ( $WPME_API->http->getResponseCode() == 404 ):
             // Looks like folders not found
@@ -85,7 +86,7 @@ class Gravityformextension extends GFAddOn {
         $count_extension = $wpdb->get_var( "SELECT count(*) from $gf_addon_wpextenstion  WHERE `form_id` = '$form_id'" );
         if ( $count_extension == 0 ):
         //inserting setting data into table
-        $wpdb->insert( $gf_addon_wpextenstion, array(
+        $gf_insert = $wpdb->insert( $gf_addon_wpextenstion, array(
             'form_id' => $form_id,
             'is_active' => $check_webinnar,
             'select_lead_folder' => $leadfolder,
@@ -97,7 +98,7 @@ class Gravityformextension extends GFAddOn {
         ) );
         else:
         //if the same data with same form id then update the values.
-        $wpdb->update( $gf_addon_wpextenstion, array(
+        $gf_update = $wpdb->update( $gf_addon_wpextenstion, array(
             'form_id' => $form_id,
             'is_active' => $check_webinnar,
             'select_lead_folder' => $leadfolder,
@@ -134,8 +135,12 @@ class Gravityformextension extends GFAddOn {
         try {
             // Make a GET request, to Genoo / WPME api, for that rest endpoint
 
-            $getemails = $WPME_API->callCustom( '/emails/' . $select_folder_id, 'GET', NULL );
-          
+            $get_emails = $WPME_API->callCustom( '/emails/' . $select_folder_id, 'GET', NULL );
+            if ( $WPME_API->http->getResponseCode() == 204 ): // No emails! Ooops
+            elseif ( $WPME_API->http->getResponseCode() == 200 ):
+            // Good emails in $emails variable
+
+            endif;
         } catch( Exception $e ) {
             if ( $WPME_API->http->getResponseCode() == 404 ):
             // Looks like product not found
@@ -144,13 +149,17 @@ class Gravityformextension extends GFAddOn {
         }
         endif;
         endif;
-        $leadfoler_array = $leadtype_array = $lead_emailfolder_array = $getemails_array = $webinar_array = array();
-      
-        $leadfoler_array[] =  array( 'label' => esc_html__( 'Select Lead Type Folders', 'Gravity Forms WPMktgEngine Extension' ), 'value' => 'selectleadtypefolder' );
-        $leadfoler_array[] = array( 'label' => esc_html__( 'Create Lead Type Folder', 'Gravity Forms WPMktgEngine Extension' ),
+        $leadfolder_array = array();
+        $leadtype_array = array();
+        $leademail_folderarray = array();
+        $get_emails_array = array();
+        $webinararray = array();
+
+        $leadfolder_array[] =  array( 'label' => esc_html__( 'Select Lead Type Folders', 'Gravity Forms WPMktgEngine Extension' ), 'value' => 'selectleadtypefolder' );
+        $leadfolder_array[] = array( 'label' => esc_html__( 'Create Lead Type Folder', 'Gravity Forms WPMktgEngine Extension' ),
         'value' => 'createleadtypefolder' );
         foreach ( $leadTypefolder as $leadTypefolders ) {
-            $leadfoler_array[] =
+            $leadfolder_array[] =
             array( 'label' => esc_html__( $leadTypefolders->name, 'Gravity Forms WPMktgEngine Extension' ),
             'value' => $leadTypefolders->type_id );
 
@@ -159,29 +168,29 @@ class Gravityformextension extends GFAddOn {
         $leadtype_array[] = array( 'label' => esc_html__( 'Create Lead Types', 'Gravity Forms WPMktgEngine Extension' ),
         'value' => 'createleadtype' );
 
-        foreach ( $lead_types as $leadtype ) {
-            if ( $leadfolder == $leadtype->folder_id ):
-            $leadtype_array[] = array( 'label' => esc_html__( $leadtype->name, 'Gravity Forms WPMktgEngine Extension' ),
-            'value' => $leadtype->id );
+        foreach ( $leadtypeoptions as $leadtypeoption ) {
+            if ( $leadfolder == $leadtypeoption->folder_id ):
+            $leadtype_array[] = array( 'label' => esc_html__( $leadtypeoption->name, 'Gravity Forms WPMktgEngine Extension' ),
+            'value' => $leadtypeoption->id );
             endif;
         }
-        $lead_emailfolder_array[] = array( 'label' => esc_html__( 'Select Email Folders', 'Gravity Forms WPMktgEngine Extension' ), 'value' => '' );
+        $leademail_folderarray[] = array( 'label' => esc_html__( 'Select Email Folders', 'Gravity Forms WPMktgEngine Extension' ), 'value' => '' );
 
         foreach ( $leademailfolders as $leademailfolder ) {
-            $lead_emailfolder_array[] = array( 'label' => esc_html__( $leademailfolder->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $leademailfolder->id );
+            $leademail_folderarray[] = array( 'label' => esc_html__( $leademailfolder->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $leademailfolder->id );
         }
-        if ( !empty( $select_email_id ) && !empty( $getemails ) ) :
-        foreach ( $getemails as $getemail ) {
-            $getemails_array[] = array( 'label' => esc_html__( $getemail->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $getemail->id );
+        if ( !empty( $select_email_id ) && !empty( $get_emails ) ) :
+        foreach ( $get_emails as $get_email ) {
+            $get_emails_array[] = array( 'label' => esc_html__( $get_email->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $get_email->id );
 
         } else:
-        $getemails_array[] = array( 'label' => esc_html__( 'no email here', 'Gravity Forms WPMktgEngine Extension' ), 'value' => '' );
+        $get_emails_array[] = array( 'label' => esc_html__( 'no email here', 'Gravity Forms WPMktgEngine Extension' ), 'value' => '' );
 
         endif;
 
         foreach ( $webinars as $webinar ) {
 
-            $webinar_array[] = array( 'label' => esc_html__( $webinar->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $webinar->id );
+            $webinararray[] = array( 'label' => esc_html__( $webinar->name, 'Gravity Forms WPMktgEngine Extension' ), 'value' => $webinar->id );
 
         }
 
@@ -196,7 +205,7 @@ class Gravityformextension extends GFAddOn {
                         'name'    => 'selectleadtypefolders',
                         'tooltip' => esc_html__( 'Select the folder where lead type exists.', '' ),
                         'choices' =>
-                        $leadfoler_array
+                        $leadfolder_array
 
                     ),
                     array(
@@ -282,7 +291,7 @@ class Gravityformextension extends GFAddOn {
                         'class' => 'leademailfolders',
                         'tooltip' => esc_html__( 'The location where the confirmation email is located.', '' ),
                         'choices' =>
-                        $lead_emailfolder_array
+                        $leademail_folderarray
 
                     ),
                     array(
@@ -292,7 +301,7 @@ class Gravityformextension extends GFAddOn {
                         'name'    => 'leademail',
                         'tooltip' => esc_html__( 'The confirmation email you�d like sent to person who completes the form', '' ),
                         'choices' =>
-                        $getemails_array
+                        $get_emails_array
 
                     ),
                     array(
@@ -314,7 +323,7 @@ class Gravityformextension extends GFAddOn {
                         'name'    => 'leadwebinars',
                         'tooltip' => esc_html__( 'The webinar you�d like the lead to be registered into', '' ),
                         'choices' =>
-                        $webinar_array
+                        $webinararray
 
                     ),
 
@@ -330,6 +339,6 @@ class Gravityformextension extends GFAddOn {
     }
 
     public function render_settings( $sections ) {
-        //To Do
+       //To Do
     }
 }
