@@ -3,15 +3,15 @@
 if($is_active=='1'): ?>
 <script>
 jQuery(document).ready(function() {
-    jQuery(".lead_webinars").css('display', 'block');
-    jQuery("#gform_setting_lead_webinars > div > label").css('display', 'block');
+    jQuery(".leadwebinars").css('display', 'block');
+    jQuery("#gform_setting_leadwebinars > div > label").css('display', 'block');
 });
 </script>
 <?php 
 else : 
   $wpdb->update($gf_addon_wpextenstion, array('select_webinar'=>''),array('form_id' => $form_id_title));  ?>
 <script>
-$('.lead_webinars option:selected').removeAttr('selected');
+$('.leadwebinars option:selected').removeAttr('selected');
 </script>
 
 <?php  endif; ?>
@@ -26,26 +26,26 @@ jQuery(document).ready(function() {
     jQuery('.leadtypefoldersaving').css('display','none');
     jQuery('.email-show').css('display', 'none');
     jQuery('#gform_setting_leademail > div > label').css('display', 'none');
-    var typeid = jQuery('#lead_types').val();
+    var typeid = jQuery('#selectleadtypes').val();
     if (typeid == '') {
         jQuery("[name='gform-settings-save']").prop('disabled', true);
-       jQuery("#lead_types").after("<div class='validationlead' style='color:red;margin-bottom: 20px;'>required</div>");
+       jQuery("#selectleadtypes").after("<div class='validationlead' style='color:red;margin-bottom: 20px;'>required</div>");
     } else {
         jQuery("[name='gform-settings-save']").removeAttr("disabled");
         jQuery(".validationlead").remove();
     }
 
-    jQuery('#lead_types').on('change', function() {
+    jQuery('#selectleadtypes').on('change', function() {
         jQuery(".validationleadvalue").remove();
         jQuery(".validationtypenew").remove();
         var value = jQuery(this).val();
         if (value == '') {
             jQuery("[name='gform-settings-save']").prop('disabled', true);
             jQuery('#gform_setting_leadtypesaving').css('display', 'none');
-             jQuery("#lead_types").after("<div class='validationleadvalue' style='color:red;margin-bottom: 20px;'>required</div>");
+             jQuery("#selectleadtypes").after("<div class='validationleadvalue' style='color:red;margin-bottom: 20px;'>required</div>");
             jQuery('.newleadtype').css('display', 'none');
             jQuery('#newleadtypecrt').prop('required', false);
-            jQuery('#lead_types').prop('required', false);
+            jQuery('#selectleadtypes').prop('required', false);
         } else if (value == 'createleadtype') {
             jQuery('.newleadtype').css('display', 'block');
             jQuery('.validationlead').remove();
@@ -59,7 +59,7 @@ jQuery(document).ready(function() {
             jQuery('.newleadtype').css('display', 'none');
             jQuery('#gform_setting_leadtypesaving').css('display', 'none');
             jQuery('#newleadtypecrt').prop('required', false);
-            jQuery('#lead_types').prop('required', false);
+            jQuery('#selectleadtypes').prop('required', false);
             jQuery(".validationleadvalue").remove();
             jQuery(".validationlead").remove();
             jQuery(".validationleadvaluefolder").remove();
@@ -69,7 +69,7 @@ jQuery(document).ready(function() {
 
     });
     //Select lead folder on change
-    jQuery('#leadtype_folders').on('change', function() {
+    jQuery('#selectleadtypefolders').on('change', function() {
         jQuery('.newleadtypefolder').css('display', 'none');
         jQuery(".validationlead").remove();
         jQuery('.newleadtypefolder').val('');
@@ -98,15 +98,15 @@ jQuery(document).ready(function() {
                 },
                 success: function(data) {
                     jQuery(".validationleadvaluefolder").remove();
-                    jQuery("#lead_types").empty();
-                    jQuery("#lead_types").append(
+                    jQuery("#selectleadtypes").empty();
+                    jQuery("#selectleadtypes").append(
                         '<option value="">Select Lead Types</option><option value="">----------------------------------</option><option value="createleadtype">Create leadtypes</option>'
                     );
                     $.each(data, function(key, value) {
-                        jQuery("#lead_types").append('<option value="' + key +
+                        jQuery("#selectleadtypes").append('<option value="' + key +
                             '">' + value + ' </option>');
                     });
-                      jQuery("#lead_types").after("<div class='validationleadvaluefolder' style='color:red;margin-bottom: 20px;'>required</div>");
+                      jQuery("#selectleadtypes").after("<div class='validationleadvaluefolder' style='color:red;margin-bottom: 20px;'>required</div>");
                        jQuery("[name='gform-settings-save']").prop('disabled', true);
 
                 },
@@ -127,7 +127,7 @@ jQuery(document).ready(function() {
         jQuery('#newleadtypecrt').prop('required', true);
 
         var getval = jQuery('#newleadtypecrt').val();
-        var folderid = jQuery('#leadtype_folders').val();
+        var folderid = jQuery('#selectleadtypefolders').val();
         if (getval != '') {
             jQuery.ajax({
                 url: '<?php echo admin_url("admin-ajax.php") ?>',
@@ -154,8 +154,8 @@ jQuery(document).ready(function() {
                      jQuery(".validationtype").remove();
                      jQuery(".validationlead").remove();
                     jQuery('.newleadtype').css('display', 'none');
-                    jQuery('#lead_types').append('<option value="' + data +'" selected="selected">' + getval + '</option>');
-		    jQuery("#lead_types").val(data);
+                    jQuery('#selectleadtypes').append('<option value="' + data +'" selected="selected">' + getval + '</option>');
+		    jQuery("#selectleadtypes").val(data);
 		    jQuery("#leadtypesaving").css("display","none");
 
                 },
@@ -169,7 +169,7 @@ jQuery(document).ready(function() {
     });
 
     //lead email folder on change
-    jQuery('.lead_emailfolders').on('change', function() {
+    jQuery('.leademailfolders').on('change', function() {
         var folderid = jQuery(this).val();
         if (folderid != '') {
             jQuery.ajax({
@@ -222,14 +222,14 @@ jQuery(document).ready(function() {
         }
     });
 
-    jQuery('.webinar_values').on('click', function() {
+    jQuery('.check_webinnar').on('click', function() {
         if ($(this).is(":checked")) {
-            jQuery('.lead_webinars').css('display', 'block');
-              jQuery("#gform_setting_lead_webinars > div > label").css('display', 'block');
-                var webiner = jQuery(".lead_webinars").val();
+            jQuery('.leadwebinars').css('display', 'block');
+              jQuery("#gform_setting_leadwebinars > div > label").css('display', 'block');
+                var webiner = jQuery(".leadwebinars").val();
               if(webiner==''){
             jQuery("[name='gform-settings-save']").prop('disabled', true);   
-            jQuery(".lead_webinars").after("<div class='validation' style='color:red;margin-bottom: 20px;'>required</div>");
+            jQuery(".leadwebinars").after("<div class='validation' style='color:red;margin-bottom: 20px;'>required</div>");
               }
               else
               {
@@ -237,22 +237,22 @@ jQuery(document).ready(function() {
               }
   
         } else if ($(this).is(":not(:checked)")) {
-            jQuery('.lead_webinars').css('display', 'none');
-              jQuery("#gform_setting_lead_webinars > div > label").css('display', 'none');
+            jQuery('.leadwebinars').css('display', 'none');
+              jQuery("#gform_setting_leadwebinars > div > label").css('display', 'none');
         jQuery("[name='gform-settings-save']").removeAttr("disabled"); 
         jQuery(".validation").remove();
         }
 
     });
     
-    jQuery('.lead_webinars').on('change',function()
+    jQuery('.leadwebinars').on('change',function()
     {
         var webiner = jQuery(this).val();
         
         if(webiner=='')
         {
          jQuery("[name='gform-settings-save']").prop('disabled', true);   
-           jQuery(".lead_webinars").after("<div class='validation' style='color:red;margin-bottom: 20px;'>required</div>");
+           jQuery(".leadwebinars").after("<div class='validation' style='color:red;margin-bottom: 20px;'>required</div>");
         }
         else
         {
@@ -295,14 +295,14 @@ jQuery(document).ready(function() {
                     jQuery('#newleadtypefolder').css('display','none');
                     jQuery('#leadtypefoldersaving').css('display','none');
                     jQuery('#newleadtypefolder').val("");
-                    jQuery("#lead_types").empty();
-                    jQuery("#lead_types").append(
+                    jQuery("#selectleadtypes").empty();
+                    jQuery("#selectleadtypes").append(
                         '<option value="">Select Lead Types</option><option value="">----------------------------------</option><option value="createleadtype">Create leadtypes</option>'
                     );
                   
-                        jQuery("#leadtype_folders").append('<option value="' + data +
+                        jQuery("#selectleadtypefolders").append('<option value="' + data +
                             '">' + leadtypefoldersaving + ' </option>');
-                            jQuery("#leadtype_folders").val(data);
+                            jQuery("#selectleadtypefolders").val(data);
                    },
 
                 error: function(errorThrown) {
@@ -349,10 +349,10 @@ jQuery(document).ready(function() {
     display: none;
 }
 
-.lead_webinars{
+.leadwebinars{
     display: none;
 }
-#gform_setting_lead_webinars > div > label{
+#gform_setting_leadwebinars > div > label{
     display: none;
 }
 #gform_setting_leademail > div >label

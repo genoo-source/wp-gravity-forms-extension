@@ -1,24 +1,24 @@
 <?php
-/* 
-Plugin Name: Gravity Forms WPMktgEngine Extension 
+/*
+Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
 Version: 2.2.16
-Requires PHP: 7.1 
+Requires PHP: 7.1
 Author: Genoo LLC
- */
+*/
 /*
- Copyright 2015  WPMKTENGINE, LLC  (web : http://www.genoo.com/)
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License, version 2, as
- published by the Free Software Foundation.
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA */
- 
+    Copyright 2015  WPMKTENGINE, LLC  (web : http://www.genoo.com/)
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as
+    published by the Free Software Foundation.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 register_activation_hook(__FILE__, function () {
     // Basic extension data
     global $wpdb;
@@ -30,8 +30,8 @@ register_activation_hook(__FILE__, function () {
     $isGenoo = false;
     // Get api / repo
     if (
-    class_exists("\WPME\ApiFactory") &&
-    class_exists("\WPME\RepositorySettingsFactory")
+        class_exists("\WPME\ApiFactory") &&
+        class_exists("\WPME\RepositorySettingsFactory")
     ) {
         $activate = true;
         $repo = new \WPME\RepositorySettingsFactory();
@@ -39,19 +39,17 @@ register_activation_hook(__FILE__, function () {
         if (class_exists("\Genoo\Api")) {
             $isGenoo = true;
         }
-    }
-    elseif (
-    class_exists("\Genoo\Api") &&
-    class_exists("\Genoo\RepositorySettings")
+    } elseif (
+        class_exists("\Genoo\Api") &&
+        class_exists("\Genoo\RepositorySettings")
     ) {
         $activate = true;
         $repo = new \Genoo\RepositorySettings();
         $api = new \Genoo\Api($repo);
         $isGenoo = true;
-    }
-    elseif (
-    class_exists("\WPMKTENGINE\Api") &&
-    class_exists("\WPMKTENGINE\RepositorySettings")
+    } elseif (
+        class_exists("\WPMKTENGINE\Api") &&
+        class_exists("\WPMKTENGINE\RepositorySettings")
     ) {
         $activate = true;
         $repo = new \WPMKTENGINE\RepositorySettings();
@@ -63,10 +61,12 @@ register_activation_hook(__FILE__, function () {
 <p style="font-family:Segoe UI;font-size:14px;">This plugin requires the WPMKtgEngine or Genoo plugin installed  order to activate</p>
 </div>
 <?php
-        genoo_wpme_deactivate_plugin(
-            $filePlugin,
-            "This extension requires WPMktgEngine or Genoo plugin to work with."        );    }
-    else { // Make ACTIVATE calls if any?}
+
+genoo_wpme_deactivate_plugin(
+    $filePlugin,
+    "This extension requires WPMktgEngine or Genoo plugin to work with."
+);
+} else {// Make ACTIVATE calls if any?}
         //creating tables setting save
         $sql = "CREATE TABLE {$wpdb->prefix}gf_settings (
             id mediumint(8) unsigned not null auto_increment,
@@ -95,8 +95,7 @@ register_activation_hook(__FILE__, function () {
         $lead_save_table = "ALTER TABLE {$wpdb->prefix}leadtype_form_save
         ADD COLUMN folder_id int(11)";
 
-        $wpdb->query($lead_save_table);
-    }
+        $wpdb->query($lead_save_table);}
 });
 
 /**
@@ -114,55 +113,52 @@ add_action(
         add_filter(
             "wpmktengine_tools_extensions_widget",
             function ($array) {
-            $array["Gravity Forms WPMktgEngine Extension"] =
-                '<span style="color:green">Active</span>' . $r;
-            return $array;
-        }
-            ,
+                $array["Gravity Forms WPMktgEngine Extension"] =
+                    '<span style="color:green">Active</span>' . $r;
+                return $array;
+            },
             10,
             1
         );
         add_filter(
             "wpmktengine_settings_sections",
             function ($sections) {
-            $sections[] = [
-                "id" => "Extension",
-                "title" => __("Extension", "wpmktengine"),
-            ];
-            return $sections;
-        }
-            ,
+                $sections[] = [
+                    "id" => "Extension",
+                    "title" => __("Extension", "wpmktengine"),
+                ];
+                return $sections;
+            },
             10,
             1
         );
         add_filter(
             "wpmktengine_settings_fields",
             function ($fields) {
-            $fields["Extension"] = [
-                [
-                    "name" => "extension_cipher_key",
-                    "id" => "extension_cipher_key",
-                    "label" => __("Cipher", "wpmktengine"),
-                    "type" => "text",
-                    "default" => "",
-                    "attr" => [
-                        "style" => "display: block",
-                    ], // Custom attributes, js etc.
-                    "desc" => __("Description", "wpmktengine"),
-                ],
-                [
-                    "label" => __("Dropdown", "wpmktengine"),
-                    "name" => "extension_dropdown_key",
-                    "id" => "extension_dropdown_key",
-                    "type" => "select",
-                    "options" => [
-                        0 => "Select",
+                $fields["Extension"] = [
+                    [
+                        "name" => "extension_cipher_key",
+                        "id" => "extension_cipher_key",
+                        "label" => __("Cipher", "wpmktengine"),
+                        "type" => "text",
+                        "default" => "",
+                        "attr" => [
+                            "style" => "display: block",
+                        ], // Custom attributes, js etc.
+                        "desc" => __("Description", "wpmktengine"),
                     ],
-                ],
-            ];
-            return $fields;
-        }
-            ,
+                    [
+                        "label" => __("Dropdown", "wpmktengine"),
+                        "name" => "extension_dropdown_key",
+                        "id" => "extension_dropdown_key",
+                        "type" => "select",
+                        "options" => [
+                            0 => "Select",
+                        ],
+                    ],
+                ];
+                return $fields;
+            },
             10,
             1
         );
@@ -193,7 +189,7 @@ function access_entry_via_field($entry, $form)
         $form_settings = $wpdb->get_row(
             "SELECT * from $gf_addon_wpextenstion WHERE form_id = $id"
         );
-        $select_folder_id = isset($form_settings->select_folder)
+  $select_folder_id = isset($form_settings->select_folder)
             ? $form_settings->select_folder
             : "";
         $get_lead_id = isset($form_settings->select_leadtype)
@@ -230,8 +226,8 @@ function access_entry_via_field($entry, $form)
                     $values["phone"] = $entry[$field["id"]];
                 endif;
                 if (
-                $field["type"] == "website" &&
-                !empty($entry[$field["id"]])
+                    $field["type"] == "website" &&
+                    !empty($entry[$field["id"]])
                 ):
                     $values["web_site_url"] = $entry[$field["id"]];
                 endif;
@@ -290,9 +286,9 @@ function access_entry_via_field($entry, $form)
                 ];
                 //check all default types which is not a premapped types
                 if (
-                in_array($field["type"], $all_default_types) &&
-                !empty($entry[$field["id"]]) &&
-                !empty($field->thirdPartyInput)
+                    in_array($field["type"], $all_default_types) &&
+                    !empty($entry[$field["id"]]) &&
+                    !empty($field->thirdPartyInput)
                 ):
                     $firstindex = strstr($field->thirdPartyInput, "c00");
                     $lastindex = strstr($field->thirdPartyInput, "date");
@@ -306,37 +302,38 @@ function access_entry_via_field($entry, $form)
                         $date = date_format($date, "m/d/Y");
                         $values[$field->thirdPartyInput] = $date;
                     elseif (
-                    $field["type"] == "radio" &&
-                    $field->thirdPartyInput == "c00eudatasubject" &&
-                    !empty($entry[$field["id"]])
+                        $field["type"] == "radio" &&
+                        $field->thirdPartyInput == "c00eudatasubject" &&
+                        !empty($entry[$field["id"]])
                     ):
                         $values["c00eudatasubject"] = "1";
                     elseif (!empty($entry[$field["id"]])):
                         $values[$field->thirdPartyInput] = $entry[$field["id"]];
                     endif;
                 endif;
-                if ($field["type"] == "select"):
+                      if ($field["type"] == "select"):
                     if ($field->thirdPartyInput == "leadtypes"):
                         $leadvalues[] = $entry[$field["id"]];
                     endif;
                 endif;
-                if ($field["type"] == "radio"):
+                  if ($field["type"] == "radio"):
                     if ($field->thirdPartyInput == "leadtypes"):
                         $leadvalues[] = $entry[$field["id"]];
                     endif;
                 endif;
                 if ($field["type"] == "multiselect"):
-                    if ($field->thirdPartyInput == "leadtypes"):
-                        $removequotes = str_replace('"', '', $entry[$field["id"]]);
-                        $multipleentry = str_replace("[", " ", $removequotes);
-                        $multipleentryremove = str_replace("]", " ", $multipleentry);
-                        $leadvaluesmultiples = explode(',', $multipleentryremove);
-
-                        foreach ($leadvaluesmultiples as $leadvaluesmultiple) {
-                            $leadvalues[] = $leadvaluesmultiple;
-                        }
-
-                    endif;
+                     if ($field->thirdPartyInput == "leadtypes"):
+                         $removequotes = str_replace('"', '', $entry[$field["id"]]);
+                        $multipleentry =  str_replace("["," ",$removequotes);
+                        $multipleentryremove = str_replace("]"," ",$multipleentry);
+                     $leadvaluesmultiples =  explode(',', $multipleentryremove);
+                    
+                     foreach($leadvaluesmultiples as $leadvaluesmultiple)
+                     {
+                        $leadvalues[] = $leadvaluesmultiple;  
+                     }
+                     
+                endif;     
                 endif;
 
                 if ($field["type"] == "checkbox"):
@@ -353,8 +350,8 @@ function access_entry_via_field($entry, $form)
                     endforeach;
                 endif;
             endforeach;
-
-            //changed callcustom api for leads submit
+          
+        //changed callcustom api for leads submit
             if (method_exists($WPME_API, "callCustom")):
                 try {
                     $response = $WPME_API->callCustom(
@@ -362,8 +359,8 @@ function access_entry_via_field($entry, $form)
                         "POST",
                         $values
                     );
-
-
+                    
+        
                     foreach ($leadvalues as $leadvalue):
                         $WPME_API->setLeadUpdate(
                             $response->genoo_id,
@@ -375,17 +372,16 @@ function access_entry_via_field($entry, $form)
                     endforeach;
 
                     if ($WPME_API->http->getResponseCode() == 204):
-                    // No values based on folderdid onchange! Ooops
+                        // No values based on folderdid onchange! Ooops
 
 
                     elseif ($WPME_API->http->getResponseCode() == 200):
                     endif;
-                }
-                catch (Exception $e) {
+                } catch (Exception $e) {
                     if ($WPME_API->http->getResponseCode() == 404):
 
 
-                    // Looks like leadfields not found
+                        // Looks like leadfields not found
                     endif;
                 }
             endif;
@@ -411,8 +407,7 @@ add_action("wp_action_to_modify", function () {
     // 1. Get lead by email address
     try {
         $lead = $WPME_API->getLeadByEmail("lead@email.com");
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
     }
     // 2. Call custom API, newly created, etc.
     if (method_exists($WPME_API, "callCustom")) {
@@ -425,15 +420,13 @@ add_action("wp_action_to_modify", function () {
                 null
             );
             if ($WPME_API->http->getResponseCode() == 204) {
-            // No product! Ooops
+                // No product! Ooops
+            } elseif ($WPME_API->http->getResponseCode() == 200) {
+                // Good product in $product variable
             }
-            elseif ($WPME_API->http->getResponseCode() == 200) {
-            // Good product in $product variable
-            }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             if ($WPME_API->http->getResponseCode() == 404) {
-            // Looks like product not found
+                // Looks like product not found
             }
         }
     }
@@ -464,7 +457,7 @@ add_action(
     function ($position, $form_id) {
         global $wpdb;
         // position -1 for adding third party(Genoo/WPMktgEngine Field:) as last
-    
+
         if ($position == -1):
 
             global $WPME_API, $wpdb;
@@ -477,14 +470,13 @@ add_action(
                         null
                     );
                     if ($WPME_API->http->getResponseCode() == 204):
-                    // No leadfields based on folderdid onchange! Ooops
-    
+                        // No leadfields based on folderdid onchange! Ooops
+
 
                     elseif ($WPME_API->http->getResponseCode() == 200):
                         $customfieldsjson = $customfields;
                     endif;
-                }
-                catch (Exception $e) {
+                } catch (Exception $e) {
                 }
             endif;
             // right after Admin Field Label
@@ -506,32 +498,32 @@ add_action(
                 "GDPR Consent Text",
                 "Web Site URL",
             ];
-    ?>
+            ?>
     <div>
         <li class="thirdparty_input_setting field_setting">
          <label class="section_label" for="field_admin_label"><?php _e(
-                "Genoo/WPMktgEngine Field:"
-            ); ?></label>
+             "Genoo/WPMktgEngine Field:"
+         ); ?></label>
          <select id="field_thirdparty_input" onchange="SetFieldProperty('thirdPartyInput', this.value);" class="fieldwidth-3" >
             <option value="">Do not map fields</option>
             
              <?php foreach ($customfieldsjson as $customfields):
-                //comparing labels with premapped labels in trim_custom_array
-                if (
-                !in_array(trim($customfields->label), $pre_mapped_fields)
-                ): ?>
+                 //comparing labels with premapped labels in trim_custom_array
+                 if (
+                     !in_array(trim($customfields->label), $pre_mapped_fields)
+                 ): ?>
                      <option value="<?php echo $customfields->key; ?>"> <?php echo trim(
-                    $customfields->label                    ); ?></option> <?php
-                endif;
-            endforeach; ?>
+    $customfields->label
+); ?></option> <?php endif;
+             endforeach; ?>
        </select>
             </li>
               <div>
         <li class="premappedname field_setting">
            
          <label class="section_label" for="field_admin_label"><?php _e(
-                "Genoo pre Mapped With"
-            ); ?></label>
+             "Genoo pre Mapped With"
+         ); ?></label>
         <input type="text" value="First name" />
           <input type="text" value="Last name" />
             </li>
@@ -539,8 +531,8 @@ add_action(
                  <div>
         <li class="premappedemail field_setting">
          <label class="section_label" for="field_admin_label"><?php _e(
-                "Genoo pre Mapped With"
-            ); ?></label>
+             "Genoo pre Mapped With"
+         ); ?></label>
         <input type="text" value="Email" />
         
             </li>
@@ -548,8 +540,8 @@ add_action(
           <div>
         <li class="premappedaddress field_setting">
          <label class="section_label" for="field_admin_label"><?php _e(
-                "Genoo pre Mapped With"
-            ); ?></label>
+             "Genoo pre Mapped With"
+         ); ?></label>
         <input type="text" value="Address 1" />
         <input type="text" value="Address 2" />
         <input type="text" value="City" />
@@ -563,8 +555,8 @@ add_action(
              <div>
         <li class="premappedwebsite field_setting">
          <label class="section_label" for="field_admin_label"><?php _e(
-                "Genoo pre Mapped With"
-            ); ?></label>
+             "Genoo pre Mapped With"
+         ); ?></label>
         <input type="text" value="Web Site URL" />
         
             </li>
@@ -572,8 +564,8 @@ add_action(
             <div>
                  <li class="premappedconsent field_setting">
          <label class="section_label" for="field_admin_label"><?php _e(
-                "Genoo pre Mapped With"
-            ); ?></label>
+             "Genoo pre Mapped With"
+         ); ?></label>
         <input type="text" value="GDPR Consent" />
          <input type="text" value="GDPR Consent Text" />
             </li>
@@ -581,100 +573,98 @@ add_action(
                 <div>
                  <li class="premappedphone field_setting">
          <label class="section_label" for="field_admin_label"><?php _e(
-                "Genoo pre Mapped With"
-            ); ?></label>
+             "Genoo pre Mapped With"
+         ); ?></label>
         <input type="text" value="Phone #" />
          
             </li>
             </div>
               
                     <?php if (method_exists($WPME_API, "callCustom")):
-                try {
-                    $leadtypes_optional = $WPME_API->callCustom(
-                        "/leadtypes",
-                        "GET",
-                        null
-                    );
-                    $get_folders = $WPME_API->callCustom(
-                        "/listLeadTypeFolders/Uncategorized",
-                        "GET",
-                        "NULL"
-                    );
+                        try {
+                            $leadtypes_optional = $WPME_API->callCustom(
+                                "/leadtypes",
+                                "GET",
+                                null
+                            );
+                            $get_folders = $WPME_API->callCustom(
+                                "/listLeadTypeFolders/Uncategorized",
+                                "GET",
+                                "NULL"
+                            );
 
-                    foreach ($get_folders as $get_folder):
-                        $folder_names[0] = "Uncategorized";
-                        $folder_names[$get_folder->type_id] =
-                            $get_folder->name;
-                        foreach (
-                        $get_folder->child_folders
-                         as $child_folders
-                        ):
-                            if (
-                            $child_folders->parent_id ==
-                            $get_folder->type_id
-                            ) {
-                                $folder_names[$child_folders->type_id] =
-                                    "--" . $child_folders->name;
-                            }
-                        endforeach;
-                    endforeach;
-                    if ($WPME_API->http->getResponseCode() == 204):
-                    // No leadfields based on folderdid onchange! Ooops
-    
+                            foreach ($get_folders as $get_folder):
+                                $folder_names[0] = "Uncategorized";
+                                $folder_names[$get_folder->type_id] =
+                                    $get_folder->name;
+                                foreach (
+                                    $get_folder->child_folders
+                                    as $child_folders
+                                ):
+                                    if (
+                                        $child_folders->parent_id ==
+                                        $get_folder->type_id
+                                    ) {
+                                        $folder_names[$child_folders->type_id] =
+                                            "--" . $child_folders->name;
+                                    }
+                                endforeach;
+                            endforeach;
+                            if ($WPME_API->http->getResponseCode() == 204):
+                                // No leadfields based on folderdid onchange! Ooops
 
-                    elseif ($WPME_API->http->getResponseCode() == 200):
-                    endif;
-                    $i = 0;
-    ?>
+
+                            elseif ($WPME_API->http->getResponseCode() == 200):
+                            endif;
+                            $i = 0;
+                            ?>
                         <div class="folderupdates"> 
                          <h2>Select lead folders</h2>
                           
                         
                         <label class="section_label leadfolder" for="field_admin_label"><?php _e(
-                        "Select Lead Folders:"
-                    ); ?></label>
+                            "Select Lead Folders:"
+                        ); ?></label>
              
                    <i class="leadfolderarrow down"></i>         
                        <div class="leadtypefolder">
                           
                             <?php foreach (
-                    $folder_names
-                     as $key => $lead_type_folder
-                    ) { ?>
+                                $folder_names
+                                as $key => $lead_type_folder
+                            ) { ?>
                         <li class="encrypt_setting_folders field_setting" >
 
                    <input type="checkbox" id="leadfolder_encrypt_value<?php echo $i; ?>"class="leadfolder_encrypt_value<?php echo $key; ?>"  name="leadfolder_encrypt_value<?php echo $i; ?>" dataidvalue=<?php echo $key; ?> leadfoldername="<?php echo $lead_type_folder; ?>" onchange="SetFieldProperty('leadfolder<?php echo $i; ?>', this.checked);" />
                 <label for="leadfolder_encrypt_value<?php echo $i; ?>" class="leadtype_folder_label<?php echo $key; ?>" style="display:inline;">
                     <?php _e(
-                            $lead_type_folder,
-                            "Gravity Forms WPMktgEngine Extension"
-                        ); ?>
+                        $lead_type_folder,
+                        "Gravity Forms WPMktgEngine Extension"
+                    ); ?>
                     <?php gform_tooltip("form_field_encrypt_value"); ?>
                 </label>  
            
 
             </li>
-              <?php $i++;
-                    }?>
+              <?php $i++;} ?>
                   </div>
                     <div class="folderleadupdates">
                            <?php foreach (
-                    $folder_names
-                     as $key => $lead_type_folder
-                    ) { ?>
+                               $folder_names
+                               as $key => $lead_type_folder
+                           ) { ?>
                                 
                              
                 <label style="display:none;" for="leadfolder_value<?php echo $i; ?>" class="leadfolder_value<?php echo $key; ?>" style="display:inline;">
                     <?php _e(
-                            $lead_type_folder,
-                            "Gravity Forms WPMktgEngine Extension"
-                        ); ?>
+                        $lead_type_folder,
+                        "Gravity Forms WPMktgEngine Extension"
+                    ); ?>
                     <?php gform_tooltip(
-                            "form_field_encrypt_value"
-                        ); ?> <i class="fa fa-trash folderdelete"id="<?php echo $key; ?>"></i>
+                        "form_field_encrypt_value"
+                    ); ?> <i class="fa fa-trash folderdelete"id="<?php echo $key; ?>"></i>
                 </label>  
-                <?php
-                    }?>
+                <?php } ?>
                                
             </div>
               
@@ -685,64 +675,63 @@ add_action(
         <h2>Select lead types</h2>
         <div class="select-arrow-item">
         <label class="leadtype_label encrypt_section_label" for="field_admin_label"><?php _e(
-                        "Select Lead Types:"
-                    ); ?></label>
+            "Select Lead Types:"
+        ); ?></label>
 		   <i class="leadtypesarrow down"></i>
 		   </div>
 
         <div class="leadtypecheckbox">
             <?php foreach ($leadtypes_optional as $leadtypes_optional_values) {
-                        foreach ($folder_names as $key => $foldername) {
-                            if ($key == $leadtypes_optional_values->folder_id) { ?>
+                foreach ($folder_names as $key => $foldername) {
+                    if ($key == $leadtypes_optional_values->folder_id) { ?>
                 <li class="encrypt_setting_leadtypes field_setting"  datafolder-id="<?php echo $leadtypes_optional_values->folder_id; ?>">
                 <input type="checkbox" id="field_encrypt_value<?php echo $i; ?>" name="field_encrypt_value<?php echo $i; ?>" data-id =<?php echo $i; ?> datafolder-id=<?php echo $leadtypes_optional_values->folder_id; ?> dataidvalue=<?php echo $leadtypes_optional_values->id; ?> leadfoldername="<?php echo $leadtypes_optional_values->name; ?>" onchange="SetFieldProperty('encryptField<?php echo $i; ?>', this.checked);" />
                 <label for="field_encrypt_value<?php echo $i; ?>" class="leadtype_value_label<?php echo $leadtypes_optional_values->id; ?>" style="display:inline;">
         <?php
-                                $folder_value = $foldername;
+        $folder_value = $foldername;
 
-                                _e(
-                                    $leadtypes_optional_values->name . "(" . $folder_value . ")",
-                                    "Gravity Forms WPMktgEngine Extension"
-                                );
-    ?>
+        _e(
+            $leadtypes_optional_values->name . "(" . $folder_value . ")",
+            "Gravity Forms WPMktgEngine Extension"
+        );
+        ?>
                     <?php gform_tooltip("form_field_encrypt_value"); ?>
                 </label>  
               
         </li>
-        <?php $i++;
-                            }
-                        }
-                    }?>
+        <?php $i++;}
+                }
+            } ?>
         
          
         </div>
      <div class="leadtypeupdates" style="display:none;"> 
        <?php
-                    $i = 0;
-                    $leadtype_form_save = $wpdb->prefix . "leadtype_form_save";
-                    foreach ($leadtypes_optional as $leadtypes_optional_values) {
-                        $label_name_value = $wpdb->get_row(
-                            "select `label_name` from $leadtype_form_save where `form_id`= $form_id and `label_value`=$leadtypes_optional_values->id"
-                        ); ?>
+       $i = 0;
+       $leadtype_form_save = $wpdb->prefix . "leadtype_form_save";
+       foreach ($leadtypes_optional as $leadtypes_optional_values) {
+           $label_name_value = $wpdb->get_row(
+               "select `label_name` from $leadtype_form_save where `form_id`= $form_id and `label_value`=$leadtypes_optional_values->id"
+           ); ?>
         <label style="display:none;" for="lead_value<?php echo $i; ?>" class="lead_value<?php echo $leadtypes_optional_values->id; ?>" style="display:inline;">
                     <?php _e(
-                            $leadtypes_optional_values->name,
-                            "Gravity Forms WPMktgEngine Extension"
-                        ); ?>
+                        $leadtypes_optional_values->name,
+                        "Gravity Forms WPMktgEngine Extension"
+                    ); ?>
                     <i class="fa fa-trash leadtypedelete" id="<?php echo $leadtypes_optional_values->id; ?>"></i>
                   <li class="encrypt_setting_option_leads field_setting" >
         
                 <input type="checkbox" id="encrypt_lead_option<?php echo $i; ?>" name="encrypt_lead_option<?php echo $i; ?>"  onchange="SetFieldProperty('encrypt_lead<?php echo $i; ?>', this.checked);" />
                 <label for="encrypt_lead_option<?php echo $i; ?>" style="display:inline;"><span class="editlabelheader">Edited Label :</span><span>
                 <?php if ($label_name_value != "") {
-                            echo $label_name_value->label_name;
-                        }?>
+                    echo $label_name_value->label_name;
+                } ?>
                  </span> </label>  
               
         </li></label>  
           <?php $i++;
-                    }
-    ?>
+       }
+       ?>
         </div>
              
            <div> <input type="button" class="leadtypeselected" value="Edit label" /></div>
@@ -751,7 +740,7 @@ add_action(
                 <p style="display:none;"><img src=<?php echo plugins_url(
                     "/images/loading.gif",
                     __FILE__
-                    ); ?> /></p>
+                ); ?> /></p>
             </div>
            
     <div class="updateoptions">
@@ -762,16 +751,15 @@ add_action(
     <button type="button" id="leadtypeupdate">Save</button><button type="button" id="leadtypeupdatecancel">Cancel</button></div>
 		   </div>
 	 <?php
-                }
-                catch (Exception $e) {
-                //To Do
-                }
-            endif; ?>
+                        } catch (Exception $e) {
+                            //To Do
+                        }
+                    endif; ?>
            
            
            
          <?php
-        endif; ?>
+        endif;?>
          
 
     <?php
@@ -781,7 +769,7 @@ add_action(
 );
 // gform_editor_js function for restricting types to show Genoo/WPMktgEngine Field:
 add_action("gform_editor_js", function () {
-?>
+    ?>
   
     <?php
     global $WPME_API;
@@ -799,14 +787,13 @@ add_action("gform_editor_js", function () {
             );
 
             if ($WPME_API->http->getResponseCode() == 204):
-            // No leadfields based on folderdid onchange! Ooops
+                // No leadfields based on folderdid onchange! Ooops
 
 
             elseif ($WPME_API->http->getResponseCode() == 200):
             endif;
-        }
-        catch (Exception $e) {
-        //To DO
+        } catch (Exception $e) {
+            //To DO
         }
     endif;
 
@@ -844,7 +831,7 @@ add_action("gform_editor_js", function () {
         "time",
         "hidden",
     ];
-?>
+    ?>
     <script>
     fieldSettings.name += ', .premappedname';
     fieldSettings.email += ', .premappedemail';
@@ -972,8 +959,7 @@ else{
 });
 //binding to the load field settings event to initialize the checkbox
 </script>
-<?php
-    endforeach;
+<?php endforeach;
 });
 //save while create the new form
 add_action("gform_after_save_form", "after_save_form", 10, 2);
@@ -991,8 +977,7 @@ function after_save_form($form, $is_new)
         $values["form_name"] = $get_form_name->title;
         $values["form_id"] = "0";
         $values["form_type"] = "GF";
-    }
-    else {
+    } else {
         $values["form_name"] = $get_form_name->title;
         $values["form_id"] = $genoo_form_id;
         $values["form_type"] = "GF";
@@ -1008,7 +993,7 @@ function after_save_form($form, $is_new)
             );
 
             if ($WPME_API->http->getResponseCode() == 204):
-            // No values based on form name,form id onchange! Ooops
+                // No values based on form name,form id onchange! Ooops
 
 
             elseif ($WPME_API->http->getResponseCode() == 200):
@@ -1036,12 +1021,11 @@ function after_save_form($form, $is_new)
                     );
                 endif;
             endif;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             if ($WPME_API->http->getResponseCode() == 404):
 
 
-            // Looks like formname or form id not found
+                // Looks like formname or form id not found
             endif;
         }
     endif;
@@ -1091,8 +1075,7 @@ function populate_dropdown($form)
         }
         if ($field->thirdPartyInput == "leadtypes") {
             $leaddetailsoptions = true;
-        }
-        else {
+        } else {
             $leaddetailsoptions = false;
         }
         if ($field->type == "select") {
@@ -1101,9 +1084,9 @@ function populate_dropdown($form)
 
         if ($leaddetailsoptions) {
             $field["choices"] = $choices;
-            if ($field->type == 'checkbox') {
-                $field->choices = $choices;
-                $field->inputs = $inputs;
+            if($field->type=='checkbox'){
+            $field->choices = $choices;
+             $field->inputs = $inputs;
             }
         }
     }
@@ -1124,10 +1107,9 @@ function log_form_deleted($form_id)
     if (method_exists($WPME_API, "callCustom")):
         try {
             $WPME_API->callCustom("/deleteGravityForm", "DELETE", $values);
-
-        }
-        catch (Exception $e) {
-        //To Do
+          
+        } catch (Exception $e) {
+	//To Do
         }
     endif;
 }
@@ -1184,7 +1166,7 @@ function lead_folder_field_creation($upgrader_object, $options)
 }
 add_action("admin_init", "adminEnqueueScripts");
 add_action("wp_ajax_gravity_form_get_lead_id", "gravity_form_get_lead_id");
-add_action("wp_ajax_lead_type_option_change_submit", "lead_type_option_change_submit");
+add_action("wp_ajax_lead_type_option_change_submit","lead_type_option_change_submit");
 add_action("wp_ajax_get_lead_options", "get_lead_options");
 add_action("wp_ajax_lead_type_delete", "lead_type_delete");
 add_action("wp_ajax_folder_option_delete", "folder_option_delete");
@@ -1320,9 +1302,8 @@ function gravity_form_get_lead_id()
                         $leadtypes_optional_values->name;
                 endif;
             endforeach;
-        }
-        catch (Exception $e) {
-        //To DO
+        } catch (Exception $e) {
+            //To DO
         }
     endif;
 
@@ -1366,7 +1347,7 @@ function adminEnqueueScripts()
     wp_enqueue_script(
         "gravityform-script",
         plugin_dir_url(__FILE__) . "includes/updatefile.js",
-    [],
+        [],
         "1.0"
     );
     wp_enqueue_style(
