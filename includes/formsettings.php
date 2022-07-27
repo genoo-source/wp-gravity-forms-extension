@@ -93,7 +93,7 @@ jQuery(document).ready(function() {
                 url: '<?php echo admin_url("admin-ajax.php") ?>',
                 type: 'POST',
                 data: {
-                    'action': 'lead_type_filter',
+                    'action': 'leadtypefilter',
                     'folder_id': folder_id,
                 },
                 success: function(data) {
@@ -121,6 +121,7 @@ jQuery(document).ready(function() {
         }
 
     });
+    //  jQuery('')
     //create new lead type    
     jQuery('#leadtypesaving').on('click', function(event) {
         event.preventDefault();
@@ -154,9 +155,12 @@ jQuery(document).ready(function() {
                      jQuery(".validationtype").remove();
                      jQuery(".validationlead").remove();
                     jQuery('.newleadtype').css('display', 'none');
-                    jQuery('#selectleadtypes').append('<option value="' + data +'" selected="selected">' + getval + '</option>');
-		    jQuery("#selectleadtypes").val(data);
-		    jQuery("#leadtypesaving").css("display","none");
+                    
+                    jQuery('#selectleadtypes').append('<option value="' + data +
+                        '" selected="selected">' + getval + '</option>');
+                    jQuery("#selectleadtypes").val(data);
+                    jQuery("#leadtypesaving").css("display","none");
+               
 
                 },
 
@@ -175,7 +179,7 @@ jQuery(document).ready(function() {
             jQuery.ajax({
                 url: '<?php echo admin_url( "admin-ajax.php" ) ?>',
                 data: {
-                    'action': 'get_lead_email',
+                    'action': 'getleadEmail',
                     'folderid': folderid
                 },
                 success: function(data) {
@@ -281,15 +285,15 @@ jQuery(document).ready(function() {
     }
     );
     jQuery('#leadtypefoldersaving').on('click', function(event) {
-      var lead_type_folder_name = jQuery('#newleadtypefolder').val();
+      var leadtypefoldersaving = jQuery('#newleadtypefolder').val();
         jQuery("[name='gform-settings-save']").prop('disabled', true);
             jQuery.ajax({
                 url: '<?php echo admin_url("admin-ajax.php") ?>',
                 type: 'POST',
                 data: {
                     action: 'create_gravity_lead_folder',
-                    folder_name: lead_type_folder_name,
-                    description: lead_type_folder_name,
+                    folder_name: leadtypefoldersaving,
+                    description: leadtypefoldersaving,
                 },
                 success: function(data) {
                     jQuery('#newleadtypefolder').css('display','none');
