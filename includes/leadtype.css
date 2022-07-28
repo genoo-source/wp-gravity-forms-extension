@@ -1,0 +1,254 @@
+.editheader
+{
+    display:none !important;
+}
+.labelupdateoption
+{
+   display:none !important;  
+}
+.optionremove
+{
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+.encrypt_setting_option_leads label::before {display:none !important;}
+
+.leadtypeselected span
+{
+display : none;
+}
+
+.leadtypeupdate span
+{
+display : none;
+}
+.leadtypeselected
+{
+padding: 5px;
+}
+.leadtypeupdate
+{
+padding: 5px;
+}
+.folderleadupdates label {
+    margin: 0;
+    min-height: 20px;
+    padding: 0 5px;
+    line-height: 20px;
+    background-color: #e8e8e8;
+    margin-bottom: 2px !important;
+}
+.folderleadupdates label:last-child {
+    margin-bottom: 0 !important;
+}
+
+.leadtype_label
+{
+    margin:5px;
+    float:left;
+    width:100%;
+}
+.folderupdates h2
+{
+font-size:16px;
+}
+.leadtypeselectoption h2
+{
+font-size:16px;
+}
+/*.leadtypecheckbox {
+    margin: 20px 0 !important;
+    overflow: auto;
+    height: 150px;
+}*/
+.leadtypeselected
+{
+background: #3e7da6 !important;
+    border: #3e7da6 !important;
+    color: #fff !important;
+    margin: 10px 0px;
+    padding: 6px;
+    float:left;
+}
+.leadfolderselected
+{
+background: #3e7da6 !important;
+    border: #3e7da6 !important;
+    color: #fff !important;
+    margin: 10px 0px;
+    padding: 6px;
+}
+
+.leadingoption div input {
+    margin-bottom: 10px;
+}
+
+input.gravityleadtypeupdate {
+    width: 100%;
+    height: 36px;
+    background-color: #3e7da6 !important;
+    color: #fff !important;
+    border: solid 1px #3e7da6;
+}
+
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+.premappedemail
+{
+    pointer-events: none;  
+}
+.premappedphone{
+ pointer-events: none;  
+}
+.premappedname 
+{
+  line-height: 52px;
+  pointer-events: none;
+}
+.premappedaddress
+{
+  line-height: 52px;
+  pointer-events: none; 
+}
+.premappedwebsite
+{
+    pointer-events: none; 
+}
+.premappedconsent
+{
+     line-height: 52px;
+    pointer-events: none; 
+}
+
+.leadfolderarrow {
+    border: solid #9092b2;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    margin: 0;
+    position: relative;
+    left: 93%;
+    top: -30px;
+}
+.leadtypesarrow {
+    border: solid #9092b2;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    margin: 0;
+    position: relative;
+    left: 53%;
+    top: 2px;
+    width: 0%;
+    height: 6%;
+  
+}
+.leadtypefolder {
+    max-height: 180px;
+    overflow: auto;
+}
+.folderleadupdates, .leadtypeupdates, .updatedoptions {
+    float: left;
+    width: 100%;
+    height: auto;
+    border: solid 1px rgba(0,0,0,0.5);
+    min-height: 36px;
+    margin-bottom: 10px;
+    max-height: 150px;
+    overflow: auto;
+    padding: 0;
+    border-radius: 3px;
+}
+.leadtypeupdates {
+    margin-top: 15px;
+}
+.folderupdates label.section_label, .leadtype_label.encrypt_section_label {
+	    width: calc(100% - 15px);
+    float: left;
+    height: 36px;
+    border: solid 1px rgba(0,0,0,0.5);
+    padding: 0;
+    line-height: 38px;
+    margin-bottom: -1px;
+    max-height: 36px;
+    padding-left: 15px;
+    border-radius: 3px;
+}
+.leadtypesarrow.down {
+	position: relative;
+    left: 93%;
+    top: 58px;
+}
+.encrypt_setting_option_leads
+{
+margin-top:12px;
+margin-left:5px;
+}
+.encrypt_setting_option_leads label:not(:empty)
+{
+  background-color: #e8e8e8;
+  margin-top:12px;
+    
+}
+.encrypt_setting_option_leads label .editlabelheader:not(:empty)
+{
+   color: #000;
+    font-size: 13px;
+    font-weight: 600;
+
+}
+.encrypt_setting_option_leads label:empty {
+      background-color: #fff;
+
+}
+
+
+.leadtypesarrow {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.leadtypesarrow.down {
+    position: absolute;
+    left: auto;
+    top: 13px;
+    right: 9px;
+    height: auto;
+}
+.select-arrow-item {
+    position: relative;
+    float: left;
+    width: 100%;
+}
+.leadtypefolder {
+	max-height: 180px;
+	overflow: auto;
+	border: solid 1px rgba(0,0,0,0.5);
+	padding: 10px;
+	margin-top: -18px;
+}
+.leadtype_label.encrypt_section_label {
+	margin: 0;
+}
+.leadtypecheckbox {
+	max-height: 180px;
+	overflow: auto;
+	border: solid 1px rgba(0,0,0,0.5);
+	padding: 10px;
+	margin-top: -20px;
+}
+.updateoptions input {
+    margin-bottom: 10px;
+}
+.leadtypeupdatebtn button {
+    background-color: #3e7da6;
+    border: solid 1px #3e7da6;
+    padding: 5px 15px;
+    margin-right: 10px;
+    border-radius: 3px;
+    color: #fff;
+}

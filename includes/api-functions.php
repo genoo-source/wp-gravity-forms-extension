@@ -1,11 +1,13 @@
 <?php
-add_action( 'wp_ajax_getleadEmail', 'getleadEmail' );
-add_action( 'wp_ajax_createleadtype', 'createleadtype' );
-add_action( 'wp_ajax_leadtypefilter', 'leadtypefilter' );
-add_action( 'wp_ajax_saveformdata', 'saveformdata' );
+add_action( 'wp_ajax_get_lead_email', 'get_lead_email' );
+add_action( 'wp_ajax_create_lead_type', 'create_lead_type' );
+add_action( 'wp_ajax_lead_type_filter', 'lead_type_filter' );
+add_action( 'wp_ajax_save_form_data', 'save_form_data' );
+add_action('wp_ajax_create_gravity_lead_folder','create_gravity_lead_folder');
+
 //for ajax call to get emails based on folderid when on change function works.
 
-function getleadEmail( $folderid ) {
+function get_lead_email( $folderid ) {
     global $WPME_API;
     if ( method_exists( $WPME_API, 'callCustom' ) ):
     try {
@@ -21,32 +23,101 @@ function getleadEmail( $folderid ) {
     }
     endif;
 }
-
-function createleadtype() {
+function display_updating_leadtype_box()
+{
     global $WPME_API;
-    $createlead = array();
-    $createlead['name'] = $_REQUEST['leadtypevalue'];
-    $createlead['description'] = $_REQUEST['description'];
-    $createlead['mngdlistind'] = $_REQUEST['mngdlistind'];
-    $createlead['costforall'] = $_REQUEST['costforall'];
-    $createlead['costperlead'] = $_REQUEST['costperlead'];
-    $createlead['sales_ind'] = $_REQUEST['sales_ind'];
-    $createlead['system_ind'] = $_REQUEST['system_ind'];
-    $createlead['blog_commenters'] = $_REQUEST['blog_commenters'];
-    $createlead['blog_subscribers'] = $_REQUEST['blog_subscribers'];
-    $createlead['folder_id'] = $_REQUEST['folder_id'];
-    if ( method_exists( $WPME_API, 'callCustom' ) ):
-    try {
-        $leadresponse = $WPME_API->callCustom( '/createLeadType', 'POST', $createlead );
+     $lead_gravity_id = $_REQUEST['ledtype_ids'];
+    
+     if (method_exists($WPME_API, 'callCustom')) :
+        try {
+            $leadTypes = $WPME_API->callCustom('/leadtypes', 'GET', null);
 
-        wp_send_json( $leadresponse->ltid );
 
-    } catch( Exception $e ) {
-    }
+            foreach ($leadTypes as $leadType) {
+              if (in_array($leadType->id, $lead_gravity_id)) :
+                        $leadtype_values[$leadType->id] = $leadType->name;
+
+                    endif;
+                    
+            }
+               wp_send_json($leadtype_values);    
+       
+            }
+         catch (Exception $e) {
+            //To Do
+        }
+        endif;
+    
+}
+
+function create_gravity_lead_folder()
+{
+   global $WPME_API;
+    $lead_folder = [];
+    $lead_folder['name'] = stripslashes($_REQUEST['folder_name']);
+    $lead_folder['description'] = stripslashes($_REQUEST['description']);
+
+    if (method_exists($WPME_API, 'callCustom')):
+        try {
+            $createfolders = $WPME_API->callCustom(
+                '/listLeadTypeFoldersByName/' . stripslashes($lead_folder['name']),
+                'GET','NULL'
+            );
+
+           
+              if (empty($createfolders)):
+
+                   try {
+                        $createfolder = $WPME_API->callCustom(
+                            '/saveLeadTypeFolder',
+                            'POST',
+                            $lead_folder
+                        );
+
+                      
+
+                        wp_send_json($createfolder->id);
+                    } catch (Exception $e) {
+                         //To DO
+                    }
+                endif;
+           
+        } catch (Exception $e) {
+             //To DO
+        }
+    endif;
+
+}
+function create_lead_type()
+{
+    global $WPME_API;
+    $createlead = [];
+    $createlead["name"] = stripslashes($_REQUEST["leadtypevalue"]);
+    $createlead["description"] = stripslashes($_REQUEST["description"]);
+    $createlead["mngdlistind"] = $_REQUEST["mngdlistind"];
+    $createlead["costforall"] = $_REQUEST["costforall"];
+    $createlead["costperlead"] = $_REQUEST["costperlead"];
+    $createlead["sales_ind"] = $_REQUEST["sales_ind"];
+    $createlead["system_ind"] = $_REQUEST["system_ind"];
+    $createlead["blog_commenters"] = $_REQUEST["blog_commenters"];
+    $createlead["blog_subscribers"] = $_REQUEST["blog_subscribers"];
+    $createlead["folder_id"] = $_REQUEST["folder_id"];
+    if (method_exists($WPME_API, "callCustom")):
+        try {
+            $leadresponse = $WPME_API->callCustom(
+                "/createLeadType",
+                "POST",
+                $createlead
+            );
+
+            wp_send_json($leadresponse->ltid);
+        } catch (Exception $e) {
+            //To Do
+        }
     endif;
 }
 
-function leadtypefilter() {
+function lead_type_filter() {
     global $WPME_API;
     $lead_folder = array();
     $lead_folder['folder_id'] = $_REQUEST['folder_id'];
@@ -69,7 +140,9 @@ function leadtypefilter() {
 
 }
 
-function saveformdata() {
+
+
+function save_form_data() {
 
     global $WPME_API, $wp;
 

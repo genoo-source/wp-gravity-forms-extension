@@ -22,30 +22,36 @@ jQuery(document).ready(function() {
     //Script for select leadtypes on change 
     //create lead type api call
     jQuery('.newleadtype').css('display', 'none');
+    jQuery('.newleadtypefolder').css('display', 'none');
+    jQuery('.leadtypefoldersaving').css('display','none');
     jQuery('.email-show').css('display', 'none');
     jQuery('#gform_setting_leademail > div > label').css('display', 'none');
     var typeid = jQuery('#selectleadtypes').val();
     if (typeid == '') {
         jQuery("[name='gform-settings-save']").prop('disabled', true);
-        jQuery("#selectleadtypes").after("<div class='validationlead' style='color:red;margin-bottom: 20px;'>required</div>");
+       jQuery("#selectleadtypes").after("<div class='validationlead' style='color:red;margin-bottom: 20px;'>required</div>");
     } else {
         jQuery("[name='gform-settings-save']").removeAttr("disabled");
-         jQuery(".validationlead").remove();
+        jQuery(".validationlead").remove();
     }
 
     jQuery('#selectleadtypes').on('change', function() {
+        jQuery(".validationleadvalue").remove();
+        jQuery(".validationtypenew").remove();
         var value = jQuery(this).val();
         if (value == '') {
             jQuery("[name='gform-settings-save']").prop('disabled', true);
+            jQuery('#gform_setting_leadtypesaving').css('display', 'none');
              jQuery("#selectleadtypes").after("<div class='validationleadvalue' style='color:red;margin-bottom: 20px;'>required</div>");
             jQuery('.newleadtype').css('display', 'none');
             jQuery('#newleadtypecrt').prop('required', false);
             jQuery('#selectleadtypes').prop('required', false);
         } else if (value == 'createleadtype') {
             jQuery('.newleadtype').css('display', 'block');
+            jQuery('.validationlead').remove();
             jQuery('#gform_setting_leadtypesaving').css('display', 'block');
             jQuery('#newleadtypecrt').prop('required', true);
-             jQuery("#newleadtypecrt").after("<div class='validationtype' style='color:red;margin-bottom: 20px;'>required</div>");
+             jQuery("#newleadtypecrt").after("<div class='validationtypenew' style='color:red;margin-bottom: 20px;'>required</div>");
             jQuery("[name='gform-settings-save']").prop('disabled', true);
 
         } else {
@@ -57,17 +63,32 @@ jQuery(document).ready(function() {
             jQuery(".validationleadvalue").remove();
             jQuery(".validationlead").remove();
             jQuery(".validationleadvaluefolder").remove();
-            jQuery(".validationtype").remove();
+            jQuery(".validationtypenew").remove();
             
         }
 
     });
     //Select lead folder on change
     jQuery('#selectleadtypefolders').on('change', function() {
-        jQuery('.newleadtype').css('display', 'none');
-        jQuery("#selectleadtypes").prop("required", true);
+        jQuery('.newleadtypefolder').css('display', 'none');
+        jQuery(".validationlead").remove();
+        jQuery('.newleadtypefolder').val('');
+        jQuery('#leadtypefoldersaving').css('display','none');
+        jQuery(".validationleadvaluefolder").remove();
         var folder_id = jQuery(this).val();
-        if (folder_id != '') {
+        if (folder_id == 'createleadtypefolder') {
+            jQuery('.newleadtypefolder').css('display', 'block');
+            jQuery('#leadtypefoldersaving').css('display', 'block');
+            
+            jQuery('#newleadtypefolder').prop('required', true);
+             jQuery("#newleadtypefolder").after("<div class='validationtypefolder' style='color:red;margin-bottom: 20px;'>required</div>");
+            jQuery("[name='gform-settings-save']").prop('disabled', true);
+
+        }
+        else{
+            jQuery(".validationtypefolder").remove();
+        }
+        if (folder_id != '' && folder_id != 'createleadtypefolder') {
             jQuery.ajax({
                 url: '<?php echo admin_url("admin-ajax.php") ?>',
                 type: 'POST',
@@ -76,7 +97,7 @@ jQuery(document).ready(function() {
                     'folder_id': folder_id,
                 },
                 success: function(data) {
-                    console.log(data);
+                    jQuery(".validationleadvaluefolder").remove();
                     jQuery("#selectleadtypes").empty();
                     jQuery("#selectleadtypes").append(
                         '<option value="">Select Lead Types</option><option value="">----------------------------------</option><option value="createleadtype">Create leadtypes</option>'
@@ -96,6 +117,7 @@ jQuery(document).ready(function() {
             });
         } else {
             jQuery("[name='gform-settings-save']").prop('disabled', true);
+            jQuery(".validationleadvaluefolder").remove();
         }
 
     });
@@ -112,7 +134,7 @@ jQuery(document).ready(function() {
                 url: '<?php echo admin_url("admin-ajax.php") ?>',
                 type: 'POST',
                 data: {
-                    'action': 'createleadtype',
+                    'action': 'create_lead_type',
                     'leadtypevalue': getval,
                     'description': getval,
                     'mngdlistind': false,
@@ -262,9 +284,42 @@ jQuery(document).ready(function() {
         
     }
     );
+    jQuery('#leadtypefoldersaving').on('click', function(event) {
+      var leadtypefoldersaving = jQuery('#newleadtypefolder').val();
+        jQuery("[name='gform-settings-save']").prop('disabled', true);
+            jQuery.ajax({
+                url: '<?php echo admin_url("admin-ajax.php") ?>',
+                type: 'POST',
+                data: {
+                    action: 'create_gravity_lead_folder',
+                    folder_name: leadtypefoldersaving,
+                    description: leadtypefoldersaving,
+                },
+                success: function(data) {
+                    jQuery('#newleadtypefolder').css('display','none');
+                    jQuery('#leadtypefoldersaving').css('display','none');
+                    jQuery('#newleadtypefolder').val("");
+                    jQuery("#selectleadtypes").empty();
+                    jQuery("#selectleadtypes").append(
+                        '<option value="">Select Lead Types</option><option value="">----------------------------------</option><option value="createleadtype">Create leadtypes</option>'
+                    );
+                  
+                        jQuery("#selectleadtypefolders").append('<option value="' + data +
+                            '">' + leadtypefoldersaving + ' </option>');
+                            jQuery("#selectleadtypefolders").val(data);
+                   },
 
+                error: function(errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+
+        
+
+    });
 
 });
+
 </script>
 
 <?php if(!empty($select_folder_id)) : ?>
@@ -308,5 +363,18 @@ jQuery(document).ready(function() {
 {
  display: none;    
 }
-
+.label_class_email_gravity
+{
+display: none !important;       
+}
+.leadtypecheckbox
+{
+display: none !important;
+height: 400px !important;
+overflow: auto !important;
+}
+#field_id_input_label_text
+{
+    display: none !important;
+}
 </style>
