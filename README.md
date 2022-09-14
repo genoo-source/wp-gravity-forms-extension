@@ -33,4 +33,6 @@ This plugin allows integration of Gravity Forms with Genoo - so that form submit
 
 == Changelog ==
 
+2.3.1 - Cleared cache by updating the custom script,styles version number randomly for each page refresh.
+
 2.3.0 - rebuilt how leadtypes can be mapped within a form as a dropdown, checkboxes, or radio button element -- and choices selected and configured from existing lead types, to help segment your list and specifics for how you can automate your follow-ups or learn more about your audience.
