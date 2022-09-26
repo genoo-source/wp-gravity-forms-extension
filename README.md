@@ -1,11 +1,11 @@
 === Gravity Forms WPMktgEngine Extension Plugin===
 Contributors: Genoo,latorante
 Tags: marketing automation, email marketing, centralized lead database, lead capture forms
-Requires at least: 4.6
-Tested up to: 6.0.1
+Requires at least: 5.8.3
+Tested up to: 6.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 
 Combine the power of Gravity Forms with the power of Genoo's marketing engine!
 
@@ -16,10 +16,10 @@ This plugin allows integration of Gravity Forms with Genoo - so that form submit
 
 = Requirements =
 
-1. Wordpress at least version 4.6
+1. Wordpress at least version 5.8.3
 2. PHP at least version 7.4
 3. PHP DOMDocument extension
-4. Active Genoo or WPMktgEngine account (http://www.genoo.com)
+4. Active WPMktgEngine account (http://wpmktgengine.com) or Genoo account(http://www.genoo.com)
 
 == Installation ==
 
