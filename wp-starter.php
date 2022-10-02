@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.3.0
+Version: 2.3.2
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -1343,16 +1343,17 @@ function lead_type_option_submit()
 
 function adminEnqueueScripts()
 {
+    $rannum = rand();
     // scripts
     wp_enqueue_script(
         "gravityform-script",
         plugin_dir_url(__FILE__) . "includes/updatefile.js",
         [],
-        "1.0"
+       $rannum
     );
     wp_enqueue_style(
         "gravityform-style",
-        plugin_dir_url(__FILE__) . "includes/leadtype.css"
+        plugin_dir_url(__FILE__) . "includes/leadtype.css",[],$rannum
     );
 }
 
