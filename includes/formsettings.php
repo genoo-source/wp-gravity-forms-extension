@@ -179,7 +179,7 @@ jQuery(document).ready(function() {
             jQuery.ajax({
                 url: '<?php echo admin_url( "admin-ajax.php" ) ?>',
                 data: {
-                    'action': 'getleadEmail',
+                    'action': 'get_lead_email',
                     'folderid': folderid
                 },
                 success: function(data) {
