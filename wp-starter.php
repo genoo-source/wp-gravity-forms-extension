@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms WPMktgEngine Extension
 Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
-Version: 2.3.4
+Version: 2.3.5
 Requires PHP: 7.1
 Author: Genoo LLC
 */
@@ -1078,11 +1078,9 @@ function populate_dropdown($form)
         } else {
             $leaddetailsoptions = false;
         }
-        if ($field->type == "select") {
-            $field->placeholder = " ";
-        }
 
         if ($leaddetailsoptions) {
+            $field->placeholder = " ";
             $field["choices"] = $choices;
             if($field->type=='checkbox'){
             $field->choices = $choices;
