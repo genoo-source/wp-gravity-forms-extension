@@ -12,7 +12,7 @@ License: GPLv2 or later
 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Stable tag: 2.3.2
+Stable tag: 2.3.5
 
 Combine the power of Gravity Forms with the power of Genoo's marketing engine!
 
@@ -39,6 +39,18 @@ This plugin allows integration of Gravity Forms with Genoo - so that form submit
 5. Enjoy.
 
 == Changelog ==
+
+== 2.3.5 ==
+
+* Displayed placeholder  to the dropdown in  the select field.
+
+== 2.3.4 ==
+
+* Fixed jquery function conflict for the email folders selection.
+
+== 2.3.3 ==
+
+* Fixed jquery function conflict for the lead types selection.
 
 == 2.3.2 ==
 
